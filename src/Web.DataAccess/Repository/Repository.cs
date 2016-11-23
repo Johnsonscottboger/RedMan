@@ -46,7 +46,7 @@ namespace RedMan.DataAccess.Repository
         /// <returns></returns>
         public async Task<bool> AddAsync(T entity, bool IsCommit = true)
         {
-            dbSet.Add(entity);
+            await dbSet.AddAsync(entity);
             if (IsCommit)
                 return await context.SaveChangesAsync() > 0;
             else
@@ -389,7 +389,7 @@ namespace RedMan.DataAccess.Repository
         /// <returns></returns>
         public bool IsExist(Expression<Func<T, bool>> predicate)
         {
-            return dbSet.Where(predicate).Any();
+            return dbSet.Any(predicate);
         }
 
         /// <summary>
@@ -399,7 +399,7 @@ namespace RedMan.DataAccess.Repository
         /// <returns></returns>
         public async Task<bool> IsExistAsync(Expression<Func<T, bool>> predicate)
         {
-            return await dbSet.Where(predicate).AnyAsync();
+            return await dbSet.AnyAsync(predicate);
         }
 
         #endregion

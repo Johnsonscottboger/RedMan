@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Web.Model.Entities;
 
 namespace RedMan.Model.Entities
 {
@@ -19,10 +20,11 @@ namespace RedMan.Model.Entities
             FavoriteSubjects = new HashSet<Subject>();
             PubReplies = new HashSet<Reply>();
             ReceivedReplies = new HashSet<Reply>();
+            Roles = new HashSet<Role>();
         }
 
         [Key]
-        public int UserId { get; set; }
+        public Int64 UserId { get; set; }
 
         [DataType(DataType.EmailAddress,ErrorMessage ="请输入正确的邮箱地址")]
         public string Eamil { get; set; }
@@ -55,6 +57,11 @@ namespace RedMan.Model.Entities
         /// 性别
         /// </summary>
         public string Gender { get; set; }
+
+        /// <summary>
+        /// 是否已被删除
+        /// </summary>
+        public bool IsDelete { get; set; }
 
         /// <summary>
         /// 积分
@@ -105,5 +112,10 @@ namespace RedMan.Model.Entities
         /// 接收到的回复
         /// </summary>
         public virtual ICollection<Reply> ReceivedReplies { get; set; }
+
+        /// <summary>
+        /// 角色
+        /// </summary>
+        public virtual ICollection<Role> Roles { get; set; }
     }
 }

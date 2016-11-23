@@ -4,7 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using RedMan.Extensions;
 using RedMan.Model.Context;
+using Web.Services.EntitiesServices;
 
 namespace RedMan
 {
@@ -17,6 +19,12 @@ namespace RedMan
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
+
+            if (env.IsDevelopment())
+            {
+                builder.AddUserSecrets();
+            }
+            builder.AddEnvironmentVariables();
             Configuration = builder.Build();
         }
 
@@ -29,6 +37,7 @@ namespace RedMan
                options.UseSqlServer(Configuration.GetConnectionString("SqlServerConnection")));
 
             // Add framework services.
+            services.AddMyIdentity();
             services.AddMvc();
         }
 
@@ -49,7 +58,12 @@ namespace RedMan
             }
 
             app.UseStaticFiles();
-
+            app.UseCookieAuthentication(new CookieAuthenticationOptions
+            {
+                AuthenticationScheme = IdentityService.AuthenticationScheme,
+                CookieName = "IdentityCookie",
+                AutomaticChallenge = true,
+            });
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

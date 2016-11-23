@@ -13,11 +13,16 @@ namespace RedMan.Model.Entities
     /// </summary>
     public class Subject
     {
+        public Subject()
+        {
+            Replies = new HashSet<Reply>();
+        }
+
         /// <summary>
         /// ID
         /// </summary>
         [Key]
-        public int SubjectId { get; set; }
+        public Int64 SubjectId { get; set; }
 
         /// <summary>
         /// 标题

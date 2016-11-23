@@ -12,6 +12,11 @@ namespace RedMan.Model.Entities
     /// </summary>
     public class Reply
     {
+        public Reply()
+        {
+            Replies = new HashSet<Reply>();
+        }
+
         [Key]
         public Int64 ReplyId { get; set; }
 
@@ -61,5 +66,7 @@ namespace RedMan.Model.Entities
         /// 发表时间
         /// </summary>
         public DateTime PubDateTime { get; set; }
+
+        public virtual ICollection<Reply> Replies { get; set; }
     }
 }
