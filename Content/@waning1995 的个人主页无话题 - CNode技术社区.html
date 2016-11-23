@@ -1,0 +1,258 @@
+﻿<!DOCTYPE html>
+<!-- saved from url=(0035)https://cnodejs.org/user/waning1995 -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- meta -->
+
+    <meta name="description" content="CNode：Node.js专业中文社区">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="nodejs, node, express, connect, socket.io">
+    <!-- see http://smerity.com/articles/2013/where_did_all_the_http_referrers_go.html -->
+    <link rel="icon" href="https://o4j806krb.qnssl.com/public/images/cnode_icon_32.png" type="image/x-icon">
+    <!-- style -->
+    <link rel="stylesheet" href="./@waning1995 的个人主页无话题 - CNode技术社区_files/index.min.3c50e680.min.css" media="all">
+    <!-- scripts -->
+    <script async="" src="./@waning1995 的个人主页无话题 - CNode技术社区_files/analytics.js.download"></script>
+    <script src="./@waning1995 的个人主页无话题 - CNode技术社区_files/index.min.aeb155e1.min.js.download"></script>
+    <title>@waning1995 的个人主页 - CNode技术社区</title>
+</head>
+<body>
+    <!-- navbar -->
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="brand" href="https://cnodejs.org/">
+                    <img src="./@waning1995 的个人主页无话题 - CNode技术社区_files/cnodejs_light.svg">
+                </a>
+                <form id="search_form" class="navbar-search" action="https://cnodejs.org/search">
+                    <input type="text" id="q" name="q" class="search-query span3" value="">
+                </form>
+                <ul class="nav pull-right">
+                    <li><a href="https://cnodejs.org/">首页</a></li>
+                    <li>
+                        <a href="https://cnodejs.org/my/messages">
+                            未读消息
+                        </a>
+                    </li>
+
+                    <li><a href="https://cnodejs.org/getstart">新手入门</a></li>
+                    <li><a href="https://cnodejs.org/api">API</a></li>
+                    <li><a href="https://cnodejs.org/about" target="">关于</a></li>
+                    <li><a href="https://cnodejs.org/setting">设置</a></li>
+                    <li>
+                        <a href="https://cnodejs.org/signout" data-method="post" rel="nofollow">退出</a>
+                    </li>
+                </ul>
+                <a class="btn btn-navbar" id="responsive-sidebar-trigger">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div id="main">
+        <div id="sidebar">
+            <div class="panel">
+                <div class="header">
+                    <span class="col_fade">个人信息</span>
+                </div>
+                <div class="inner">
+                    <div class="user_card">
+                        <div>
+                            <a class="user_avatar" href="https://cnodejs.org/user/waning1995">
+                                <img src="./@waning1995 的个人主页无话题 - CNode技术社区_files/14328811" title="waning1995">
+                            </a>
+                            <span class="user_name"><a class="dark" href="https://cnodejs.org/user/waning1995">waning1995</a></span>
+                            <div class="board clearfix">
+                                <div class="floor">
+                                    <span class="big">积分: 0 </span>
+                                </div>
+                            </div>
+                            <div class="space clearfix"></div>
+                            <span class="signature">
+                                “
+
+                                这家伙很懒，什么个性签名都没有留下。
+
+                                ”
+                            </span>
+                        </div>
+                    </div>
+
+                    <script>
+                        $(document).ready(function () {
+                            $('.follow_btn').click(function () {
+                                var $me = $(this);
+                                var action = $me.attr('action');
+                                var params = {
+                                    follow_id: '5834ea386add41f206000b1e',
+                                    _csrf: 'zJiiW9v2-_nPPqmovvmWVOlVdQNm9beMQrSE'
+                                };
+                                $.post('/user/' + action, params, function (data) {
+                                    if (data.status === 'success') {
+                                        var $btns = $('.follow_btn');
+                                        if (action === 'follow') {
+                                            $btns.html('取消关注');
+                                            $btns.attr('action', 'un_follow');
+                                        } else {
+                                            $btns.html('加入关注');
+                                            $btns.attr('action', 'follow');
+                                        }
+                                        $btns.toggleClass('btn-success');
+                                    }
+                                }, 'json');
+                            });
+                        });
+                    </script>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="inner">
+                    <a href="https://cnodejs.org/topic/create" id="create_topic_btn">
+                        <span class="span-success">发布话题</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="content">
+            <div class="panel">
+                <div class="header">
+                    <ul class="breadcrumb">
+                        <li><a href="https://cnodejs.org/">主页</a><span class="divider">/</span></li>
+                    </ul>
+                </div>
+                <div class="inner userinfo">
+                    <div class="user_big_avatar">
+                        <img src="./@waning1995 的个人主页无话题 - CNode技术社区_files/14328811" class="user_avatar" title="waning1995">
+                    </div>
+                    <a class="dark">waning1995</a>
+                    <div class="user_profile">
+                        <ul class="unstyled">
+                            <span class="big">0</span> 积分
+                            <li>
+                                <i class="fa fa-lg fa-fw fa-github"></i>
+                                <a class="dark" href="https://github.com/waning1995" target="_blank">
+                                    @waning1995
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <p class="col_fade">注册时间 几秒前</p>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="header">
+                    <span class="col_fade">最近创建的话题</span>
+                </div>
+                <div class="inner">
+                    <p>无话题</p>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="header">
+                    <span class="col_fade">最近参与的话题</span>
+                </div>
+                <div class="inner">
+                    <p>无话题</p>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+                $('#set_star_btn').click(function () {
+                    var $me = $(this);
+                    var action = $me.attr('action');
+                    var params = {
+                        user_id: '5834ea386add41f206000b1e',
+                        _csrf: 'zJiiW9v2-_nPPqmovvmWVOlVdQNm9beMQrSE'
+                    };
+                    $.post('/user/' + action, params, function (data) {
+                        if (data.status === 'success') {
+                            if (action === 'set_star') {
+                                $me.html('取消达人');
+                                $me.attr('action', 'cancel_star');
+                            } else {
+                                $me.html('设为达人');
+                                $me.attr('action', 'set_star');
+                            }
+                        }
+                    }, 'json');
+                });
+
+                $('#set_block_btn').click(function () {
+                    var $me = $(this);
+                    var action = $me.attr('action');
+                    var params = {
+                        _csrf: 'zJiiW9v2-_nPPqmovvmWVOlVdQNm9beMQrSE',
+                        action: action
+                    };
+                    if (action === 'set_block' && !confirm('确定要屏蔽该用户吗？')) {
+                        return;
+                    }
+                    $.post('/user/waning1995/block', params, function (data) {
+                        if (data.status === 'success') {
+                            if (action === 'set_block') {
+                                $me.html('取消屏蔽用户');
+                                $me.attr('action', 'cancel_block');
+                            } else if (action === 'cancel_block') {
+                                $me.html('屏蔽用户');
+                                $me.attr('action', 'set_block');
+                            }
+                        }
+                    }, 'json');
+                })
+
+                $('#delete_all').click(function () {
+                    var $me = $(this);
+                    var params = {
+                        _csrf: 'zJiiW9v2-_nPPqmovvmWVOlVdQNm9beMQrSE',
+                    };
+                    if (!confirm('确定要删除吗？（不会永久删除，只做标记位）')) {
+                        return;
+                    }
+                    $.post('/user/waning1995/delete_all', params, function (data) {
+                        if (data.status === 'success') {
+                            alert('操作成功');
+                        }
+                    }, 'json');
+                })
+            });
+        </script>
+
+    </div>
+    <div id="backtotop" style="top: 309px; right: 0px; display: none;">回到顶部</div>
+    <div id="footer">
+        <div id="footer_main">
+            <div class="links">
+                <a class="dark" href="https://cnodejs.org/rss">RSS</a>
+                |
+                <a class="dark" href="https://github.com/cnodejs/nodeclub/">源码地址</a>
+            </div>
+            <div class="col_fade">
+                <p>CNode 社区为国内最专业的 Node.js 开源技术社区，致力于 Node.js 的技术研究。</p>
+                <p>
+                    服务器赞助商为
+                    <a href="http://www.ucloud.cn/?utm_source=zanzhu&amp;utm_campaign=cnodejs&amp;utm_medium=display&amp;utm_content=yejiao&amp;ytag=cnodejs_logo" target="_blank" class="sponsor_outlink" data-label="ucloud_bottom">
+                        <img src="./@waning1995 的个人主页无话题 - CNode技术社区_files/FuIpEaM9bvsZKnQ3QfPtBHWQmLM9" title="ucloud" alt="ucloud" width="92px">
+                    </a>
+                    ，存储赞助商为
+                    <a href="http://www.qiniu.com/?ref=cnode" target="_blank" class="sponsor_outlink" data-label="qiniu_bottom">
+                        <img src="./@waning1995 的个人主页无话题 - CNode技术社区_files/Fg0jtDIcTqVC049oVu5-sn6Om4NX" title="七牛云存储" alt="七牛云存储" width="115px">
+                    </a>
+                    ，由<a href="https://alinode.aliyun.com/?ref=cnode" target="_blank" class="sponsor_outlink" data-label="alinode_bottom">
+                        <img src="./@waning1995 的个人主页无话题 - CNode技术社区_files/FpMZk31PDyxkC8yStmMQL4XroaGD" title="alinode" alt="alinode" height="54px" width="166px">
+                    </a>提供应用性能服务。
+                </p>
+                <p>新手搭建 Node.js 服务器，推荐使用无需备案的 <a href="https://www.digitalocean.com/?refcode=eba02656eeb3">DigitalOcean(https://www.digitalocean.com/)</a></p>
+            </div>
+
+        </div>
+    </div>
+    <div id="sidebar-mask"></div>
+</body>
+</html>
