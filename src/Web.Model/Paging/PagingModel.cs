@@ -11,7 +11,7 @@ namespace RedMan.Model.Paging
         /// <summary>
         /// 数据列表
         /// </summary>
-        public IEnumerable<T> ModelList { get; set; }
+        public List<T> ModelList { get; set; }
 
         /// <summary>
         /// 分页信息

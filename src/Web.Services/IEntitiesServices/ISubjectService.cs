@@ -12,44 +12,54 @@ namespace Web.Services.IEntitiesServices
         /// <summary>
         /// 添加
         /// </summary>
-        /// <param name="subject">实体</param>
+        /// <param name="user">用户</param>
+        /// <param name="subject">主题</param>
         /// <returns></returns>
-        bool Add(Subject subject);
+        Task<Subject> Add(User user,Subject subject);
+
+        /// <summary>
+        /// 修改主题
+        /// </summary>
+        /// <param name="subject">主题实体</param>
+        /// <returns></returns>
+        Task<Subject> UpdateSubject(Subject subject);
 
         /// <summary>
         /// 删除一条主题
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="user">用户</param>
+        /// <param name="id">主题ID</param>
         /// <returns></returns>
-        Result DeleteSubject(Int64 id);
+        Task<Result> DeleteSubject(User user,Int64 id);
 
         /// <summary>
         /// 获取一条主题通过ID
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns></returns>
-        Subject GetSubjectById(Int64 id);
+        Task<Subject> GetSubjectById(Int64 id);
 
         /// <summary>
         /// 获取所有主题
         /// </summary>
         /// <returns></returns>
-        PagingModel<Subject> GetAllSubect();
+        Task<PagingModel<Subject>> GetAllSubject();
 
         /// <summary>
         /// 收藏主题
         /// </summary>
-        /// <param name="userId">用户ID</param>
+        /// <param name="userId">用户</param>
         /// <param name="subId">主题ID</param>
         /// <returns></returns>
-        Result FavoritesSubject(Int64 userId, Int64 subId);
+        Task<Result> FavoritesSubject(User user, Int64 subId);
 
         /// <summary>
         /// 回复主题
         /// </summary>
         /// <param name="subId">主题ID</param>
+        /// <param name="user">回复者</param>
         /// <param name="reply">回复实体</param>
         /// <returns></returns>
-        Result Reply(Int64 subId, Reply reply);
+        Task<PagingModel<Reply>> Reply(Int64 subId,User user, Reply reply);
     }
 }

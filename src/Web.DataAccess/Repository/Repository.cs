@@ -356,9 +356,11 @@ namespace RedMan.DataAccess.Repository
                 throw new NullReferenceException("PagingModel为NULL");
             if (pagingModel.PagingInfo == null)
                 throw new NullReferenceException("PagingModel.PagingInfo为NULL");
-            var totalItems = dbSet.LongCount();
-            pagingModel.PagingInfo.TotalItems = totalItems;
-            pagingModel.ModelList = dbSet.Where(predicate).Skip((Int32)((pagingModel.PagingInfo.CurrentPage - 1) * pagingModel.PagingInfo.ItemsPerPage)).Take((Int32)(pagingModel.PagingInfo.ItemsPerPage)).AsNoTracking();
+            if (pagingModel.ModelList == null)
+                throw new NullReferenceException("PagingModel.ModelList为NULL");
+            pagingModel.PagingInfo.TotalItems += dbSet.LongCount();
+            var result= dbSet.Where(predicate).Skip((Int32)((pagingModel.PagingInfo.CurrentPage - 1) * pagingModel.PagingInfo.ItemsPerPage)).Take((Int32)(pagingModel.PagingInfo.ItemsPerPage)).AsNoTracking();
+            pagingModel.ModelList.AddRange(result);
             return pagingModel;
         }
         /// <summary>
@@ -373,9 +375,11 @@ namespace RedMan.DataAccess.Repository
                 throw new NullReferenceException("PagingModel为NULL");
             if (pagingModel.PagingInfo == null)
                 throw new NullReferenceException("PagingModel.PagingInfo为NULL");
-            var totalItems = dbSet.LongCount();
-            pagingModel.PagingInfo.TotalItems = totalItems;
-            pagingModel.ModelList = await dbSet.Where(predicate).Skip((int)((pagingModel.PagingInfo.CurrentPage - 1) * pagingModel.PagingInfo.ItemsPerPage)).Take((int)(pagingModel.PagingInfo.ItemsPerPage)).AsNoTracking().ToListAsync();
+            if (pagingModel.ModelList == null)
+                throw new NullReferenceException("PagingModel.ModelList为NULL");
+            pagingModel.PagingInfo.TotalItems += dbSet.LongCount();
+            var result= await dbSet.Where(predicate).Skip((int)((pagingModel.PagingInfo.CurrentPage - 1) * pagingModel.PagingInfo.ItemsPerPage)).Take((int)(pagingModel.PagingInfo.ItemsPerPage)).AsNoTracking().ToListAsync();
+            pagingModel.ModelList.AddRange(result);
             return pagingModel;
         }
 

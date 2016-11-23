@@ -19,7 +19,7 @@ namespace Web.Services.IEntitiesServices
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        Task<Result> Updata(User user);
+        Task<User> Updata(User user);
 
         /// <summary>
         /// 关注用户

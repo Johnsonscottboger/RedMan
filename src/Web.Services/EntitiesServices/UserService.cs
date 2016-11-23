@@ -5,18 +5,19 @@ using RedMan.Model.Entities;
 using System;
 using System.Threading.Tasks;
 using Web.Services.IEntitiesServices;
+using static Web.Services.Common.Common;
 
 namespace Web.Services.EntitiesServices
 {
     public class UserService : IUserService
     {
-        private readonly IRepository<User> User;
+        private readonly IRepository<User> _user;
         private readonly MyContext context;
 
         public UserService(MyContext context)
         {
             this.context = context;
-            User = new Repository<User>(context);
+            _user = new Repository<User>(context);
         }
 
         /// <summary>
@@ -26,12 +27,12 @@ namespace Web.Services.EntitiesServices
         /// <returns></returns>
         public async Task<bool> DeleteUser(long id)
         {
-            var user = await User.FindAsync(p => p.UserId == id);
+            var user = await _user.FindAsync(p => p.UserId == id);
             if (user == null)
                 return true;
             //标记为删除
             user.IsDelete = true;
-            return await User.UpdateAsync(user);
+            return await _user.UpdateAsync(user);
         }
 
         /// <summary>
@@ -42,36 +43,45 @@ namespace Web.Services.EntitiesServices
         /// <returns></returns>
         public async Task<Result> Follow(Int64 userId, Int64 followUserId)
         {
-            var user = await User.FindAsync(p => p.UserId == userId);
+            var user = await _user.FindAsync(p => p.UserId == userId);
             if (user == null || user.IsDelete)
             {
-                return new Result() { Code = -200, Success = false, Message = "用户不存在" };
+                return Fail("用户不存在！");
             }
-            var followUser = await User.FindAsync(p => p.UserId == followUserId);
+            var followUser = await _user.FindAsync(p => p.UserId == followUserId);
             if (followUser == null || followUser.IsDelete)
             {
-                return new Result() { Code = -200, Success = false, Message = "被关注用户不存在" };
+                return Fail("被关注的用户不存在！");
             }
             //模拟事务
             user.FollowingUsers.Add(followUser);
             followUser.FollowUsers.Add(user);
-            var successUser = await User.UpdateAsync(user, false);
-            var successFollowUser = await User.UpdateAsync(followUser, false);
+            var successUser = await _user.UpdateAsync(user, false);
+            var successFollowUser = await _user.UpdateAsync(followUser, false);
             if (successUser && successFollowUser)
             {
                 await context.SaveChangesAsync();
-                return new Result() { Code = 200, Success = true, Message = "关注成功" };
+                return Success("关注成功!");
             }
             else
             {
-                return new Result() { Code = -200, Success = false, Message = "关注失败" };
+                return Fail("关注失败");
             }
 
         }
 
-        public Task<Result> Updata(User user)
+        /// <summary>
+        /// 修改用户信息
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public async Task<User> Updata(User user)
         {
-            throw new NotImplementedException();
+            var isSuccess = await _user.UpdateAsync(user);
+            if (isSuccess)
+                return await _user.FindAsync(p => p.UserId == user.UserId);
+            else
+                return null;
         }
     }
 }
