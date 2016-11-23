@@ -202,6 +202,47 @@ namespace RedMan.DataAccess.IRepository
         /// <param name="pagingModel">分页模型</param>
         /// <returns></returns>
         Task<PagingModel<T>> FindPagingAsync(Expression<Func<T, bool>> predicate, PagingModel<T> pagingModel);
+
+        /// <summary>
+        /// 排序
+        /// </summary>
+        /// <typeparam name="TOrderKey">排序键类型</typeparam>
+        /// <param name="predicate">Lambda表达式</param>
+        /// <param name="orderKey">排序键</param>
+        /// <param name="pagingModel">分页模型</param>
+        /// <returns></returns>
+        PagingModel<T> FindPagingOrderBy<TOrderKey>(Expression<Func<T, bool>> predicate, Expression<Func<T, TOrderKey>> orderKey, PagingModel<T> pagingModel);
+
+        /// <summary>
+        /// 排序
+        /// </summary>
+        /// <typeparam name="TOrderKey">排序键类型</typeparam>
+        /// <param name="predicate">Lambda表达式</param>
+        /// <param name="orderKey">排序键</param>
+        /// <param name="pagingModel">分页模型</param>
+        /// <returns></returns>
+        Task<PagingModel<T>> FindPagingOrderByAsync<TOrderKey>(Expression<Func<T, bool>> predicate, Expression<Func<T, TOrderKey>> orderKey, PagingModel<T> pagingModel);
+
+        /// <summary>
+        /// 排序
+        /// </summary>
+        /// <typeparam name="TOrderKey">排序键类型</typeparam>
+        /// <param name="predicate">Lambda表达式</param>
+        /// <param name="orderKey">排序键</param>
+        /// <param name="pagingModel">分页模型</param>
+        /// <returns></returns>
+        PagingModel<T> FindPagingOrderByDescending<TOrderKey>(Expression<Func<T, bool>> predicate, Expression<Func<T, TOrderKey>> orderKey, PagingModel<T> pagingModel);
+
+        /// <summary>
+        /// 排序
+        /// </summary>
+        /// <typeparam name="TOrderKey">排序键类型</typeparam>
+        /// <param name="predicate">Lambda表达式</param>
+        /// <param name="orderKey">排序键</param>
+        /// <param name="pagingModel">分页模型</param>
+        /// <returns></returns>
+        Task<PagingModel<T>> FindPagingOrderByDescendingAsync<TOrderKey>(Expression<Func<T, bool>> predicate, Expression<Func<T, TOrderKey>> orderKey, PagingModel<T> pagingModel);
+
         #endregion
 
         #region SQL命令

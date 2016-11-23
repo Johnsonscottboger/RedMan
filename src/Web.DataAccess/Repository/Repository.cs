@@ -383,6 +383,92 @@ namespace RedMan.DataAccess.Repository
             return pagingModel;
         }
 
+        /// <summary>
+        /// 分页查询
+        /// </summary>
+        /// <typeparam name="TOrderKey">排序的键类型</typeparam>
+        /// <param name="predicate">Lambda表达式</param>
+        /// <param name="orderKey">排序的键</param>
+        /// <param name="pagingModel">分页模型</param>
+        /// <returns></returns>
+        public PagingModel<T> FindPagingOrderBy<TOrderKey>(Expression<Func<T, bool>> predicate, Expression<Func<T, TOrderKey>> orderKey, PagingModel<T> pagingModel)
+        {
+            if (pagingModel == null)
+                throw new NullReferenceException("PagingModel为NULL");
+            if (pagingModel.PagingInfo == null)
+                throw new NullReferenceException("PagingModel.PagingInfo为NULL");
+            if (pagingModel.ModelList == null)
+                throw new NullReferenceException("PagingModel.ModelList为NULL");
+            pagingModel.PagingInfo.TotalItems += dbSet.LongCount();
+            var result = dbSet.Where(predicate).OrderBy(orderKey).Skip((Int32)((pagingModel.PagingInfo.CurrentPage - 1) * pagingModel.PagingInfo.ItemsPerPage)).Take((Int32)(pagingModel.PagingInfo.ItemsPerPage)).AsNoTracking();
+            pagingModel.ModelList.AddRange(result);
+            return pagingModel;
+        }
+
+        /// <summary>
+        /// 分页查询
+        /// </summary>
+        /// <typeparam name="TOrderKey">排序的键类型</typeparam>
+        /// <param name="predicate">Lambda表达式</param>
+        /// <param name="orderKey">排序的键</param>
+        /// <param name="pagingModel">分页模型</param>
+        /// <returns></returns>
+        public async Task<PagingModel<T>> FindPagingOrderByAsync<TOrderKey>(Expression<Func<T, bool>> predicate,Expression<Func<T, TOrderKey>> orderKey, PagingModel<T> pagingModel)
+        {
+            if (pagingModel == null)
+                throw new NullReferenceException("PagingModel为NULL");
+            if (pagingModel.PagingInfo == null)
+                throw new NullReferenceException("PagingModel.PagingInfo为NULL");
+            if (pagingModel.ModelList == null)
+                throw new NullReferenceException("PagingModel.ModelList为NULL");
+            pagingModel.PagingInfo.TotalItems += dbSet.LongCount();
+            var result = await dbSet.Where(predicate).OrderBy(orderKey).Skip((int)((pagingModel.PagingInfo.CurrentPage - 1) * pagingModel.PagingInfo.ItemsPerPage)).Take((int)(pagingModel.PagingInfo.ItemsPerPage)).AsNoTracking().ToListAsync();
+            pagingModel.ModelList.AddRange(result);
+            return pagingModel;
+        }
+
+
+        /// <summary>
+        /// 分页查询
+        /// </summary>
+        /// <typeparam name="TOrderKey">排序的键类型</typeparam>
+        /// <param name="predicate">Lambda表达式</param>
+        /// <param name="orderKey">排序的键</param>
+        /// <param name="pagingModel">分页模型</param>
+        public PagingModel<T> FindPagingOrderByDescending<TOrderKey>(Expression<Func<T, bool>> predicate, Expression<Func<T, TOrderKey>> orderKey, PagingModel<T> pagingModel)
+        {
+            if (pagingModel == null)
+                throw new NullReferenceException("PagingModel为NULL");
+            if (pagingModel.PagingInfo == null)
+                throw new NullReferenceException("PagingModel.PagingInfo为NULL");
+            if (pagingModel.ModelList == null)
+                throw new NullReferenceException("PagingModel.ModelList为NULL");
+            pagingModel.PagingInfo.TotalItems += dbSet.LongCount();
+            var result = dbSet.Where(predicate).OrderByDescending(orderKey).Skip((Int32)((pagingModel.PagingInfo.CurrentPage - 1) * pagingModel.PagingInfo.ItemsPerPage)).Take((Int32)(pagingModel.PagingInfo.ItemsPerPage)).AsNoTracking();
+            pagingModel.ModelList.AddRange(result);
+            return pagingModel;
+        }
+
+        /// <summary>
+        /// 分页查询
+        /// </summary>
+        /// <typeparam name="TOrderKey">排序的键类型</typeparam>
+        /// <param name="predicate">Lambda表达式</param>
+        /// <param name="orderKey">排序的键</param>
+        /// <param name="pagingModel">分页模型</param>
+        public async Task<PagingModel<T>> FindPagingOrderByDescendingAsync<TOrderKey>(Expression<Func<T, bool>> predicate, Expression<Func<T, TOrderKey>> orderKey, PagingModel<T> pagingModel)
+        {
+            if (pagingModel == null)
+                throw new NullReferenceException("PagingModel为NULL");
+            if (pagingModel.PagingInfo == null)
+                throw new NullReferenceException("PagingModel.PagingInfo为NULL");
+            if (pagingModel.ModelList == null)
+                throw new NullReferenceException("PagingModel.ModelList为NULL");
+            pagingModel.PagingInfo.TotalItems += dbSet.LongCount();
+            var result = await dbSet.Where(predicate).OrderByDescending(orderKey).Skip((int)((pagingModel.PagingInfo.CurrentPage - 1) * pagingModel.PagingInfo.ItemsPerPage)).Take((int)(pagingModel.PagingInfo.ItemsPerPage)).AsNoTracking().ToListAsync();
+            pagingModel.ModelList.AddRange(result);
+            return pagingModel;
+        }
         #endregion
 
         #region 是否存在
@@ -429,7 +515,9 @@ namespace RedMan.DataAccess.Repository
         {
             return await context.Database.ExecuteSqlCommandAsync(commandText, default(System.Threading.CancellationToken),parameters);
         }
+
         
+
         #endregion
     }
 }

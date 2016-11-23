@@ -116,9 +116,9 @@ namespace Web.Services.EntitiesServices
                 }
             };
             //首先获取置顶主题
-            var topSubjects = await _subject.FindPagingAsync(p => p.IsTop == true,pagingModel);
+            var topSubjects = await _subject.FindPagingOrderByAsync<DateTime>(p => p.IsTop == true, p=>p.PubDateTime, pagingModel);
             //获取主题，以时间倒序
-            var subjects = await _subject.FindPagingAsync(p=>p.IsTop!=true,pagingModel);
+            var subjects = await _subject.FindPagingOrderByDescendingAsync<DateTime>(p => p.IsTop != true, p => p.PubDateTime, pagingModel);
             return pagingModel;
         }
 
