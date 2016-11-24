@@ -18,6 +18,7 @@ namespace Web.Services.EntitiesServices
         private readonly MyContext context;
         private readonly IRepository<User> _user;
         private readonly IRepository<Subject> _subject;
+        private readonly IRepository<Reply> _reply;
 
         public SubjectService(MyContext context)
         {
@@ -116,20 +117,79 @@ namespace Web.Services.EntitiesServices
                 }
             };
             //首先获取置顶主题
-            var topSubjects = await _subject.FindPagingOrderByAsync<DateTime>(p => p.IsTop == true, p=>p.PubDateTime, pagingModel);
+            await _subject.FindPagingOrderByAsync<DateTime>(p => p.IsTop == true, p=>p.PubDateTime, pagingModel);
             //获取主题，以时间倒序
-            var subjects = await _subject.FindPagingOrderByDescendingAsync<DateTime>(p => p.IsTop != true, p => p.PubDateTime, pagingModel);
+            await _subject.FindPagingOrderByDescendingAsync<DateTime>(p => p.IsTop != true, p => p.PubDateTime, pagingModel);
             return pagingModel;
         }
 
-        public Task<Result> FavoritesSubject(User user, long subId)
+        /// <summary>
+        /// 收藏主题
+        /// </summary>
+        /// <param name="user">用户</param>
+        /// <param name="subId">主题ID</param>
+        /// <returns></returns>
+        public async Task<Result> FavoritesSubject(User user, Int64 subId)
         {
-            throw new NotImplementedException();
+            if (user == null)
+                throw new ArgumentNullException(nameof(user), "user不能为空！");
+            var currentUser = await _user.FindAsync(p => p.UserId == user.UserId);
+            if (currentUser == null)
+                return Fail("当前用户未找到");
+            var subject = await _subject.FindAsync(p => p.SubjectId == subId);
+            if (subject == null)
+                return Fail("当前主题未找到");
+            currentUser.FavoriteSubjects.Add(subject);
+            //保存
+            var IsSuccess = await context.SaveChangesAsync() > 0;
+            if (!IsSuccess)
+                return Fail("收藏失败");
+            return Success("加入收藏成功");
         }
 
-        public Task<PagingModel<Reply>> Reply(long subId, User user, Reply reply)
+        /// <summary>
+        /// 回复主题
+        /// 返回：
+        ///     主题下的所有回复
+        /// </summary>
+        /// <param name="subId">主题ID</param>
+        /// <param name="user">用户</param>
+        /// <param name="reply">回复实体</param>
+        /// <param name="pageSize">分页大小</param>
+        /// <param name="pageIndex">当前页数</param>
+        /// <returns></returns>
+        public async Task<PagingModel<Reply>> ReplyToSubject(Int64 subId, User user, Reply reply,Int32 pageSize, Int32 pageIndex=1)
         {
-            throw new NotImplementedException();
+            if (user == null)
+                throw new ArgumentNullException(nameof(user), "用户不能为空");
+            if (reply == null)
+                throw new ArgumentNullException(nameof(reply), "回复不能为空");
+
+            var subject = await _subject.FindAsync(p => p.SubjectId == subId);
+            if (subject == null)
+                return null;
+
+            //添加
+            subject.Replies.Add(reply);
+            user.PubReplies.Add(reply);
+            //保存
+            var IsSuccess = await context.SaveChangesAsync() > 0;
+            if (!IsSuccess)
+                return null;
+
+            //获取主题下的所有回复
+            var result = subject.Replies;
+            var pagingModel = new PagingModel<Reply>()
+            {
+                PagingInfo = new PagingInfo()
+                {
+                    CurrentPage = pageIndex,
+                    ItemsPerPage = pageSize,
+                    TotalItems=result.Count   
+                }
+            };
+            pagingModel.ModelList = result.Skip((int)(pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            return pagingModel;
         }
     }
 }

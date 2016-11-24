@@ -43,7 +43,7 @@ namespace Web.Services.IEntitiesServices
         /// 获取所有主题
         /// </summary>
         /// <returns></returns>
-        Task<PagingModel<Subject>> GetAllSubject();
+        Task<PagingModel<Subject>> GetAllSubject(Int32 pageIndex, Int32 pageSize);
 
         /// <summary>
         /// 收藏主题
@@ -60,6 +60,6 @@ namespace Web.Services.IEntitiesServices
         /// <param name="user">回复者</param>
         /// <param name="reply">回复实体</param>
         /// <returns></returns>
-        Task<PagingModel<Reply>> Reply(Int64 subId,User user, Reply reply);
+        Task<PagingModel<Reply>> ReplyToSubject(Int64 subId,User user, Reply reply);
     }
 }
