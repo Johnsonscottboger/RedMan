@@ -67,6 +67,11 @@ namespace RedMan.Model.Entities
         /// </summary>
         public DateTime PubDateTime { get; set; }
 
+        /// <summary>
+        /// 是否删除
+        /// </summary>
+        public bool IsDelete { get; set; }
+
         public virtual ICollection<Reply> Replies { get; set; }
     }
 }

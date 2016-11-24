@@ -60,6 +60,6 @@ namespace Web.Services.IEntitiesServices
         /// <param name="user">回复者</param>
         /// <param name="reply">回复实体</param>
         /// <returns></returns>
-        Task<PagingModel<Reply>> ReplyToSubject(Int64 subId,User user, Reply reply);
+        Task<PagingModel<Reply>> ReplyToSubject(Int64 subId, User user, Reply reply, Int32 pageSize, Int32 pageIndex = 1);
     }
 }

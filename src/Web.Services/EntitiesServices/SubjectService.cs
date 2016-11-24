@@ -25,6 +25,7 @@ namespace Web.Services.EntitiesServices
             this.context = context;
             this._user = new Repository<User>(context);
             this._subject = new Repository<Subject>(context);
+            this._reply = new Repository<Reply>(context);
         }
 
         /// <summary>
