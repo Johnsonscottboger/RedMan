@@ -20,10 +20,7 @@ namespace RedMan
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
 
-            if (env.IsDevelopment())
-            {
-                builder.AddUserSecrets();
-            }
+            
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
         }
