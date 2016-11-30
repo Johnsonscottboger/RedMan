@@ -1,32 +1,63 @@
-﻿using RedMan.Model.Entities;
-using System;
-using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using Web.Model.Entities;
 
 namespace Web.Services.IEntitiesServices
 {
     public interface IUserService
     {
         /// <summary>
-        /// 删除
+        /// 根据用户名列表，获取用户列表
         /// </summary>
-        /// <param name="id">ID</param>
+        /// <param name="userNames">用户名列表</param>
         /// <returns></returns>
-        Task<bool> DeleteUser(Int64 id);
-
-        
-        /// <summary>
-        /// 修改信息
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        Task<User> Updata(User user);
+        List<User> GetUsersByUserNames(IEnumerable<string> userNames);
 
         /// <summary>
-        /// 关注用户
+        /// 根据登录名，查找用户
+        /// </summary>
+        /// <param name="loginName"></param>
+        /// <returns></returns>
+        User GetUserByLoginName(string loginName);
+
+        /// <summary>
+        /// 根据用户ID，获取用户
         /// </summary>
         /// <param name="userId">用户ID</param>
-        /// <param name="followUserId">被关注的用户ID</param>
         /// <returns></returns>
-        Task<Result> Follow(Int64 userId, Int64 followUserId);
+        User GetuserById(Int64 userId);
+
+        /// <summary>
+        /// 根据邮箱地址，获取用户
+        /// </summary>
+        /// <param name="eamilAddress">邮箱地址</param>
+        /// <returns></returns>
+        User GetUserByMail(string eamilAddress);
+
+        /// <summary>
+        /// 根据用户ID列表，获取用户列表
+        /// </summary>
+        /// <param name="userIds"></param>
+        /// <returns></returns>
+        List<User> GetUsersByUserIds(IEnumerable<Int64> userIds);
+
+        /// <summary>
+        /// 添加用户
+        /// </summary>
+        /// <param name="name">用户名</param>
+        /// <param name="loginName">登录名</param>
+        /// <param name="pass">密码</param>
+        /// <param name="email">邮箱</param>
+        /// <param name="avatar_url">头像URL</param>
+        /// <param name="active">是否激活</param>
+        /// <returns></returns>
+        Result AddUser(string name, string loginName, string pass, string email, string avatar_url);
+
+        /// <summary>
+        /// 获取用户头像URL
+        /// </summary>
+        /// <param name="user">用户</param>
+        /// <returns></returns>
+        string GetGravatar(User user);
     }
 }

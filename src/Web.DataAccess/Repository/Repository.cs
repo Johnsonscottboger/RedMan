@@ -341,6 +341,61 @@ namespace RedMan.DataAccess.Repository
         {
             return predicate != null ? await Task.Factory.StartNew(() => dbSet.Where(predicate)) : await Task.Factory.StartNew(() => dbSet);
         }
+
+        /// <summary>
+        /// 查找前N条数据
+        /// </summary>
+        /// <typeparam name="TOrderKey"></typeparam>
+        /// <param name="amount"></param>
+        /// <param name="predicate"></param>
+        /// <param name="orderKey"></param>
+        /// <returns></returns>
+        public IQueryable<T> FindTopDelay<TOrderKey>(int amount, Expression<Func<T, bool>> predicate, Expression<Func<T, TOrderKey>> orderKey)
+        {
+            if (amount <= 0)
+                throw new ArgumentOutOfRangeException(nameof(amount), "查询数量不可小于等于0");
+            return predicate != null ? dbSet.OrderBy(orderKey).Where(predicate).Take(amount) :dbSet.OrderBy(orderKey).Take(amount);
+        }
+        /// <summary>
+        /// 查找前N条数据
+        /// </summary>
+        /// <typeparam name="TOrderKey"></typeparam>
+        /// <param name="amount"></param>
+        /// <param name="predicate"></param>
+        /// <param name="orderKey"></param>
+        public async Task<IQueryable<T>> FindTopDelayAsync<TOrderKey>(int amount, Expression<Func<T, bool>> predicate, Expression<Func<T, TOrderKey>> orderKey)
+        {
+            if (amount <= 0)
+                throw new ArgumentOutOfRangeException(nameof(amount), "查询数量不可小于等于0");
+            return predicate != null ? await Task.Factory.StartNew(() => dbSet.OrderBy(orderKey).Where(predicate).Take(amount)) : await Task.Factory.StartNew(() => dbSet.OrderBy(orderKey).Take(amount));
+        }
+        /// <summary>
+        /// 查找前N条数据
+        /// </summary>
+        /// <typeparam name="TOrderKey"></typeparam>
+        /// <param name="amount"></param>
+        /// <param name="predicate"></param>
+        /// <param name="orderKey"></param>
+        public IEnumerable<T> FindTop<TOrderKey>(int amount, Expression<Func<T, bool>> predicate, Expression<Func<T, TOrderKey>> orderKey)
+        {
+            if (amount <= 0)
+                throw new ArgumentOutOfRangeException(nameof(amount), "查询数量不可小于等于0");
+            return predicate != null ? dbSet.OrderBy(orderKey).Where(predicate).Take(amount) : dbSet.OrderBy(orderKey).Take(amount);
+        }
+        /// <summary>
+        /// 查找前N条数据
+        /// </summary>
+        /// <typeparam name="TOrderKey"></typeparam>
+        /// <param name="amount"></param>
+        /// <param name="predicate"></param>
+        /// <param name="orderKey"></param>
+        public async Task<IEnumerable<T>> FindTopAsync<TOrderKey>(int amount, Expression<Func<T, bool>> predicate, Expression<Func<T, TOrderKey>> orderKey)
+        {
+            if (amount <= 0)
+                throw new ArgumentOutOfRangeException(nameof(amount), "查询数量不可小于等于0");
+            return predicate != null ? await Task.Factory.StartNew(() => dbSet.OrderBy(orderKey).Where(predicate).Take(amount)) : await Task.Factory.StartNew(() => dbSet.OrderBy(orderKey).Take(amount));
+        }
+
         #endregion
 
         #region 分页查找
@@ -517,7 +572,6 @@ namespace RedMan.DataAccess.Repository
         }
 
         
-
         #endregion
     }
 }

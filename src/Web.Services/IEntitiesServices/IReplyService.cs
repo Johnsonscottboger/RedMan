@@ -1,72 +1,54 @@
-﻿using RedMan.Model.Entities;
-using RedMan.Model.Paging;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Web.Model.Entities;
 
 namespace Web.Services.IEntitiesServices
 {
     public interface IReplyService
     {
         /// <summary>
-        /// 获取一条回复
+        /// 获取一条回复消息
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<Reply> GetReplyById(Int64 id);
-
-        /// <summary>
-        /// 获取主题下的回复
-        /// </summary>
-        /// <param name="subId">主题ID</param>
-        /// <returns></returns>
-        Task<PagingModel<Reply>> GetRepliesBySubId(Int64 subId, Int32 pageSize, Int32 pageIndex = 1);
-
-        /// <summary>
-        /// 获取用户的所有回复
-        /// </summary>
-        /// <param name="userId">用户ID</param>
-        /// <returns></returns>
-        Task<PagingModel<Reply>> GetRepliesByUserId(Int64 userId, Int32 pageSize, Int32 pageIndex = 1);
-
-        /// <summary>
-        /// 修改回复
-        /// </summary>
-        /// <param name="id">ID</param>
-        /// <returns></returns>
-        Task<Result> UpdateReply(Reply reply);
-
-        /// <summary>
-        /// 删除回复
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<Result> DeleteReply(Int64 id);
-
-        /// <summary>
-        /// 赞
-        /// </summary>
-        /// <param name="userId">用户ID</param>
         /// <param name="replyId">回复ID</param>
         /// <returns></returns>
-        Task<Result> LikeReply(Int64 replyId);
+        Reply GetReplyById(Int64 replyId);
 
         /// <summary>
-        /// 回复一条回复
+        /// 根据主题ID，获取回复列表
         /// </summary>
-        /// <param name="replyId">被回复的ID</param>
-        /// <param name="reply">回复实体</param>
+        /// <param name="topicId">主题ID</param>
         /// <returns></returns>
-        Task<Result> ReplyToReply(Int64 replyId, Reply reply);
+        List<Reply> GetRepliesByTopicId(Int64 topicId);
 
         /// <summary>
-        /// 获取用户收到的回复
+        /// 创建并保存一条回复消息
         /// </summary>
-        /// <param name="userId">用户ID</param>
-        /// <param name="pageSize">页大小</param>
-        /// <param name="pageIndex">当前页数</param>
+        /// <param name="content">回复内容</param>
+        /// <param name="topicId">主题ID</param>
+        /// <param name="authorId">回复作者</param>
+        /// <param name="replyId">回复ID，当二级回复时设定该值</param>
         /// <returns></returns>
-        Task<PagingModel<Reply>> GetRecivedRepliesByUserId(Int64 userId, Int32 pageSize, Int32 pageIndex = 1);
+        Result NewAndSave(string content, Int64 topicId, Int64 authorId, Int64? replyId);
+
+        /// <summary>
+        /// 根据TopicId获取到最新的一条回复
+        /// </summary>
+        /// <param name="topicId"></param>
+        /// <returns></returns>
+        Reply GetLastReplyByTopicId(Int64 topicId);
+
+        /// <summary>
+        /// 根据作者ID获取回复消息列表
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        List<Reply> GetRpliesByAuthorId(Int64 userId);
+
+        /// <summary>
+        /// 根据作者ID，获取回复数量
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        Int32 GetCountByAuthorId(Int64 userId);
     }
 }

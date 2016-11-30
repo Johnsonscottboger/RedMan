@@ -183,6 +183,46 @@ namespace RedMan.DataAccess.IRepository
         /// <param name="predicate">Lambda表达式</param>
         /// <returns></returns>
         Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>> predicate);
+
+        /// <summary>
+        /// 延时查找前N条的数据
+        /// </summary>
+        /// <typeparam name="TOrderKey">排序键类型</typeparam>
+        /// <param name="amount">数量</param>
+        /// <param name="predicate">Lambda表达式</param>
+        /// <param name="order">排序键</param>
+        /// <returns></returns>
+        IQueryable<T> FindTopDelay<TOrderKey>(Int32 amount, Expression<Func<T, bool>> predicate, Expression<Func<T, TOrderKey>> orderKey);
+
+        /// <summary>
+        /// 延时查找前N条数据
+        /// </summary>
+        /// <typeparam name="TOrderKey">排序键类型</typeparam>
+        /// <param name="amount">数量</param>
+        /// <param name="predicate">Labmda表达式</param>
+        /// <param name="orderKey">排序键</param>
+        /// <returns></returns>
+        Task<IQueryable<T>> FindTopDelayAsync<TOrderKey>(Int32 amount, Expression<Func<T, bool>> predicate, Expression<Func<T, TOrderKey>> orderKey);
+
+        /// <summary>
+        /// 查找前N条数据
+        /// </summary>
+        /// <typeparam name="TOrderKey">排序键类型</typeparam>
+        /// <param name="amount">数量</param>
+        /// <param name="predicate">Lambda表达式</param>
+        /// <param name="orderKey">排序键</param>
+        /// <returns></returns>
+        IEnumerable<T> FindTop<TOrderKey>(Int32 amount, Expression<Func<T, bool>> predicate, Expression<Func<T, TOrderKey>> orderKey);
+
+        /// <summary>
+        /// 查找前N条数据
+        /// </summary>
+        /// <typeparam name="TOrderKey">排序键类型</typeparam>
+        /// <param name="amount">数量</param>
+        /// <param name="predicate">Lambda表达式</param>
+        /// <param name="orderKey">排序键</param>
+        /// <returns></returns>
+        Task<IEnumerable<T>> FindTopAsync<TOrderKey>(Int32 amount, Expression<Func<T, bool>> predicate, Expression<Func<T, TOrderKey>> orderKey);
         #endregion
 
         #region 分页查找

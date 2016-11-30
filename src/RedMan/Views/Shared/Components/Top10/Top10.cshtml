@@ -1,4 +1,14 @@
-﻿<ol>
+﻿@model IQueryable<RedMan.Model.Entities.User>
+<ol>
+    @foreach (var user in Model)
+    {
+        <li>
+            <span class="top_score">@user.Integrate</span>
+            <span class="user_name"><a href="http://cnodejs.org/user/i5ting">@user.NickName</a></span>
+        </li>
+    }
+
+
     <li>
         <span class="top_score">15575</span>
         <span class="user_name"><a href="http://cnodejs.org/user/i5ting">i5ting</a></span>

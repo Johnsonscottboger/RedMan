@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RedMan.Model.Context;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Web.Services.EntitiesServices;
+using Web.Services.IEntitiesServices;
 
 namespace RedMan.ViewComponentes
 {
@@ -13,17 +12,20 @@ namespace RedMan.ViewComponentes
     public class Top10:ViewComponent
     {
         private readonly MyContext _context;
+        private readonly IUserService _userService;
+
         public Top10(MyContext context)
         {
             this._context = context;
+            this._userService = new UserService(context);
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
             //TODO:前10名用户
-            await Task.FromResult(0);
-            var list = new List<int>() { 1, 2, 3, 4, 5 };
-            return View("Top10",list);
+            var top10User = await _userService.GetTop10Users();
+            
+            return View("Top10",top10User);
         }
     }
 }

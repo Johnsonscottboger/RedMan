@@ -3,119 +3,49 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using Web.Model.Entities;
 
-namespace RedMan.Model.Entities
+namespace Web.Model.Entities
 {
-    /// <summary>
-    /// 用户
-    /// </summary>
     public class User
     {
-        public User()
-        {
-            FollowingUsers = new HashSet<User>();
-            FollowUsers = new HashSet<User>();
-            Subjects = new HashSet<Subject>();
-            FavoriteSubjects = new HashSet<Subject>();
-            PubReplies = new HashSet<Reply>();
-            ReceivedReplies = new HashSet<Reply>();
-            Roles = new HashSet<Role>();
-        }
-
         [Key]
         public Int64 UserId { get; set; }
 
-        [DataType(DataType.EmailAddress,ErrorMessage ="请输入正确的邮箱地址")]
-        public string Eamil { get; set; }
+        public string Name { get; set; }
+        public string loginName { get; set; }
+        public string Email { get; set; }
+        public string Url { get; set; }
+        public string profileImageUrl { get; set; }
+        public string Location { get; set; }
+        public string Signature { get; set; }
+        public string Profile { get; set; }
+        public string Weibo { get; set; }
+        public string Avatar { get; set; }
+        public string GithubId { get; set; }
+        public string GithubUserName { get; set; }
+        public string GithubAccessToken { get; set; }
+        public bool Is_Block { get; set; } = false;
 
-        /// <summary>
-        /// 密码
-        /// </summary>
-        [DataType(DataType.Password,ErrorMessage ="请至少出入一个小写字母，一个大写母，一个符号")]
-        public string Password { get; set; }
+        public Int32 Score { get; set; }
+        public Int32 Topic_Count { get; set; }
+        public Int32 Reply_Count { get; set; }
+        public Int32 Follower_Count { get; set; }
+        public Int32 Following_Count { get; set; }
+        public Int32 Collect_Tag_Count { get; set; }
+        public Int32 Collect_Topic_Count { get; set; }
+        public DateTime CreateDateTime { get; set; }
+        public DateTime UpdateDateTime { get; set; }
+        public bool Is_Star { get; set; }
+        public string Level { get; set; }
+        public bool Active { get; set; }
 
-        /// <summary>
-        /// 确认密码
-        /// </summary>
-        [DataType(DataType.Password)]
-        [Compare(nameof(Password),ErrorMessage ="两次输入的密码不一致")]
-        public string ConfirmPassword { get; set; }
+        public bool Receive_Reply_Mail { get; set; } = false;
+        public bool Receive_At_Mail { get; set; } = false;
+        public bool From_WP { get; set; }
 
-        /// <summary>
-        /// 头像
-        /// </summary>
-        public string HeadImgUrl { get; set; }
+        public Int32 Retrieve_Time { get; set; }
+        public string Retrieve_Key { get; set; }
 
-        /// <summary>
-        /// 昵称
-        /// </summary>
-        [MaxLength(16,ErrorMessage ="输入的昵称过长")]
-        public string NickName { get; set; }
-
-        /// <summary>
-        /// 性别
-        /// </summary>
-        public string Gender { get; set; }
-
-        /// <summary>
-        /// 是否已被删除
-        /// </summary>
-        public bool IsDelete { get; set; }
-
-        /// <summary>
-        /// 积分
-        /// </summary>
-        public string Integrate { get; set; }
-
-        /// <summary>
-        /// 等级
-        /// </summary>
-        public string Grade { get; set; }
-
-        /// <summary>
-        /// 签名
-        /// </summary>
-        public string Sign { get; set; }
-
-        /// <summary>
-        /// 注册时间
-        /// </summary>
-        public DateTime RegDateTime { get; set; }
-
-        /// <summary>
-        /// 我关注的用户
-        /// </summary>
-        public virtual ICollection<User> FollowingUsers { get; set; }
-
-        /// <summary>
-        /// 关注我的用户
-        /// </summary>
-        public virtual ICollection<User> FollowUsers { get; set; }
-
-        /// <summary>
-        /// 发表过的主题
-        /// </summary>
-        public virtual ICollection<Subject> Subjects { get; set; }
-
-        /// <summary>
-        /// 收藏的主题
-        /// </summary>
-        public virtual ICollection<Subject> FavoriteSubjects { get; set; }
-
-        /// <summary>
-        /// 发表过的回复
-        /// </summary>
-        public virtual ICollection<Reply> PubReplies { get; set; }
-
-        /// <summary>
-        /// 接收到的回复
-        /// </summary>
-        public virtual ICollection<Reply> ReceivedReplies { get; set; }
-
-        /// <summary>
-        /// 角色
-        /// </summary>
-        public virtual ICollection<Role> Roles { get; set; }
+        public string AccessToken { get; set; }
     }
 }
