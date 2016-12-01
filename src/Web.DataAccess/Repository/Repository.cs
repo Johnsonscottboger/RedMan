@@ -571,7 +571,30 @@ namespace RedMan.DataAccess.Repository
             return await context.Database.ExecuteSqlCommandAsync(commandText, default(System.Threading.CancellationToken),parameters);
         }
 
-        
+
+        #endregion
+
+        #region 计数
+
+        /// <summary>
+        /// 获取数量
+        /// </summary>
+        /// <param name="predicate">Lambda表达式</param>
+        /// <returns></returns>
+        public int Count(Expression<Func<T, bool>> predicate)
+        {
+            return dbSet.Count(predicate);
+        }
+
+        /// <summary>
+        /// 获取数量
+        /// </summary>
+        /// <param name="predicate">Lambda表达式</param>
+        /// <returns></returns>
+        public async Task<int> CountAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await dbSet.CountAsync(predicate);
+        }
         #endregion
     }
 }

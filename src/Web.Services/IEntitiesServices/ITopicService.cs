@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Web.Model.Entities;
 
 namespace Web.Services.IEntitiesServices
@@ -11,21 +13,21 @@ namespace Web.Services.IEntitiesServices
         /// </summary>
         /// <param name="topicId">主题ID</param>
         /// <returns></returns>
-        Topic GetTopicById(Int64 topicId);
+        Task<Topic> GetTopicById(Int64 topicId);
 
         /// <summary>
         /// 根据查询关键词，获取主题数量
         /// </summary>
         /// <param name="queryString">查询关键词</param>
         /// <returns></returns>
-        Int32 GetCountByQuery(string queryString);
+        Task<Int32> GetCountByQuery(string queryString);
 
         /// <summary>
         /// 根据查询关键词，获取主题列表
         /// </summary>
         /// <param name="queryString">查询关键词</param>
         /// <returns></returns>
-        List<Topic> GetTopicsByQuery(string queryString);
+        Task<IQueryable<Topic>> GetTopicsByQuery(string queryString);
 
         /// <summary>
         /// 更新主题的最后回复信息
@@ -33,7 +35,7 @@ namespace Web.Services.IEntitiesServices
         /// <param name="topicId">主题ID</param>
         /// <param name="replyId">回复ID</param>
         /// <returns></returns>
-        Result UpdateLastReply(Int64 topicId, Int64 replyId);
+        Task<Result> UpdateLastReply(Int64 topicId, Int64 replyId);
 
         /// <summary>
         /// 新增一条主题
@@ -43,7 +45,6 @@ namespace Web.Services.IEntitiesServices
         /// <param name="tab">分类</param>
         /// <param name="authorId">作者ID</param>
         /// <returns></returns>
-        Result AddTopic(string title, string content, string tab, string authorId);
-
+        Task<Result> AddTopic(string title, string content, string tab, string authorId);
     }
 }

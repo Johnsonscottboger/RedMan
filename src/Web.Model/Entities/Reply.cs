@@ -13,7 +13,7 @@ namespace Web.Model.Entities
         public string Content { get; set; }
         public Int64 Author_Id { get; set; }
         public Int64 Topic_Id { get; set; }
-        public Int64 Reply_Id { get; set; }
+        public Int64? Reply_Id { get; set; }
         public DateTime CreateDateTime { get; set; }
         public DateTime UpdateDateTime { get; set; }
         public bool Content_Is_Html { get; set; }

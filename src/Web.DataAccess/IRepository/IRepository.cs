@@ -319,5 +319,11 @@ namespace RedMan.DataAccess.IRepository
         /// <returns></returns>
         Task<bool> IsExistAsync(Expression<Func<T, bool>> predicate);
         #endregion
+
+        #region 计数
+        Int32 Count(Expression<Func<T, bool>> predicate);
+
+        Task<Int32> CountAsync(Expression<Func<T, bool>> predicate);
+        #endregion
     }
 }

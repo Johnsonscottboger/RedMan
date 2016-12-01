@@ -13,28 +13,28 @@ namespace Web.Services.IEntitiesServices
         /// </summary>
         /// <param name="userId">用户ID</param>
         /// <returns></returns>
-        Int32 GetMessageUnReadCountByUserId(Int64 userId);
+        Task<Int32> GetMessageUnReadCountByUserId(Int64 userId);
 
         /// <summary>
         /// 根据消息Id获取消息
         /// </summary>
         /// <param name="messageId">消息ID</param>
         /// <returns></returns>
-        Message GetMessageById(Int64 messageId);
+        Task<Message> GetMessageById(Int64 messageId);
 
         /// <summary>
         /// 根据用户ID获取已读消息列表
         /// </summary>
         /// <param name="userId">用户ID</param>
         /// <returns></returns>
-        List<Message> GetMessageReadByUserId(Int64 userId);
+        Task<IQueryable<Message>> GetMessageReadByUserId(Int64 userId);
 
         /// <summary>
         /// 根据用户ID获取未读消息列表
         /// </summary>
         /// <param name="userId">用户ID</param>
         /// <returns></returns>
-        List<Message> GetMessageUnReadByUserId(Int64 userId);
+        Task<IQueryable<Message>> GetMessageUnReadByUserId(Int64 userId);
 
         /// <summary>
         /// 将消息标记为已读
@@ -42,7 +42,7 @@ namespace Web.Services.IEntitiesServices
         /// <param name="userId">用户ID</param>
         /// <param name="message">消息</param>
         /// <returns></returns>
-        Result UpdateMessageToRead(Int64 userId, Message message);
+        Task<Result> UpdateMessageToRead(Int64 userId, Message message);
 
         /// <summary>
         /// 将消息标记为已读
@@ -50,6 +50,6 @@ namespace Web.Services.IEntitiesServices
         /// <param name="userId">用户ID</param>
         /// <param name="messages">未读消息列表</param>
         /// <returns></returns>
-        Result UpdateMessageToRead(Int64 userId, IEnumerable<Message> messages);
+        Task<Result> UpdateMessageToRead(Int64 userId, IEnumerable<Message> messages);
     }
 }

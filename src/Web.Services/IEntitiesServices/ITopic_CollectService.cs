@@ -14,14 +14,14 @@ namespace Web.Services.IEntitiesServices
         /// <param name="userId">用户ID</param>
         /// <param name="topicId">主题ID</param>
         /// <returns></returns>
-        TopicCollect GetTopicCollect(Int64 userId, Int64 topicId);
+        Task<TopicCollect> GetTopicCollect(Int64 userId, Int64 topicId);
 
         /// <summary>
         /// 根据用户ID，获取收藏的主题列表
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        List<TopicCollect> GetTopicCollectsByUserId(Int64 userId);
+        Task<IQueryable<TopicCollect>> GetTopicCollectsByUserId(Int64 userId);
 
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace Web.Services.IEntitiesServices
         /// <param name="userId">用户ID</param>
         /// <param name="topicId">主题ID</param>
         /// <returns></returns>
-        Result AddTopicCollect(Int64 userId, Int64 topicId);
+        Task<Result> AddTopicCollect(Int64 userId, Int64 topicId);
 
         /// <summary>
         /// 删除一条 主题收藏
@@ -38,6 +38,6 @@ namespace Web.Services.IEntitiesServices
         /// <param name="userId"></param>
         /// <param name="topicId"></param>
         /// <returns></returns>
-        Result Remove(Int64 userId, Int64 topicId);
+        Task<Result> Remove(Int64 userId, Int64 topicId);
     }
 }
