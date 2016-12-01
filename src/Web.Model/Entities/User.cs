@@ -12,7 +12,8 @@ namespace Web.Model.Entities
         public Int64 UserId { get; set; }
 
         public string Name { get; set; }
-        public string loginName { get; set; }
+        public string LoginName { get; set; }
+        public string Password { get; set; }
         public string Email { get; set; }
         public string Url { get; set; }
         public string profileImageUrl { get; set; }

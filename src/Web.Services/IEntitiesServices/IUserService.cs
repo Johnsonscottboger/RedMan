@@ -27,7 +27,7 @@ namespace Web.Services.IEntitiesServices
         /// </summary>
         /// <param name="userId">用户ID</param>
         /// <returns></returns>
-        Task<User> GetuserById(Int64 userId);
+        Task<User> GetUserById(Int64 userId);
 
         /// <summary>
         /// 根据邮箱地址，获取用户

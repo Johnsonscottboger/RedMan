@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RedMan.Model.Paging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,7 +28,7 @@ namespace Web.Services.IEntitiesServices
         /// </summary>
         /// <param name="queryString">查询关键词</param>
         /// <returns></returns>
-        Task<IQueryable<Topic>> GetTopicsByQuery(string queryString);
+        Task<PagingModel<Topic>> GetTopicsByQuery(string queryString, Int32 pageSize, Int32 pageIndex = 1);
 
         /// <summary>
         /// 更新主题的最后回复信息
@@ -45,6 +46,6 @@ namespace Web.Services.IEntitiesServices
         /// <param name="tab">分类</param>
         /// <param name="authorId">作者ID</param>
         /// <returns></returns>
-        Task<Result> AddTopic(string title, string content, string tab, string authorId);
+        Task<Result> AddTopic(string title, string content, string tab, Int64 authorId);
     }
 }
