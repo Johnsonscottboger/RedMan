@@ -41,7 +41,7 @@ namespace Web.Services.IEntitiesServices
         /// </summary>
         /// <param name="userIds"></param>
         /// <returns></returns>
-        Task<IQueryable<User>> GetUsersByUserIds(IEnumerable<Int64> userIds);
+        IEnumerable<User> GetUsersByUserIds(IEnumerable<long> userIds);
 
         /// <summary>
         /// 添加用户

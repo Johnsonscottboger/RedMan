@@ -159,14 +159,25 @@ namespace Web.Services.EntitiesServices
         {
             foreach (var userId in userIds)
             {
-                 GetUserById(userId).ToAsyncEnumerable();
+                var user = GetUserById(userId);
+                user.Wait();
+                yield return user.Result;
             }
         }
 
-
-        public Task<IQueryable<User>> GetUsersByUserNames(IEnumerable<string> userNames)
+        /// <summary>
+        /// 通过用户名列表，查找所有用户
+        /// </summary>
+        /// <param name="userNames">多个用户名</param>
+        /// <returns></returns>
+        public IEnumerable<User> GetUsersByUserNames(IEnumerable<string> userNames)
         {
-            throw new NotImplementedException();
+            foreach(var userName in userNames)
+            {
+                var user = _userRepo.FindAsync(p => p.Name == userName);
+                user.Wait();
+                yield return user.Result;
+            }
         }
     }
 }
