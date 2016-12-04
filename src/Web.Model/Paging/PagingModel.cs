@@ -1,11 +1,6 @@
-﻿using RedMan.Model.Paging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace RedMan.Model.Paging
-{
+namespace Web.Model.Paging {
     public class PagingModel<T>
     {
         /// <summary>

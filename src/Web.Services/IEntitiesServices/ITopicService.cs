@@ -1,12 +1,12 @@
-﻿using RedMan.Model.Paging;
-using System;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Web.Model.Entities;
+using Web.Model.Paging;
 
-namespace Web.Services.IEntitiesServices
-{
+namespace Web.Services.IEntitiesServices {
     public interface ITopicService
     {
         /// <summary>
@@ -47,5 +47,13 @@ namespace Web.Services.IEntitiesServices
         /// <param name="authorId">作者ID</param>
         /// <returns></returns>
         Task<Result> AddTopic(string title, string content, string tab, Int64 authorId);
+
+        /// <summary>
+        /// 获取指定数量的话题
+        /// </summary>
+        /// <param name="predicate">Lambda表达式</param>
+        /// <param name="count">数量</param>
+        /// <returns></returns>
+        Task<IEnumerable<Topic>> GetTopicsInCount(Expression<Func<Topic,bool>> predicate,Int32 count);
     }
 }

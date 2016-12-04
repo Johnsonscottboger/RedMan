@@ -1,15 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RedMan.Model.Context;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Web.DataAccess.IRepository;
-using Web.DataAccess.Repository;
+using Web.Model.Context;
+using System.Collections.Generic;
 
-namespace Web.DataAccess.Repository
-{
+namespace Web.DataAccess.Repository {
     public class IdentityRepository<T> : IIdentityRepository<T> where T:class
     {
         private readonly MyContext context;
@@ -88,6 +86,16 @@ namespace Web.DataAccess.Repository
         public async Task<T> GetUserAsync(Expression<Func<T, bool>> predicate)
         {
             return await dbSet.FirstOrDefaultAsync(predicate);
+        }
+
+        /// <summary>
+        /// 根据用户名获取角色
+        /// </summary>
+        /// <param name="username">用户名</param>
+        /// <returns></returns>
+        public Task<IEnumerable<Object>> GetUserRolesAsync(String username) 
+        {
+            return null; 
         }
     }
 }

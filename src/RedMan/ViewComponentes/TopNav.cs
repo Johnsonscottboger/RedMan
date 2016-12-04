@@ -1,12 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RedMan.Model.Context;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Web.Model.Context;
 
-namespace RedMan.ViewComponentes
-{
+namespace RedMan.ViewComponentes {
     /// <summary>
     /// 首页-头部-右侧-导航菜单
     /// </summary>

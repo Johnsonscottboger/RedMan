@@ -1,16 +1,21 @@
 ﻿<!DOCTYPE html>
-<!-- saved from url=(0019)http://cnodejs.org/ -->
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <!-- meta -->
-
     <meta name="description" content="CNode：Node.js专业中文社区">
-
     <!-- style -->
     <link rel="stylesheet" href="~/css/index.min.3c50e680.min.css" media="all">
+    <link rel="stylesheet" href="~/libs/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/stylesheets/common.css" />
+    <link rel="stylesheet" href="~/stylesheets/style.less" />
+    <link rel="stylesheet" href="~/stylesheets/responsive.css" />
+    <link rel="stylesheet" href="~/stylesheets/jquery.atwho.css" />
+    <link rel="stylesheet" href="~/libs/editor/editor.css" />
+    <link rel="stylesheet" href="~/libs/webuploader/webuploader.css" />
+    <link rel="stylesheet" href="~/libs/code-prettify/prettify.css" />
+    <link rel="stylesheet" href="~/libs/font-awesome/css/font-awesome.css" />
 
-    <!-- scripts -->
     <title>@ViewData["Title"]</title>
 </head>
 <body>
@@ -39,43 +44,9 @@
         </div>
     </div>
     <div id="main">
-        <div id="sidebar">
-            <!--右侧用户面板-->
-            <div class="panel">
-                <div class="inner">
-                    <!--用户面板-调用视图组件-->
-                    @await Component.InvokeAsync(nameof(UserPanel))
-                </div>
-            </div>
+        <!--右侧边栏-->
+        @RenderSection("sidebar",true)
 
-            <!--右侧显示无人回复的话题-->
-            <div class="panel">
-                <div class="header">
-                    <span class="col_fade">无人回复的话题</span>
-                </div>
-                <div class="inner">
-                    <ul class="unstyled">
-                        <!--无人回复的话题-调用视图组件-->
-                        @await Component.InvokeAsync(nameof(ZeroReplySubject))
-                    </ul>
-                </div>
-            </div>
-            <!--右侧显示无人回复的话题-->
-
-            <!--右侧等级用户排行-->
-            <div class="panel">
-                <div class="header">
-                    <span class="col_fade">积分榜</span>
-                    &nbsp;
-                    <a class="dark" href="@Url.Action("Top100","User")">TOP 100 &gt;&gt;</a>
-                </div>
-                <div class="inner">
-                    <!--前10用户-调用视图组件-->
-                    @await Component.InvokeAsync(nameof(Top10))
-                </div>
-            </div>
-            <!--右侧等级用户排行-->
-        </div>
         <!--主体部分-->
         <div id="content">
             @RenderBody()
@@ -110,18 +81,17 @@
         </div>
     </div>
     <div id="sidebar-mask"></div>
-
-    <!--<script>
-        // google analytics
-        (function (i, s, o, g, r, a, m) {
-            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
-                (i[r].q = i[r].q || []).push(arguments)
-            }, i[r].l = 1 * new Date(); a = s.createElement(o),
-            m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
-        })(window, document, 'script', "https://www.google-analytics.com/analytics.js", 'ga');
-
-        ga('create', 'UA-41753901-5', 'auto');
-        ga('send', 'pageview');
-    </script>-->
+    
+    <script type="text/javascript" src="~/libs/jquery-2.1.0.js"></script>
+    <script type="text/javascript" src="~/libs/lodash.compat.js"></script>
+    <script type="text/javascript" src="~/libs/jquery-ujs.js"></script>
+    <script type="text/javascript" src="~/libs/bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="~/libs/jquery.caret.js"></script>
+    <script type="text/javascript" src="~/libs/jquery.atwho.js"></script>
+    <script type="text/javascript" src="~/libs/markdownit.js"></script>
+    <script type="text/javascript" src="~/libs/code-prettify/prettify.js"></script>
+    <script type="text/javascript" src="~/libs/qrcode.js"></script>
+    <script type="text/javascript" src="~/javascripts/main.js"></script>
+    <script type="text/javascript" src="~/javascripts/responsive.js"></script>
 </body>
 </html>

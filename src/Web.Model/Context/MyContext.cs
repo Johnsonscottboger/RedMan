@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RedMan.Model.Context
+namespace Web.Model.Context
 {
     public class MyContext:DbContext
     {

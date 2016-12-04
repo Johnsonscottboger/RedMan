@@ -1,25 +1,19 @@
-﻿<li>
-    <div>
-        <a class="dark topic_title" href="http://cnodejs.org/topic/58343da2bde2b59e06141e50" title="根据过期时间更改状态，怎么搞比较高效呢？">根据过期时间更改状态，怎么搞比较高效呢？</a>
-    </div>
-</li>
-<li>
-    <div>
-        <a class="dark topic_title" href="http://cnodejs.org/topic/583426806add41f206000aea" title="关于前端项目中的服务器">关于前端项目中的服务器</a>
-    </div>
-</li>
-<li>
-    <div>
-        <a class="dark topic_title" href="http://cnodejs.org/topic/58341e4d6add41f206000ae7" title="12312423432">12312423432</a>
-    </div>
-</li>
-<li>
-    <div>
-        <a class="dark topic_title" href="http://cnodejs.org/topic/58341ace27d001d606ac183a" title="&lt;/微信小程序开发&gt;直播分享课，感兴趣的进。">&lt;/微信小程序开发&gt;直播分享课，感兴趣的进。</a>
-    </div>
-</li>
-<li>
-    <div>
-        <a class="dark topic_title" href="http://cnodejs.org/topic/58341552bde2b59e06141e36" title="sixstone：一个generator包">sixstone：一个generator包</a>
-    </div>
-</li>
+﻿@*无人回复的话题，显示5条*@
+
+@model IEnumerable<Web.Model.Entities.Topic>
+
+@if(Model.Count() != 0) {
+    <ul class="unstyled">
+        @foreach(var item in Model) {
+            <li>
+                <div>
+                    <a class="dark topic_title" href="@Url.Action("Index","Topic",new { topicid=item.TopicId })" title="@item.Title">@item.Title</a>
+                </div>
+            </li>
+        }
+    </ul>
+}
+else {
+    <p>无</p>
+}
+

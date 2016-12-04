@@ -1,52 +1,11 @@
-﻿@model IQueryable<RedMan.Model.Entities.User>
+﻿@*用户积分排行榜-显示10条*@
+
+@model IEnumerable<Web.Model.Entities.User>
 <ol>
-    @foreach (var user in Model)
-    {
+    @foreach(var item in Model) {
         <li>
-            <span class="top_score">@user.Integrate</span>
-            <span class="user_name"><a href="http://cnodejs.org/user/i5ting">@user.NickName</a></span>
+            <span class="top_score">@item.Score</span>
+            <span class="user_name"><a href="@Url.Action("Detail","User",new { username=item.Name})">@item.Name</a></span>
         </li>
     }
-
-
-    <li>
-        <span class="top_score">15575</span>
-        <span class="user_name"><a href="http://cnodejs.org/user/i5ting">i5ting</a></span>
-    </li>
-    <li>
-        <span class="top_score">13930</span>
-        <span class="user_name"><a href="http://cnodejs.org/user/alsotang">alsotang</a></span>
-    </li>
-    <li>
-        <span class="top_score">9300</span>
-        <span class="user_name"><a href="http://cnodejs.org/user/leapon">leapon</a></span>
-    </li>
-    <li>
-        <span class="top_score">8680</span>
-        <span class="user_name"><a href="http://cnodejs.org/user/jiyinyiyong">jiyinyiyong</a></span>
-    </li>
-    <li>
-        <span class="top_score">5640</span>
-        <span class="user_name"><a href="http://cnodejs.org/user/yakczh">yakczh</a></span>
-    </li>
-    <li>
-        <span class="top_score">4650</span>
-        <span class="user_name"><a href="http://cnodejs.org/user/magicdawn">magicdawn</a></span>
-    </li>
-    <li>
-        <span class="top_score">4280</span>
-        <span class="user_name"><a href="http://cnodejs.org/user/captainblue2013">captainblue2013</a></span>
-    </li>
-    <li>
-        <span class="top_score">4125</span>
-        <span class="user_name"><a href="http://cnodejs.org/user/fengmk2">fengmk2</a></span>
-    </li>
-    <li>
-        <span class="top_score">4100</span>
-        <span class="user_name"><a href="http://cnodejs.org/user/chapgaga">chapgaga</a></span>
-    </li>
-    <li>
-        <span class="top_score">3750</span>
-        <span class="user_name"><a href="http://cnodejs.org/user/DevinXian">DevinXian</a></span>
-    </li>
 </ol>

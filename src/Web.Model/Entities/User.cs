@@ -48,5 +48,8 @@ namespace Web.Model.Entities
         public string Retrieve_Key { get; set; }
 
         public string AccessToken { get; set; }
+
+
+        public virtual ICollection<Role> Roles { get; set; }
     }
 }

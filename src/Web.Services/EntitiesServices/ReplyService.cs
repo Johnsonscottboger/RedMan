@@ -1,16 +1,15 @@
 ﻿using RedMan.DataAccess.IRepository;
 using RedMan.DataAccess.Repository;
-using RedMan.Model.Context;
-using RedMan.Model.Paging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Web.Model.Context;
 using Web.Model.Entities;
+using Web.Model.Paging;
 using Web.Services.IEntitiesServices;
 
-namespace Web.Services.EntitiesServices
-{
+namespace Web.Services.EntitiesServices {
     public class ReplyService : IReplyService
     {
         private readonly MyContext _context;

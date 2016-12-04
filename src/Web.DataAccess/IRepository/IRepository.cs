@@ -1,12 +1,11 @@
-﻿using RedMan.Model.Paging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Web.Model.Paging;
 
-namespace RedMan.DataAccess.IRepository
-{
+namespace RedMan.DataAccess.IRepository {
     public interface IRepository<T>
     {
         #region 单模型操作

@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RedMan.Model.Context;
 using System.Threading.Tasks;
+using Web.Model.Context;
 using Web.Services.EntitiesServices;
 using Web.Services.IEntitiesServices;
 
-namespace RedMan.ViewComponentes
-{
+namespace RedMan.ViewComponentes {
     /// <summary>
     /// 首页-右侧-前10名用户
     /// </summary>
@@ -23,8 +22,7 @@ namespace RedMan.ViewComponentes
         public async Task<IViewComponentResult> InvokeAsync()
         {
             //TODO:前10名用户
-            var top10User = await _userService.GetTop10Users();
-            
+            var top10User = await _userService.GetTopScoreUser(10);
             return View("Top10",top10User);
         }
     }

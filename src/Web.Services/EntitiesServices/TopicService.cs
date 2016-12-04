@@ -1,16 +1,15 @@
 ﻿using RedMan.DataAccess.IRepository;
 using RedMan.DataAccess.Repository;
-using RedMan.Model.Context;
-using RedMan.Model.Paging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Web.Model.Context;
 using Web.Model.Entities;
+using Web.Model.Paging;
 using Web.Services.IEntitiesServices;
 
-namespace Web.Services.EntitiesServices
-{
+namespace Web.Services.EntitiesServices {
     public class TopicService:ITopicService
     {
         private readonly MyContext _context;
@@ -158,6 +157,10 @@ namespace Web.Services.EntitiesServices
             {
                 return new Result() { Code = -200, Success = false, Message = "修改失败,服务器内部错误" };
             }
+        }
+
+        public async Task<IEnumerable<Topic>> GetTopicsInCount(Expression<Func<Topic,Boolean>> predicate,Int32 count) {
+            return await _topicRepo.FindTopAsync(count,predicate,p => p.CreateDateTime);
         }
     }
 }

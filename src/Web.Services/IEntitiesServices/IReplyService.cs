@@ -1,12 +1,10 @@
-﻿using RedMan.Model.Paging;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Web.Model.Entities;
+using Web.Model.Paging;
 
-namespace Web.Services.IEntitiesServices
-{
+namespace Web.Services.IEntitiesServices {
     public interface IReplyService
     {
         /// <summary>

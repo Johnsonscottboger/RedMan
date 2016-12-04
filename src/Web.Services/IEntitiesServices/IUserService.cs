@@ -13,7 +13,7 @@ namespace Web.Services.IEntitiesServices
         /// </summary>
         /// <param name="userNames">用户名列表</param>
         /// <returns></returns>
-        Task<IQueryable<User>> GetUsersByUserNames(IEnumerable<string> userNames);
+        IEnumerable<User> GetUsersByUserNames(IEnumerable<string> userNames);
 
         /// <summary>
         /// 根据登录名，查找用户
@@ -61,5 +61,12 @@ namespace Web.Services.IEntitiesServices
         /// <param name="user">用户</param>
         /// <returns></returns>
         Task<string> GetGravatar(User user);
+
+        /// <summary>
+        /// 获取前count为高分用户列表
+        /// </summary>
+        /// <param name="count">个数</param>
+        /// <returns></returns>
+        Task<IEnumerable<User>> GetTopScoreUser(int count);
     }
 }

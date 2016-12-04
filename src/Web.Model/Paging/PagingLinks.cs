@@ -2,7 +2,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace RedMan.Model.Paging
+namespace Web.Model.Paging
 {
     /// <summary>
     /// 分页控件

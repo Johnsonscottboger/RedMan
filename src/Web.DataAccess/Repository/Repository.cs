@@ -1,15 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RedMan.DataAccess.IRepository;
-using RedMan.Model.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
-using RedMan.Model.Paging;
+using Web.Model.Context;
+using Web.Model.Paging;
 
-namespace RedMan.DataAccess.Repository
-{
+namespace RedMan.DataAccess.Repository {
     public class Repository<T>:IRepository<T> where T:class
     {
         private readonly MyContext context;

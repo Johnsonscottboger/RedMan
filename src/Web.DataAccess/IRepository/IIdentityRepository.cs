@@ -16,6 +16,8 @@ namespace Web.DataAccess.IRepository
 
         Task<T> GetUserAsync(Expression<Func<T, bool>> predicate);
 
+        Task<IEnumerable<Object>> GetUserRolesAsync(string username);
+
         bool CheckEamil(Expression<Func<T, bool>> predicate);
 
         Task<bool> CheckEmailAsync(Expression<Func<T, bool>> predicate);

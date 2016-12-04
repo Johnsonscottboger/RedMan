@@ -1,15 +1,14 @@
 ﻿using RedMan.DataAccess.IRepository;
 using RedMan.DataAccess.Repository;
-using RedMan.Model.Context;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Web.Model.Context;
 using Web.Model.Entities;
 using Web.Services.IEntitiesServices;
+using System.Linq;
 
-namespace Web.Services.EntitiesServices
-{
+namespace Web.Services.EntitiesServices {
     public class UserService:IUserService
     {
         private readonly MyContext _context;
@@ -178,6 +177,15 @@ namespace Web.Services.EntitiesServices
                 user.Wait();
                 yield return user.Result;
             }
+        }
+
+        /// <summary>
+        /// 获取前count位高分用户列表
+        /// </summary>
+        /// <param name="count">个数</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<User>> GetTopScoreUser(Int32 count) {
+            return await _userRepo.FindTopAsync(count,p => p.Active,p => p.Score);
         }
     }
 }

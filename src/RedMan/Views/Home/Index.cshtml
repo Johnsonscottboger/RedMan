@@ -2,6 +2,39 @@
     ViewData["Title"] = "红火社区";
 }
 
+@section sidebar{
+    <div id="sidebar">
+        <!--右侧用户面板-->
+        <!--用户面板-调用视图组件-显示登陆用户信息-->
+        @await Component.InvokeAsync(nameof(UserPanel),new { username = "loginUserName" })
+
+        <!--右侧显示无人回复的话题-->
+        <div class="panel">
+            <div class="header">
+                <span class="col_fade">无人回复的话题</span>
+            </div>
+            <div class="inner">
+                <!--无人回复的话题-调用视图组件-->
+                @await Component.InvokeAsync(nameof(ZeroReplySubject))
+            </div>
+        </div>
+
+        <!--右侧等级用户排行-->
+        <div class="panel">
+            <div class="header">
+                <span class="col_fade">积分榜</span>
+                &nbsp;
+                <a class="dark" href="@Url.Action("Top100","User")">TOP 100 &gt;&gt;</a>
+            </div>
+            <div class="inner">
+                <!--前10用户-调用视图组件-->
+                @await Component.InvokeAsync(nameof(Top10))
+            </div>
+        </div>
+        <!--右侧等级用户排行-->
+    </div>
+}
+
 <div class="panel">
     <!--分类-->
     <div class="header">
@@ -1176,20 +1209,20 @@
             </ul>
         </div>
         <script>
-                        $(document).ready(function () {
-                            var $nav = $('.pagination');
-                            var current_page = $nav.attr('current_page');
-                            if (current_page) {
-                                $nav.find('li').each(function () {
-                                    var $li = $(this);
-                                    var $a = $li.find('a');
-                                    if ($a.html() == current_page) {
-                                        $li.addClass('active');
-                                        $a.removeAttr('href');
-                                    }
-                                });
-                            }
-                        });
+            $(document).ready(function () {
+                var $nav = $('.pagination');
+                var current_page = $nav.attr('current_page');
+                if (current_page) {
+                    $nav.find('li').each(function () {
+                        var $li = $(this);
+                        var $a = $li.find('a');
+                        if ($a.html() == current_page) {
+                            $li.addClass('active');
+                            $a.removeAttr('href');
+                        }
+                    });
+                }
+            });
         </script>
         <!--分页区-->
     </div>

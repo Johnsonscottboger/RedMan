@@ -1,15 +1,13 @@
 ﻿using RedMan.DataAccess.IRepository;
 using RedMan.DataAccess.Repository;
-using RedMan.Model.Context;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Web.Model.Context;
 using Web.Model.Entities;
 using Web.Services.IEntitiesServices;
 
-namespace Web.Services.EntitiesServices
-{
+namespace Web.Services.EntitiesServices {
     public class Topic_CollectService : ITopic_CollectService
     {
         private readonly MyContext _context;
