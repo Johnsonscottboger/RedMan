@@ -303,6 +303,7 @@ namespace RedMan.DataAccess.Repository {
         #endregion
 
         #region 获取集合数据
+        
         /// <summary>
         /// 查找
         /// </summary>
@@ -499,7 +500,9 @@ namespace RedMan.DataAccess.Repository {
                 throw new NullReferenceException("PagingModel.ModelList为NULL");
             pagingModel.PagingInfo.TotalItems += dbSet.LongCount();
             var result = dbSet.Where(predicate).OrderByDescending(orderKey).Skip((Int32)((pagingModel.PagingInfo.CurrentPage - 1) * pagingModel.PagingInfo.ItemsPerPage)).Take((Int32)(pagingModel.PagingInfo.ItemsPerPage)).AsNoTracking();
-            pagingModel.ModelList.AddRange(result);
+            if(result.Count() != 0) {
+                pagingModel.ModelList.AddRange(result);
+            }
             return pagingModel;
         }
 

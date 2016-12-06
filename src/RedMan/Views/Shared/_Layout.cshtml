@@ -6,7 +6,7 @@
     <meta name="description" content="CNode：Node.js专业中文社区">
     <!-- style -->
     <link rel="stylesheet" href="~/css/index.min.3c50e680.min.css" media="all">
-    <link rel="stylesheet" href="~/libs/bootstrap/css/bootstrap.min.css" />
+    @*<link rel="stylesheet" href="~/libs/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/stylesheets/common.css" />
     <link rel="stylesheet" href="~/stylesheets/style.less" />
     <link rel="stylesheet" href="~/stylesheets/responsive.css" />
@@ -14,7 +14,19 @@
     <link rel="stylesheet" href="~/libs/editor/editor.css" />
     <link rel="stylesheet" href="~/libs/webuploader/webuploader.css" />
     <link rel="stylesheet" href="~/libs/code-prettify/prettify.css" />
-    <link rel="stylesheet" href="~/libs/font-awesome/css/font-awesome.css" />
+    <link rel="stylesheet" href="~/libs/font-awesome/css/font-awesome.css" />*@
+
+    <script type="text/javascript" src="~/libs/jquery-2.1.0.js"></script>
+    <script type="text/javascript" src="~/libs/lodash.compat.js"></script>
+    <script type="text/javascript" src="~/libs/jquery-ujs.js"></script>
+    <script type="text/javascript" src="~/libs/bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="~/libs/jquery.caret.js"></script>
+    <script type="text/javascript" src="~/libs/jquery.atwho.js"></script>
+    <script type="text/javascript" src="~/libs/markdownit.js"></script>
+    <script type="text/javascript" src="~/libs/code-prettify/prettify.js"></script>
+    <script type="text/javascript" src="~/libs/qrcode.js"></script>
+    <script type="text/javascript" src="~/javascripts/main.js"></script>
+    <script type="text/javascript" src="~/javascripts/responsive.js"></script>
 
     <title>@ViewData["Title"]</title>
 </head>
@@ -23,8 +35,9 @@
     <div class="navbar">
         <div class="navbar-inner">
             <div class="container">
-                <a class="brand" href="http://cnodejs.org/">
-                    <img src="~/images/cnodejs_light.svg">
+                <a class="brand" href="@Url.Action("Index","Home")">
+                    @*<img src="~/images/cnodejs_light.svg">*@
+                    <h4>红人社区</h4> 
                 </a>
                 <form id="search_form" class="navbar-search" action="http://cnodejs.org/search">
                     <input type="text" id="q" name="q" class="search-query span3" value="">
@@ -61,7 +74,7 @@
                 |
                 <a class="dark" href="https://github.com/cnodejs/nodeclub/">源码地址</a>
             </div>
-            <div class="col_fade">
+            @*<div class="col_fade">
                 <p>CNode 社区为国内最专业的 Node.js 开源技术社区，致力于 Node.js 的技术研究。</p>
                 <p>
                     服务器赞助商为
@@ -77,21 +90,11 @@
                     </a>提供应用性能服务。
                 </p>
                 <p>新手搭建 Node.js 服务器，推荐使用无需备案的 <a href="https://www.digitalocean.com/?refcode=eba02656eeb3">DigitalOcean(https://www.digitalocean.com/)</a></p>
-            </div>
+            </div>*@
         </div>
     </div>
     <div id="sidebar-mask"></div>
     
-    <script type="text/javascript" src="~/libs/jquery-2.1.0.js"></script>
-    <script type="text/javascript" src="~/libs/lodash.compat.js"></script>
-    <script type="text/javascript" src="~/libs/jquery-ujs.js"></script>
-    <script type="text/javascript" src="~/libs/bootstrap/js/bootstrap.js"></script>
-    <script type="text/javascript" src="~/libs/jquery.caret.js"></script>
-    <script type="text/javascript" src="~/libs/jquery.atwho.js"></script>
-    <script type="text/javascript" src="~/libs/markdownit.js"></script>
-    <script type="text/javascript" src="~/libs/code-prettify/prettify.js"></script>
-    <script type="text/javascript" src="~/libs/qrcode.js"></script>
-    <script type="text/javascript" src="~/javascripts/main.js"></script>
-    <script type="text/javascript" src="~/javascripts/responsive.js"></script>
+    
 </body>
 </html>

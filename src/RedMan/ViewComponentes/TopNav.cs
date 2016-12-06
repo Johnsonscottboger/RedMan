@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Web.Model.Context;
+using Web.Model.Entities;
 
 namespace RedMan.ViewComponentes {
     /// <summary>
@@ -18,7 +19,7 @@ namespace RedMan.ViewComponentes {
         {
             //TODO:首页-头部-右侧导航菜单
             await Task.FromResult(0);
-            return View(nameof(TopNav));
+            return View(nameof(TopNav),new User());
         }
     }
 }

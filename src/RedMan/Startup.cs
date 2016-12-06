@@ -5,11 +5,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RedMan.Extensions;
-using RedMan.Model.Context;
+using Web.Model.Context;
 using Web.Services.EntitiesServices;
 
-namespace RedMan
-{
+namespace RedMan {
     public class Startup
     {
         public Startup(IHostingEnvironment env)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Web.DataAccess.IRepository;
@@ -15,15 +16,26 @@ namespace Web.Services.EntitiesServices {
             this._identityRepository = identityRepository;
         }
 
+        public async Task<ClaimsPrincipal> CheckUserAsync(String email,String password) {
+            var user = await _identityRepository.GetUserAsync(p => p.Email == email && p.Password == password);
+            if(user == null)
+                return null;
+            var ci = CreateClaimsIdentity(user);
+            var roles = user.Roles;
+            AddRoleClaims(ci,roles);
+            return new ClaimsPrincipal(ci);
+        }
+
         /// <summary>
         /// 检索用户
         /// </summary>
+        /// <param name="email">邮箱</param>
         /// <param name="username">用户名</param>
         /// <param name="password">密码</param>
         /// <returns></returns>
-        public async Task<ClaimsPrincipal> CheckUserAsync(string username, string password)
+        public async Task<ClaimsPrincipal> CheckUserAsync(string email, string username, string password)
         {
-            var user = await _identityRepository.GetUserAsync(p => p.Name == username && p.Password == password);
+            var user = await _identityRepository.GetUserAsync(p => p.Email==email && p.Name == username && p.Password == password);
             if (user == null)
                 return null;
             var ci = CreateClaimsIdentity(user);
@@ -38,16 +50,24 @@ namespace Web.Services.EntitiesServices {
         /// <param name="email">邮箱</param>
         /// <param name="password">密码</param>
         /// <returns></returns>
-        public async Task<IdentityResult> RegisterAsync(string username, string password)
+        public async Task<IdentityResult> RegisterAsync(string email, string username, string password)
         {
-            if(await _identityRepository.CheckEmailAsync(p=>p.Name==username&&p.Password==password))
+            if(await _identityRepository.CheckEmailAsync(p=>p.Email==email && p.Name==username && p.Password==password))
             {
                 return new IdentityResult("用户名已存在！");
             }
             var user = new User()
             {
+                Email=email,
                 Name = username,
-                Password = password
+                Password = password,
+                
+                LoginName=username,
+                CreateDateTime=DateTime.Now,
+                Active=true,
+                Roles=new List<Role>() {
+                    new Role() {Id=1, RoleName="普通用户" }
+                }
             };
             await _identityRepository.AddUserAsync(user);
             var ci = CreateClaimsIdentity(user);
@@ -68,11 +88,14 @@ namespace Web.Services.EntitiesServices {
 
         private void AddRoleClaims(ClaimsIdentity claimsIdentity,ICollection<Role> roles)
         {
-            foreach(var item in roles)
-            {
-                claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, item.RoleName));
+            if(roles != null) {
+                foreach(var item in roles) {
+                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role,item.RoleName));
+                }
             }
         }
+
+        
         #endregion
     }
 }

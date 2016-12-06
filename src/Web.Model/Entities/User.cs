@@ -10,7 +10,6 @@ namespace Web.Model.Entities
     {
         [Key]
         public Int64 UserId { get; set; }
-
         public string Name { get; set; }
         public string LoginName { get; set; }
         public string Password { get; set; }

@@ -1,15 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using RedMan.Model.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Web.DataAccess.IRepository;
 using Web.DataAccess.Repository;
+using Web.Model.Entities;
 using Web.Services.EntitiesServices;
 
-namespace RedMan.Extensions
-{
+namespace RedMan.Extensions {
     public static class ServiceExtension
     {
         public static IServiceCollection AddMyIdentity(this IServiceCollection services)

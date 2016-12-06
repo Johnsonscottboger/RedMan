@@ -10,15 +10,21 @@ namespace RedMan.ViewModel
     public class RegisterViewModel
     {
 
-        [Required(ErrorMessage = "用户名不能为空!")]
+        [Required(ErrorMessage = "邮箱不能为空!")]
         [DataType(DataType.EmailAddress,ErrorMessage ="请输入正确的邮箱地址")]
         [Remote("CheckEmailIsExist","Account")]
         public string Email { get; set; }
+
+        [Required(ErrorMessage ="用户名不能为空")]
+        [MaxLength(10,ErrorMessage ="用户名不得超过10个字符")]
+        [Remote("CheckUserNameIsExist","Account")]
+        public string Name { get; set; }
 
         [Required(ErrorMessage = "密码不能为空!")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
+        [Required(ErrorMessage ="请输入确认密码")]
         [DataType(DataType.Password)]
         [Compare(nameof(Password), ErrorMessage = "两次输入密码不一致!")]
         public string ConfirmPassword { get; set; }

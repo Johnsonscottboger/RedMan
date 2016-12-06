@@ -5,11 +5,12 @@ using System.Threading.Tasks;
 
 namespace Web.Model.Enums
 {
-    public enum SubjectType
+    public enum TopicType
     {
+        置顶,
         精华,
         分享,
         问答,
-        交易
+        招聘
     }
 }

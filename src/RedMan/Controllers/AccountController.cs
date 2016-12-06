@@ -24,7 +24,12 @@ namespace RedMan.Controllers
         [AllowAnonymous]
         public IActionResult Login(string returnUrl=null)
         {
+            ViewData["Error"] = false;
             ViewData["ReturnUrl"] = returnUrl;
+            if(!string.IsNullOrEmpty(returnUrl)) {
+                ViewData["Error"] = true;
+                ModelState.AddModelError("","此操作需要登录，请登陆后继续!");
+            }
             return View();
         }
 
@@ -33,9 +38,11 @@ namespace RedMan.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model,string returnUrl=null)
         {
+            ViewData["Error"] = true;
             ViewData["ReturnUrl"] = returnUrl;
-            if (!ModelState.IsValid)
+            if(!ModelState.IsValid) {
                 return View(model);
+            }
             var user = await _identityService.CheckUserAsync(model.Email, model.Password);
             if(user==null)
             {
@@ -43,6 +50,8 @@ namespace RedMan.Controllers
                 model.Password = string.Empty;
                 return View(model);
             }
+
+            ViewData["Error"] = false;
             //登录
             await HttpContext.Authentication.SignInAsync(IdentityService.AuthenticationScheme, user);
             //重定向
@@ -52,7 +61,7 @@ namespace RedMan.Controllers
         [AllowAnonymous]
         public IActionResult Register(string returnUrl = null)
         {
-
+            ViewData["Error"] = false;
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
@@ -62,23 +71,32 @@ namespace RedMan.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model,string returnUrl=null)
         {
+            ViewData["Error"] = true;
             ViewData["ReturnUrl"] = returnUrl;
-            if (!ModelState.IsValid)
+            if(!ModelState.IsValid) {
                 return View(model);
-            var result = await _identityService.RegisterAsync(model.Email, model.Password);
+            }
+            var result = await _identityService.RegisterAsync(model.Email, model.Name, model.Password);
             if (!result.IsSuccess)
             {
                 ModelState.AddModelError(string.Empty, result.ErrorString);
                 return View(model);
             }
+            ViewData["Error"] = false;
             //登录
             await HttpContext.Authentication.SignInAsync(IdentityService.AuthenticationScheme, result.User);
             return RedirectToLocal(returnUrl);
         }
 
-        public IActionResult AccessDenied()
+        /// <summary>
+        /// 退出登录
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> Logout() 
         {
-            return View();
+            await HttpContext.Authentication.SignOutAsync(IdentityService.AuthenticationScheme);
+            return RedirectToLocal(null);
         }
 
         #region 辅助

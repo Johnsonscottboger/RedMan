@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RedMan.DataAccess.IRepository;
+using RedMan.DataAccess.Repository;
 using System;
 using System.Threading.Tasks;
+using Web.DataAccess.Repository;
 using Web.Model.Context;
+using Web.Model.Entities;
 using Web.Services.EntitiesServices;
 using Web.Services.IEntitiesServices;
 
@@ -13,12 +17,14 @@ namespace RedMan.ViewComponentes {
     {
         private readonly MyContext _context;
         private readonly IIdentityService _identitySer;
-        private readonly IUserService _userSer;
-        public UserPanel(MyContext context,IIdentityService iidentityService)
+        private readonly IRepository<User> _userRepo;
+        public UserPanel(MyContext context)
         {
+            if(context == null)
+                throw new ArgumentNullException(nameof(context));
             this._context = context;
-            this._identitySer = iidentityService;
-            this._userSer = new UserService(context);
+            this._userRepo = new Repository<User>(context);
+            this._identitySer = new IdentityService(new IdentityRepository<User>(context));
         }
 
         public async Task<IViewComponentResult> InvokeAsync(String username)
@@ -26,24 +32,24 @@ namespace RedMan.ViewComponentes {
             //当前登录用户名
             if(username== "loginUserName") {
                 var loginUserName = User.Identity.Name;
-                var loginUser = await _userSer.GetUserByLoginName(loginUserName);
                 //已登录
                 if(loginUserName != null) {
+                    var loginUser = await _userRepo.FindAsync(p => p.Name == loginUserName);
                     return View(nameof(UserPanel),loginUser);
                 }
                 //未登录
                 else {
-                    return View(nameof(UserPanel));
+                    return View(nameof(UserPanel),new User());
                 }
             }
             //话题作者，或其他
             else {
-                var showUser = await _userSer.GetUserByLoginName(username);
+                var showUser = await _userRepo.FindAsync(p => p.Name == username);
                 if(showUser != null) {
                     return View(nameof(UserPanel),showUser);
                 }
                 else {
-                    return View(nameof(UserPanel));
+                    return View(nameof(UserPanel),new User());
                 }
             }
         }

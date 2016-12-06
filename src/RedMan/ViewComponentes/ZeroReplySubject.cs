@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RedMan.DataAccess.IRepository;
+using RedMan.DataAccess.Repository;
 using System;
 using System.Threading.Tasks;
 using Web.Model.Context;
-using Web.Services.EntitiesServices;
-using Web.Services.IEntitiesServices;
+using Web.Model.Entities;
 
 namespace RedMan.ViewComponentes {
     /// <summary>
@@ -12,19 +13,19 @@ namespace RedMan.ViewComponentes {
     public class ZeroReplySubject:ViewComponent
     {
         private readonly MyContext _context;
-        private readonly ITopicService _topicSer;
+        private readonly IRepository<Topic> _topicRepo;
 
         public ZeroReplySubject(MyContext context)
         {
             if(context == null)
                 throw new ArgumentNullException(nameof(context));
             this._context = context;
-            this._topicSer = new TopicService(context);
+            this._topicRepo = new Repository<Topic>(context);
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var zeroReplySubject = await _topicSer.GetTopicsInCount(p => p.Reply_Count == 0,5);
+            var zeroReplySubject = await _topicRepo.FindTopDelayAsync(5,p => p.Reply_Count == 0,p => p.CreateDateTime);
             return View(nameof(ZeroReplySubject),zeroReplySubject);
         }
     }

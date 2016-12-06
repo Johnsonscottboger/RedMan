@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using RedMan.Model.Context;
+﻿using Microsoft.AspNetCore.Mvc;
+using Web.Model.Context;
 
-
-namespace RedMan.Controllers
-{
+namespace RedMan.Controllers {
     public class UserController : Controller
     {
         private readonly MyContext _context;
@@ -25,5 +19,7 @@ namespace RedMan.Controllers
         {
             return View();
         }
+
+        
     }
 }
