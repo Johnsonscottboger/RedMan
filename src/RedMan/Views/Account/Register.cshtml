@@ -22,70 +22,71 @@
         </div>
     </div>
 }
+<div id="content">
+    <div class="panel">
+        <div class="header">
+            <ul class="breadcrumb">
+                <li><a href="@Url.Action("Index","Home")">主页</a><span class="divider">/</span></li>
+                <li class="active">登录</li>
+            </ul>
+        </div>
+        <div class="inner">
+            <form id="signin_form" class="form-horizontal" asp-controller="Account" asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+                @Html.AntiForgeryToken()
+                @*<div asp-validation-summary="All" class="text-danger"></div>*@
+                @if((bool)ViewData["Error"]) {
+                    <div class="alert alert-error">
+                        <a class="close" data-dismiss="alert" href="#">&times;</a>
+                        <strong>@Html.ValidationSummary()</strong>
+                    </div>
+                }
+                <div class="control-group">
+                    <label class="control-label" for="email">邮箱</label>
+                    <div class="controls">
+                        <input class="input-xlarge" id="Email" name="Email" size="30" type="text" placeholder="请输入邮箱">
+                        @*<span asp-validation-for="Email" class="text-danger"></span>*@
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="name">用户名</label>
+                    <div class="controls">
+                        <input class="input-xlarge" id="Name" name="Name" size="30" type="text" placeholder="请输入用户名">
+                        @*<span asp-validation-for="Name" class="text-danger"></span>*@
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="Password">密码</label>
+                    <div class="controls">
+                        <input class="input-xlarge" id="Password" name="Password" size="30" type="password" placeholder="请输入密码">
+                        @*<span asp-validation-for="Password" class="text-danger"></span>*@
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="ConfirmPassword">确认密码</label>
+                    <div class="controls">
+                        <input class="input-xlarge" id="ConfirmPassword" name="ConfirmPassword" size="30" type="password" placeholder="请输入密码">
+                        @*<span asp-validation-for="ConfirmPassword" class="text-danger"></span>*@
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <input type="submit" class="span-primary" value="立即注册">
+                </div>
+            </form>
+        </div>
+    </div>
 
-<div class="panel">
-    <div class="header">
-        <ul class="breadcrumb">
-            <li><a href="@Url.Action("Index","Home")">主页</a><span class="divider">/</span></li>
-            <li class="active">登录</li>
-        </ul>
-    </div>
-    <div class="inner">
-        <form id="signin_form" class="form-horizontal" asp-controller="Account" asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
-            @Html.AntiForgeryToken()
-            @*<div asp-validation-summary="All" class="text-danger"></div>*@
-            @if((bool)ViewData["Error"]) {
-                <div class="alert alert-error">
-                    <a class="close" data-dismiss="alert" href="#">&times;</a>
-                    <strong>@Html.ValidationSummary()</strong>
-                </div>
-            }
-            <div class="control-group">
-                <label class="control-label" for="email">邮箱</label>
-                <div class="controls">
-                    <input class="input-xlarge" id="Email" name="Email" size="30" type="text" placeholder="请输入邮箱">
-                    @*<span asp-validation-for="Email" class="text-danger"></span>*@
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="name">用户名</label>
-                <div class="controls">
-                    <input class="input-xlarge" id="Name" name="Name" size="30" type="text" placeholder="请输入用户名">
-                    @*<span asp-validation-for="Name" class="text-danger"></span>*@
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="Password">密码</label>
-                <div class="controls">
-                    <input class="input-xlarge" id="Password" name="Password" size="30" type="password" placeholder="请输入密码">
-                    @*<span asp-validation-for="Password" class="text-danger"></span>*@
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="ConfirmPassword">确认密码</label>
-                <div class="controls">
-                    <input class="input-xlarge" id="ConfirmPassword" name="ConfirmPassword" size="30" type="password" placeholder="请输入密码">
-                    @*<span asp-validation-for="ConfirmPassword" class="text-danger"></span>*@
-                </div>
-            </div>
-            <div class="form-actions">
-                <input type="submit" class="span-primary" value="立即注册">
-            </div>
-        </form>
-    </div>
+    <environment names="Development">
+        <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"
+                asp-fallback-src="~/lib/jquery-validation/dist/jquery.validate.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.validator">
+        </script>
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery.validation.unobtrusive/3.2.6/jquery.validate.unobtrusive.min.js"
+                asp-fallback-src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.validator && window.jQuery.validator.unobtrusive">
+        </script>
+    </environment>
 </div>
-
-<environment names="Development">
-    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
-</environment>
-<environment names="Staging,Production">
-    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"
-            asp-fallback-src="~/lib/jquery-validation/dist/jquery.validate.min.js"
-            asp-fallback-test="window.jQuery && window.jQuery.validator">
-    </script>
-    <script src="https://ajax.aspnetcdn.com/ajax/jquery.validation.unobtrusive/3.2.6/jquery.validate.unobtrusive.min.js"
-            asp-fallback-src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"
-            asp-fallback-test="window.jQuery && window.jQuery.validator && window.jQuery.validator.unobtrusive">
-    </script>
-</environment>

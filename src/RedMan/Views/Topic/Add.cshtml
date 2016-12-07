@@ -38,7 +38,6 @@
                 <li class="active">编辑话题</li>
             }
 
-
         </ol>
     </div>
     <div class="inner post">
@@ -60,6 +59,7 @@
                     <option value="4">招聘</option>
                 </select>
                 <span id="topic_create_warn"></span>
+                <input type="hidden" id="TopicId" name="TopicId" value="@Model.TopicId" />
                 <textarea autofocus class='span9' id='title' name='title' rows='1'
                           placeholder="标题字数 10 字以上">
                     @Model.Title

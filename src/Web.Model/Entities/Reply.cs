@@ -12,6 +12,7 @@ namespace Web.Model.Entities
         public Int64 ReplyId { get; set; }
         public string Content { get; set; }
         public Int64 Author_Id { get; set; }
+        public string Author_Name { get; set; }
         public Int64 Topic_Id { get; set; }
         public Int64? Reply_Id { get; set; }
         public DateTime CreateDateTime { get; set; }

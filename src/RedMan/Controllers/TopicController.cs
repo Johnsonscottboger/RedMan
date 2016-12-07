@@ -9,20 +9,22 @@ using RedMan.DataAccess.IRepository;
 using Web.Model.Entities;
 using RedMan.DataAccess.Repository;
 using RedMan.ViewModel;
+using System.Security.Claims;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace RedMan.Controllers
 {
     [Authorize]
-    public class TopicController : Controller
+    public class TopicController :Controller
     {
         private readonly MyContext _context;
         private readonly IRepository<Topic> _topicRepo;
         private readonly IRepository<User> _userRepo;
         private readonly IRepository<Reply> _replyRepo;
+        private readonly IRepository<TopicCollect> _topicCollectRepo;
 
-        public TopicController(MyContext context) 
+        public TopicController(MyContext context)
         {
             if(context == null)
                 throw new ArgumentNullException(nameof(context));
@@ -30,20 +32,46 @@ namespace RedMan.Controllers
             this._userRepo = new Repository<User>(context);
             this._topicRepo = new Repository<Topic>(context);
             this._replyRepo = new Repository<Reply>(context);
+            this._topicCollectRepo = new Repository<TopicCollect>(context);
         }
 
-        [Route("[controller]/{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> Index(int id)
         {
             var topic = await _topicRepo.FindAsync(p => p.TopicId == id);
             if(topic == null)
                 throw new Exception("找不到此话题");
+            topic.Visit_Count += 1;
+            await _topicRepo.UpdateAsync(topic);
+            var author = await _userRepo.FindAsync(p => p.UserId == topic.Author_Id);
+            if(author == null)
+                throw new Exception("作者未找到");
 
-            return View(topic);
+            var topicViewModel = new TopicViewModel()
+            {
+                Tab = topic.Type,
+                Title = topic.Title,
+                Content = topic.Content,
+
+                Topic = topic,
+                Author = author
+            };
+
+            if(User.Claims.Any(p => p.Type == ClaimTypes.Name))
+            {
+                var loginUser = await _userRepo.FindAsync(p => p.Name == User.Identity.Name);
+                topicViewModel.LoginUser = loginUser;
+                topicViewModel.Collected = await _topicCollectRepo.IsExistAsync(p => p.TopicId == topic.TopicId && p.UserId == loginUser.UserId);
+            }
+
+            return View(topicViewModel);
         }
 
-        public IActionResult Add() 
+        /// <summary>
+        /// 发布话题
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult Add()
         {
             ViewData["Error"] = false;
             ViewData["Action"] = "Add";
@@ -53,24 +81,27 @@ namespace RedMan.Controllers
         /// <summary>
         /// 发布话题
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="model">话题</param>
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(TopicViewModel model) 
+        public async Task<IActionResult> Add(TopicViewModel model)
         {
             model.Title = model.Title.Trim();
             ViewData["Error"] = true;
-            if(!ModelState.IsValid) {
+            if(!ModelState.IsValid)
+            {
                 return View(model);
             }
             var loginUserName = User.Identity.Name;
             var loginUser = await _userRepo.FindAsync(p => p.Name == loginUserName);
-            if(loginUser == null) {
+            if(loginUser == null)
+            {
                 ModelState.AddModelError("","用户找不到");
                 return View(model);
             }
-            var topic = new Topic() {
+            var topic = new Topic()
+            {
                 Title = model.Title,
                 Content = model.Content,
                 Author_Id = loginUser.UserId,
@@ -78,11 +109,99 @@ namespace RedMan.Controllers
                 Type = model.Tab
             };
             var result = await _topicRepo.AddAsync(topic);
-            if(result) {
+            if(result)
+            {
                 return RedirectToAction("Index","Home");
-            }else {
+            }
+            else
+            {
                 ModelState.AddModelError("","出现未知错误，发布失败，请稍后再试");
                 return View(model);
+            }
+        }
+
+        /// <summary>
+        /// 编辑话题
+        /// </summary>
+        /// <param name="topidId">话题编号</param>
+        /// <returns></returns>
+        public async Task<IActionResult> Edit(int id)
+        {
+            ViewData["Error"] = false;
+            var topic = await _topicRepo.FindAsync(p => p.TopicId == id);
+            if(topic == null)
+                throw new Exception("此话题未找到，或已被删除");
+            var loginUserName = User.Identity.Name;
+            var loginUser = await _userRepo.FindAsync(p => p.Name == loginUserName);
+
+            var topicViewModel = new TopicViewModel()
+            {
+                Author = loginUser,
+                Content = topic.Content,
+                Title = topic.Title,
+                Tab = topic.Type,
+                LoginUser = loginUser,
+                Topic = topic,
+                TopicId=topic.TopicId
+            };
+            return View("Add",topicViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(TopicViewModel model)
+        {
+            model.Title = model.Title.Trim();
+            ViewData["Error"] = true;
+            if(!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var loginUserName = User.Identity.Name;
+            var loginUser = await _userRepo.FindAsync(p => p.Name == loginUserName);
+            if(loginUser == null)
+            {
+                ModelState.AddModelError("","用户找不到");
+                return View(model);
+            }
+            var topicOrign = await _topicRepo.FindAsync(p => p.TopicId == model.TopicId);
+            if(topicOrign == null)
+                throw new Exception("找不到话题，或已被删除");
+            topicOrign.Title = model.Title;
+            topicOrign.Content = model.Content;
+            topicOrign.Type = model.Tab;
+            topicOrign.UpdateDateTime = DateTime.Now;
+
+            var result = await _topicRepo.UpdateAsync(topicOrign);
+            if(result)
+            {
+                return new RedirectResult(Url.Content($"/Topic/Index/{topicOrign.TopicId}"));
+            }
+            else
+            {
+                ModelState.AddModelError("","出现未知错误，编辑失败，请稍后再试");
+                return View(model);
+            }
+        }
+
+        /// <summary>
+        /// 删除
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<JsonResult> Delete(int id)
+        {
+            var topic = await _topicRepo.FindAsync(p => p.TopicId == id);
+            if(topic == null)
+                return Json(new { success = false,message = "找不到此话题" });
+            else
+            {
+                var success = await _topicRepo.DeleteAsync(topic);
+                if(success)
+                    return Json(new { success = true,message = "删除成功" });
+                else
+                    return Json(new { success = false,message = "删除失败" });                
             }
         }
     }

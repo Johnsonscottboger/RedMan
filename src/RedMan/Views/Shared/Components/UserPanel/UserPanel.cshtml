@@ -14,7 +14,12 @@
 @if(Model.Name != null) {
     <div class="panel">
         <div class="header">
-            <span class="col_fade">个人信息</span>
+            @if(User.Identity.Name == Model.Name) {
+                <span class="col_fade">个人信息</span>
+            }
+            else {
+                <span class="col_fade">作者</span>
+            }
         </div>
         <div class="inner">
             <div class="user_card">
