@@ -9,7 +9,7 @@
     {
         <div class="panel">
             <div class="header">
-                <span class="col_fade">1 回复</span>
+                <span class="col_fade">@Model.Replies.Count() 回复</span>
             </div>
             @{ int index = 1;}
             @foreach(var item in Model.Replies)
@@ -18,7 +18,7 @@
                     <a class="anchor" id="@item.ReplyId"></a>
                     <div class="author_content">
                         <a href="@Url.Content($"/User/Index/{item.Author_Id}")" class="user_avatar">
-                            <img src="@Url.Content($"/User/Avatar/{item.Author_Id}")" title="@item.Author_Id" />
+                            <img src="@Url.Content($"/User/GetUserAvatarUrl/{item.Author_Id}")" title="@item.Author_Id" />
                         </a>
                         <div class='user_info'>
                             <a class='dark reply_author' href="@Url.Content($"/User/Index/{item.Author_Id}")">@item.Author_Name</a>
@@ -47,7 +47,6 @@
                                     </a>
                                 }
                             }
-                            
                             <span>
                                 <i class="fa fa-reply reply2_btn" title="回复"></i>
                             </span>
@@ -60,8 +59,7 @@
                                 {
                                     var firstSpaceIndex = item.Content.IndexOf(' ');
                                     var atUserName = item.Content.Substring(0,firstSpaceIndex);
-                                    <a href="@Url.Content($"/Topic/Index/{item.Topic_Id}#{item.Reply_Id}")">@atUserName</a>
-                                    @item.Content.Substring(firstSpaceIndex,item.Content.Length-firstSpaceIndex).Trim();
+                                    <a href="@Url.Content($"/User/Index/{item.Author_Id}")" style="float: left;">@atUserName</a> <span style="margin-left: -175px;">@item.Content.Substring(firstSpaceIndex,item.Content.Length - firstSpaceIndex).Trim()</span>
                                 }
                                 else
                                 {

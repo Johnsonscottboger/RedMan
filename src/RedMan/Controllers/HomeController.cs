@@ -60,7 +60,7 @@ namespace RedMan.Controllers
             var topicUsers = new List<User>();
             pagingModel.ModelList.ForEach(item =>
             {
-                topicUsers.Add(_userRepo.Find(p => p.UserId == item.Author_Id));
+                topicUsers.AddRange(_userRepo.FindAll(p => p.UserId == item.Author_Id || p.UserId == item.Last_Reply_UserId).Distinct());
             });
 
             pagingModel.ModelList.ForEach(item =>
@@ -69,14 +69,12 @@ namespace RedMan.Controllers
                 {
                     Tab = (TopicTapViewModel)tab,
                     Type = (TopicTypeViewModel)item.Type,
-                    //UserAvatarUrl = Url.Action("AvatarUrl","User",new { userId = item.Author_Id }),
-                    UserAvatarUrl = "~/img/8791709.png",
+                    UserAvatarUrl = topicUsers.Where(p => p.UserId == item.Author_Id).FirstOrDefault().Avatar,
                     UserName = topicUsers.Where(p => p.UserId == item.Author_Id).FirstOrDefault().Name,
                     RepliesCount = item.Reply_Count,
                     VisitsCount = item.Visit_Count,
-                    LastReplyUrl = Url.Content($"/Topic/{item.TopicId}/#{item.Last_Reply_Id}"),
-                    //LastReplyUserAvatarUrl = Url.Action("AvatarUrl","User",new { userId = item.Last_Reply_UserId }),
-                    LastReplyUserAvatarUrl = "/img/8791709.png",
+                    LastReplyUrl = item.Last_Reply_Id == null ? null : Url.Content($"/Topic/{item.TopicId}/#{item.Last_Reply_Id}"),
+                    LastReplyUserAvatarUrl = item.Last_Reply_UserId == null ? null : topicUsers.Where(p => p.UserId == item.Last_Reply_UserId).FirstOrDefault().Avatar,
                     LastReplyDateTime = item.Last_ReplyDateTime.ToString(),
                     TopicId = item.TopicId,
                     Title = item.Title

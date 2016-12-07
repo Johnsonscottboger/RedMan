@@ -39,7 +39,7 @@ namespace RedMan.ViewComponentes
                 TopicId = topic.TopicId,
                 Topic=topic,
                 LoginUser=loginUser,
-                Replies = topicReplies
+                Replies = topicReplies,
             };
             return View(nameof(TopicReplies),topicRepliesViewModel);
         }

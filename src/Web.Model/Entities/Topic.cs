@@ -21,10 +21,10 @@ namespace Web.Model.Entities
         public Int32 Visit_Count { get; set; }
         public Int32 Collect_Count { get; set; }
         public DateTime CreateDateTime { get; set; }
-        public DateTime UpdateDateTime { get; set; }
-        public Int64 Last_Reply_Id { get; set; }
-        public Int64 Last_Reply_UserId { get; set; }
-        public DateTime Last_ReplyDateTime { get; set; }
+        public DateTime? UpdateDateTime { get; set; }
+        public Int64? Last_Reply_Id { get; set; }
+        public Int64? Last_Reply_UserId { get; set; }
+        public DateTime? Last_ReplyDateTime { get; set; }
         public bool Content_Is_Html { get; set; } = false;
         public int Type { get; set; }
         public bool Deleted { get; set; } = false;
