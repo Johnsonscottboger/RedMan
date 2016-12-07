@@ -71,7 +71,9 @@ namespace RedMan.Controllers
             topic.Last_Reply_Id = reply.ReplyId;
             topic.Last_ReplyDateTime = reply.CreateDateTime;
             topic.Last_Reply_UserId = loginUser.UserId;
-            var topicSuccess = await _topicRepo.UpdateAsync(topic);
+            var topicSuccess = await _topicRepo.UpdateAsync(topic,false);
+            loginUser.Reply_Count += 1;
+            topicSuccess = await _userRepo.UpdateAsync(loginUser);
             if(replySuccess&&topicSuccess)
             {
                 return new RedirectResult(Url.Content($"/Topic/Index/{id}"));
@@ -118,7 +120,9 @@ namespace RedMan.Controllers
             topic.Last_Reply_Id = replyToReply.ReplyId;
             topic.Last_Reply_UserId = replyToReply.Author_Id;
             topic.Reply_Count += 1;
-            var topicSuccess = await _topicRepo.UpdateAsync(topic);
+            var topicSuccess = await _topicRepo.UpdateAsync(topic,false);
+            loginUser.Reply_Count += 1;
+            topicSuccess = await _userRepo.UpdateAsync(loginUser);
             if(replySuccess && topicSuccess)
             {
                 return new RedirectResult(Url.Content($"/Topic/Index/{topicId}#{replyToReply.ReplyId}"));

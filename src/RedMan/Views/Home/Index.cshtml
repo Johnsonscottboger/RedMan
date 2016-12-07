@@ -95,7 +95,7 @@
                     @foreach(var item in Model.ModelList)
                     {
                         <div class="cell">
-                            <a class="user_avatar pull-left" href="@Url.Content(item.UserAvatarUrl)">
+                            <a class="user_avatar pull-left" href="@Url.Content($"/User/index/{item.UserName}")">
                                 <img src="@Url.Content(item.UserAvatarUrl)" title="nswbmw">
                             </a>
                             <span class="reply_count pull-left">

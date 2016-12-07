@@ -27,7 +27,7 @@
                     <a class="user_avatar" href="@Url.Content($"/User/Index/{Model.UserId}")">
                         <img src="@Model.Avatar")" title="@Model.Name">
                     </a>
-                    <span class="user_name"><a class="dark" href="@Url.Action("Index","User",new { userid = Model.UserId})"> @Model.Name </a></span>
+                    <span class="user_name"><a class="dark" href="@Url.Content($"/User/Index/{Model.UserId}")"> @Model.Name </a></span>
                     <div class="board clearfix">
                         <div class="floor">
                             <span class="big">积分: @Model.Score </span>

@@ -108,7 +108,9 @@ namespace RedMan.Controllers
                 CreateDateTime = DateTime.Now,
                 Type = model.Tab
             };
-            var result = await _topicRepo.AddAsync(topic);
+            var result = await _topicRepo.AddAsync(topic,false);
+            loginUser.Topic_Count += 1;
+            result = await _userRepo.UpdateAsync(loginUser);
             if(result)
             {
                 return RedirectToAction("Index","Home");
@@ -197,7 +199,13 @@ namespace RedMan.Controllers
                 return Json(new { success = false,message = "找不到此话题" });
             else
             {
-                var success = await _topicRepo.DeleteAsync(topic);
+                var success = await _topicRepo.DeleteAsync(topic,false);
+                var user = await _userRepo.FindAsync(p => p.UserId == topic.Author_Id);
+                if(user!=null)
+                {
+                    user.Topic_Count -= 1;
+                    success = await _userRepo.UpdateAsync(user);
+                }
                 if(success)
                     return Json(new { success = true,message = "删除成功" });
                 else
