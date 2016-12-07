@@ -41,7 +41,7 @@ namespace RedMan.ViewComponentes
                 LoginUser=loginUser,
                 Replies = topicReplies
             };
-            return View(topicRepliesViewModel);
+            return View(nameof(TopicReplies),topicRepliesViewModel);
         }
     }
 }

@@ -107,10 +107,13 @@
                                     @item.VisitsCount
                                 </span>
                             </span>
-                            <a class="last_time pull-right" href="@item.LastReplyUrl">
-                                <img class="user_small_avatar" src="@item.LastReplyUserAvatarUrl">
-                                <span class="last_active_time">@item.LastReplyDateTime</span>
-                            </a>
+                            @if(item.RepliesCount > 0)
+                            {
+                                <a class="last_time pull-right" href="@item.LastReplyUrl">
+                                    <img class="user_small_avatar" src="@item.LastReplyUserAvatarUrl">
+                                    <span class="last_active_time">@item.LastReplyDateTime</span>
+                                </a>
+                            }
                             <div class="topic_title_wrapper">
                                 @if(item.Type == TopicTypeViewModel.置顶)
                                 {
@@ -129,7 +132,7 @@
                 }
                 else
                 {
-                    <div>无数据</div>
+                    <div class="cell">无数据</div>
                 }
             </div>
 

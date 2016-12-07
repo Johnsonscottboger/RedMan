@@ -24,8 +24,8 @@
         <div class="inner">
             <div class="user_card">
                 <div>
-                    <a class="user_avatar" href="@Url.Action("Index","User",new { userid = Model.UserId})">
-                        <img src="@Url.Action("Avatar","User",new { userid = Model.UserId})" title="@Model.Name">
+                    <a class="user_avatar" href="@Url.Content($"/User/Index/{Model.UserId}")">
+                        <img src="@Url.Content($"/User/Avatar/{Model.UserId}")" title="@Model.Name">
                     </a>
                     <span class="user_name"><a class="dark" href="@Url.Action("Index","User",new { userid = Model.UserId})"> @Model.Name </a></span>
                     <div class="board clearfix">

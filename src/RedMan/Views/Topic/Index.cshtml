@@ -57,7 +57,8 @@
                 </span>
                 <span>
                     来自
-                    @switch(Model.Tab) {
+                    @switch(Model.Tab)
+                    {
                         case 1:
                             @TopicTypeViewModel.精华;
                         break;
@@ -75,22 +76,29 @@
                     }
                 </span>
                 @*判断是否已收藏*@
-                @if(User.Claims.Any(p => p.Type == ClaimTypes.Name)) {
-                    if(Model.Collected) {
+                @if(User.Claims.Any(p => p.Type == ClaimTypes.Name))
+                {
+                    if(Model.Collected)
+                    {
                         <input class="span-common pull-right collect_btn" type="submit" value="取消收藏" action="de_collect">
                     }
-                    else {
+                    else
+                    {
                         <input class="span-common span-success pull-right collect_btn" type="submit" value="收藏" action="collect">
                     }
                 }
             </div>
             <div id="manage_topic">
-                <a href="@Url.Content($"/Topic/Edit/{Model.Topic.TopicId}")">
-                    <i class="fa fa-lg fa-pencil-square-o" title="编辑"></i>
-                </a>
-                <a href="javascript:;" data-id="@Model.Topic.TopicId" class="delete_topic_btn">
-                    <i class="fa fa-lg fa-trash" title="删除"></i>
-                </a>
+                @if(Model.Author.Name == User.Identity.Name)
+                {
+                    <a href="@Url.Content($"/Topic/Edit/{Model.Topic.TopicId}")">
+                        <i class="fa fa-lg fa-pencil-square-o" title="编辑"></i>
+                    </a>
+                    <a href="javascript:;" data-id="@Model.Topic.TopicId" class="delete_topic_btn">
+                        <i class="fa fa-lg fa-trash" title="删除"></i>
+                    </a>
+                }
+                
             </div>
         </div>
         <div class="inner topic">
@@ -102,24 +110,24 @@
         </div>
     </div>
 
-    @if(Model.Topic.Reply_Count > 0) {
+    @if(Model.Topic.Reply_Count > 0)
+    {
         <div class='panel'>
-            <div class='header'>
-                <span class='col_fade'><%= topic.replies.length %> 回复</span>
-            </div>
             @*回复列表*@
-            @await Component.InvokeAsync(nameof(TopicReplies),new { topicId=Model.Topic.TopicId})
+            @await Component.InvokeAsync(nameof(TopicReplies),new { topicId = Model.Topic.TopicId })
             @*回复列表*@
         </div>
     }
 
-    @if(User.Claims.Any(p => p.Type == ClaimTypes.Name)) {
+    @if(User.Claims.Any(p => p.Type == ClaimTypes.Name))
+    {
         <div class="panel">
             <div class="header">
                 <span class="col_fade">添加回复</span>
             </div>
+            @Html.ValidationSummary()
             <div class="inner reply">
-                <form id="reply_form" action="@Url.Content($"/Topic/Reply/{Model.Topic.TopicId}")" method="post">
+                <form id="reply_form" action="@Url.Content($"/Reply/Add/{Model.Topic.TopicId}")" method="post">
                     <div class="markdown_editor in_editor">
                         <div class="markdown_in_editor">
                             <textarea class='editor' name='r_content' rows='8'></textarea>
@@ -145,7 +153,8 @@
     </div>
 </div>
 
-@if(User.Claims.Any(p => p.Type == ClaimTypes.Name)) {
+@if(User.Claims.Any(p => p.Type == ClaimTypes.Name))
+{
     <script type="text/javascript" src="~/libs/editor/editor.js"></script>
     <script type="text/javascript" src="~/libs/webuploader/webuploader.withoutimage.js"></script>
     <script type="text/javascript" src="~/libs/editor/ext.js"></script>
@@ -272,10 +281,9 @@
                         reply_id = $me.closest('.reply2_item').attr('reply_id');
                     }
                     var data = {
-                        reply_id: reply_id,
-                        _csrf: "<%- csrf %>"
+                        reply_id: reply_id
                     };
-                    $.post('/reply/' + reply_id + '/delete', data, function (data) {
+                    $.post('/Reply/delete/' + reply_id, data, function (data) {
                         if (data.status === 'success') {
                             if ($me.hasClass('delete_reply_btn')) {
                                 $me.closest('.reply_item').remove();

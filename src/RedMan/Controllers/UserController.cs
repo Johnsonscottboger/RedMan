@@ -20,6 +20,14 @@ namespace RedMan.Controllers {
             return View();
         }
 
-        
+        /// <summary>
+        /// 获取用户头像
+        /// </summary>
+        /// <param name="id">用户ID</param>
+        /// <returns></returns>
+        public string Avatar(int id)
+        {
+            return null;
+        }
     }
 }
