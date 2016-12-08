@@ -9,8 +9,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Web.DataAccess.Repository;
 using Web.Model.Context;
 using Web.Model.Entities;
+using Web.Services.EntitiesServices;
 
 namespace RedMan.Controllers
 {
@@ -21,6 +23,8 @@ namespace RedMan.Controllers
         private readonly IRepository<User> _userRepo;
         private readonly IRepository<Topic> _topicRepo;
         private readonly IRepository<Reply> _replyRepo;
+        private readonly IdentityService _identityService;
+
 
         public UserController(MyContext context)
         {
@@ -30,6 +34,7 @@ namespace RedMan.Controllers
             this._userRepo = new Repository<User>(context);
             this._topicRepo = new Repository<Topic>(context);
             this._replyRepo = new Repository<Reply>(context);
+            this._identityService = new IdentityService(new IdentityRepository<User>(context));
         }
 
         /// <summary>
@@ -68,10 +73,110 @@ namespace RedMan.Controllers
             return View(userViewModel);
         }
 
+        /// <summary>
+        /// 用户设置
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Settings()
         {
-            //TODO:用户资料设置
-            return null;
+            var user = await _userRepo.FindAsync(p => p.Name == User.Identity.Name);
+            if(user == null)
+                throw new Exception("用户找不到，或已被删除");
+            var userSettingViewModel = new UserSettingsViewModel()
+            {
+                UserId = user.UserId,
+                Name = user.Name,
+                Email = user.Email,
+                Avatar = user.Avatar,
+                Signature = user.Signature
+            };
+            ViewData["Error1"] = false;
+            return View(userSettingViewModel);
+        }
+
+        /// <summary>
+        /// 用户设置
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> Settings(UserSettingsViewModel model)
+        {
+            ViewData["Error1"] = true;
+            if(!ModelState.IsValid)
+                return View(model);
+            var loginUserName = User.Identity.Name;
+            if(loginUserName == null)
+                return RedirectToAction("Login","Account",new { ReturnUrl = "/User/Setting" });
+           
+            var user = await _userRepo.FindAsync(p => p.UserId == model.UserId);
+            if(user==null)
+                throw new Exception("用户找不到，或已被删除");
+            if(user.Name != loginUserName)
+                return RedirectToAction("Index","Home");
+
+            var nameIsExist = await _userRepo.IsExistAsync(p => p.Name == model.Name);
+            if(nameIsExist && (model.Name != user.Name))
+            {
+                ModelState.AddModelError("","此名称已存在");
+                return View(model);
+            }
+            var emailIsExist = await _userRepo.IsExistAsync(p => p.Email == model.Email);
+            if(emailIsExist && model.Email != user.Email)
+            {
+                ModelState.AddModelError("","此邮箱地址已存在");
+                return View(model);
+            }
+
+            user.Name = model.Name;
+            user.Email = model.Email;
+            if(!string.IsNullOrEmpty(model.Avatar))
+                user.Avatar = model.Avatar;
+            user.Signature = model.Signature;
+            var success = await _userRepo.UpdateAsync(user);
+            if(success)
+                return new RedirectResult(Url.Content("/User/Settings/"));
+            else
+            {
+                ModelState.AddModelError("","保存失败，请稍后重试");
+                return View(model);
+            }
+        }
+
+        /// <summary>
+        /// 修改密码
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            ViewData["Error2"] = true;
+            var user = await _userRepo.FindAsync(p => p.UserId == model.UserId);
+            if(user == null)
+            {
+                ModelState.AddModelError("","用户不存在，或已被删除");
+                return PartialView("_PartialChangePassword",model);
+            }
+            if(!ModelState.IsValid)
+                return PartialView("_PartialChangePassword",model);
+            if(user.Password != model.OldPassword)
+            {
+                ModelState.AddModelError("","密码不正确");
+                return PartialView("_PartialChangePassword",model);
+            }
+            user.Password = model.Password;
+            var success = await _userRepo.UpdateAsync(user);
+            if(success)
+            {
+                ViewData["Error2"] = false;
+                return Content("<script>alert('修改成功!');location.href='/Account/Login'</script>");
+            }
+            else
+            {
+                ModelState.AddModelError("","修改失败");
+                return PartialView("_PartialChangePassword",new ChangePasswordViewModel());
+            }
         }
 
         /// <summary>

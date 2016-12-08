@@ -1,0 +1,84 @@
+﻿@model UserSettingsViewModel
+
+@section sidebar{
+    <div id="sidebar">
+        <!--右侧用户面板-->
+        <!--用户面板-调用视图组件-显示登陆用户信息-->
+        @await Component.InvokeAsync(nameof(UserPanel),new { username = "loginUserName" })
+
+        <!--右侧显示无人回复的话题-->
+        <div class="panel">
+            <div class="header">
+                <span class="col_fade">无人回复的话题</span>
+            </div>
+            <div class="inner">
+                <!--无人回复的话题-调用视图组件-->
+                @await Component.InvokeAsync(nameof(ZeroReplySubject))
+            </div>
+        </div>
+
+        <!--右侧等级用户排行-->
+        <div class="panel">
+            <div class="header">
+                <span class="col_fade">积分榜</span>
+                &nbsp;
+                <a class="dark" href="@Url.Action("Top100","User")">TOP 100 &gt;&gt;</a>
+            </div>
+            <div class="inner">
+                <!--前10用户-调用视图组件-->
+                @await Component.InvokeAsync(nameof(Top10))
+            </div>
+        </div>
+        <!--右侧等级用户排行-->
+    </div>
+}
+
+<div id="content">
+    <div class="panel">
+        <div class="header">
+            <ul class="breadcrumb">
+                <li><a href="@Url.Action("Index","Home")">主页</a><span class="divider">/</span></li>
+                <li class="active">设置</li>
+            </ul>
+        </div>
+        <div class="inner">
+            <form id="setting_form" class="form-horizontal" action="@Url.Content($"/User/Settings")" method="post">
+                @if((bool)ViewData["Error1"])
+                {
+                    <div class="alert alert-error">
+                        <a class="close" data-dismiss="alert" href="#">&times;</a>
+                        <strong>@Html.ValidationSummary()</strong>
+                    </div>
+                }
+                <input class="input-xlarge readonly" id="UserId" name="UserId" size="30" type="hidden" value="@Model.UserId">
+                <div class="control-group">
+                    <label class="control-label" for="Name">用户名</label>
+                    <div class="controls">
+                        <input class="input-xlarge readonly" id="Name" name="Name" size="30" type="text" value="@Model.Name">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="Email">电子邮件</label>
+                    <div class="controls">
+                        <input class="input-xlarge readonly" id="Email" name="Email" size="30" type="text" value="@Model.Email">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="Signature">个性签名</label>
+                    <div class="controls">
+                        <textarea class="input-xlarge" id="Signature" name="Signature" size="30">@Model.Signature</textarea>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <input type="submit" class="span-primary submit_btn" data-loading-text="保存中.." value="保存设置">
+                </div>
+            </form>
+        </div>
+    </div>
+    @*修改密码*@
+    <div class="panel" id="changep_assword">
+        @await Html.PartialAsync("_PartialChangePassword",new ChangePasswordViewModel() { UserId = Model.UserId })
+    </div>
+    @*修改密码*@
+</div>
