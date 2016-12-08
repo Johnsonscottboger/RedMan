@@ -70,6 +70,7 @@ namespace RedMan.Controllers
                     Tab = (TopicTapViewModel)tab,
                     Type = (TopicTypeViewModel)item.Type,
                     UserAvatarUrl = topicUsers.Where(p => p.UserId == item.Author_Id).FirstOrDefault().Avatar,
+                    UserId=item.Author_Id,
                     UserName = topicUsers.Where(p => p.UserId == item.Author_Id).FirstOrDefault().Name,
                     RepliesCount = item.Reply_Count,
                     VisitsCount = item.Visit_Count,

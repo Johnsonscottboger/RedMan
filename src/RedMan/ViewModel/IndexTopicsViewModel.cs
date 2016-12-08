@@ -9,6 +9,7 @@ namespace RedMan.ViewModel
         public TopicTapViewModel Tab { get; set; }
         public TopicTypeViewModel Type { get; set; }
         public string UserAvatarUrl { get; set; }
+        public Int64 UserId { get; set; }
         public string UserName { get; set; }
         public int RepliesCount { get; set; }
         public int VisitsCount { get; set; }

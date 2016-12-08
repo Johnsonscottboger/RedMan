@@ -47,6 +47,7 @@
             <a href="@Url.Action("Index","Home",new { tab = 3 })" class="topic-tab ">问答</a>
             <a href="@Url.Action("Index","Home",new { tab = 4 })" class="topic-tab ">招聘</a>
         </div>
+        <!--首页Tab标签-->
         <script type="text/javascript">
             $(document).ready(function () {
                 var $header = $('#index_header');
@@ -95,8 +96,8 @@
                     @foreach(var item in Model.ModelList)
                     {
                         <div class="cell">
-                            <a class="user_avatar pull-left" href="@Url.Content($"/User/index/{item.UserName}")">
-                                <img src="@Url.Content(item.UserAvatarUrl)" title="nswbmw">
+                            <a class="user_avatar pull-left" href="@Url.Content($"/User/index/{item.UserId}")">
+                                <img src="@Url.Content(item.UserAvatarUrl)" title="@item.UserName">
                             </a>
                             <span class="reply_count pull-left">
                                 <span class="count_of_replies" title="回复数">
@@ -123,7 +124,7 @@
                                 {
                                     <span class="topiclist-tab">@item.Type</span>
                                 }
-                                <a class="topic_title" href="@Url.Content($"Topic/Index/{item.TopicId}")" title="@item.Title">
+                                <a class="topic_title" href="@Url.Content($"/Topic/Index/{item.TopicId}")" title="@item.Title">
                                     @item.Title
                                 </a>
                             </div>
@@ -138,33 +139,14 @@
 
             <!--分页区-->
             <div class="pagination" current_page="1">
-                <ul>
-                    <li class="disabled"><a>«</a></li>
-                    <li class="disabled active"><a>1</a></li>
-                    <li><a href="http://cnodejs.org/?tab=all&amp;page=2">2</a></li>
-                    <li><a href="http://cnodejs.org/?tab=all&amp;page=3">3</a></li>
-                    <li><a href="http://cnodejs.org/?tab=all&amp;page=4">4</a></li>
-                    <li><a href="http://cnodejs.org/?tab=all&amp;page=5">5</a></li>
-                    <li><a>...</a></li>
-                    <li><a href="http://cnodejs.org/?tab=all&amp;page=476">»</a></li>
-                </ul>
-            </div>
-            <script>
-                $(document).ready(function () {
-                    var $nav = $('.pagination');
-                    var current_page = $nav.attr('current_page');
-                    if (current_page) {
-                        $nav.find('li').each(function () {
-                            var $li = $(this);
-                            var $a = $li.find('a');
-                            if ($a.html() == current_page) {
-                                $li.addClass('active');
-                                $a.removeAttr('href');
-                            }
-                        });
+                @functions{
+                    public string GetUrl(long pageIndex)
+                    {
+                        return Url.Content($"/Home/Index?pageIndex={pageIndex}");
                     }
-                });
-            </script>
+                }
+                <page paging-info="Model.PagingInfo" page-url="x => GetUrl(x)"></page>
+            </div>
             <!--分页区-->
         </div>
     </div>

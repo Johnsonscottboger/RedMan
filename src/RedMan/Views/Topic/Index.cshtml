@@ -50,7 +50,7 @@
                     发布于 @Model.Topic.CreateDateTime
                 </span>
                 <span>
-                    作者 <a href="@Url.Content($"/User/Index/{Model.Author.Name}")">@Model.Author.Name</a>
+                    作者 <a href="@Url.Content($"/User/Index/{Model.Author.UserId}")">@Model.Author.Name</a>
                 </span>
                 <span>
                     @Model.Topic.Visit_Count 次浏览

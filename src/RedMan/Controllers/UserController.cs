@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Web.DataAccess.Repository;
 using Web.Model.Context;
 using Web.Model.Entities;
+using Web.Model.Paging;
 using Web.Services.EntitiesServices;
 
 namespace RedMan.Controllers
@@ -53,9 +54,9 @@ namespace RedMan.Controllers
             if(user == null)
                 throw new Exception("用户找不到，或者已被删除");
             //获取用户发布过的主题
-            var topic_Pub = await _topicRepo.FindAllDelayAsync(p => p.Author_Id == user.UserId);
+            var topic_Pub = await _topicRepo.FindTopDelayAsync(10,p => p.Author_Id == user.UserId,p=>p.CreateDateTime);
             //获取用户发布过的回复
-            var reply_Pub = await _replyRepo.FindAllDelayAsync(p => p.Author_Id == user.UserId);
+            var reply_Pub = await _replyRepo.FindTopDelayAsync(10,p => p.Author_Id == user.UserId,p=>p.CreateDateTime);
             var topic_Reply = GetTopicByReply(reply_Pub);
             UserViewModel userViewModel;
             if(topic_Pub!=null && topic_Reply != null)
@@ -76,6 +77,83 @@ namespace RedMan.Controllers
             }
 
             return View(userViewModel);
+        }
+
+        /// <summary>
+        /// 用户所有相关话题
+        /// </summary>
+        /// <param name="id">用户ID</param>
+        /// <param name="type">相关话题类型：发布/参与</param>
+        /// <param name="pageIndex">页码</param>
+        /// <returns></returns>
+        public async Task<IActionResult> AllTopic(int id, string type, int pageIndex=1)
+        {
+            var user = await _userRepo.FindAsync(p => p.UserId == id);
+            if(user == null)
+                throw new Exception("用户找不到，或者已被删除");
+            var pageSize = GetPageSize("User/AllTopic") ?? 40;
+            var pagingModel = new PagingModel<Topic>()
+            {
+                ModelList = new List<Topic>(),
+                PagingInfo = new PagingInfo()
+                {
+                    CurrentPage = pageIndex,
+                    ItemsPerPage = pageSize
+                }
+            };
+
+            if(type == "pub")
+            {
+                //获取用户发布过的主题
+                var topic_Pub = await _topicRepo.FindPagingOrderByDescendingAsync(p => p.Author_Id == user.UserId,p => p.CreateDateTime,pagingModel);
+            }
+            else
+            {
+                var replyPagingModel = new PagingModel<Reply>()
+                {
+                    ModelList = new List<Reply>(),
+                    PagingInfo = new PagingInfo()
+                    {
+                        CurrentPage = pageIndex,
+                        ItemsPerPage = pageSize
+                    }
+                };
+
+                //获取用户发布过的回复
+                var reply_Pub = await _replyRepo.FindPagingOrderByDescendingAsync(p => p.Author_Id == user.UserId,p => p.CreateDateTime,replyPagingModel);
+                var topic_Reply = GetTopicByReply(reply_Pub.ModelList);
+                pagingModel.ModelList = topic_Reply.ToList();
+            }
+
+            var pagingViewModel = new PagingModel<IndexTopicsViewModel>();
+            pagingViewModel.ModelList = new List<IndexTopicsViewModel>();
+            pagingViewModel.PagingInfo = pagingModel.PagingInfo;
+
+            var topicUsers = new List<User>();
+            pagingModel.ModelList.ForEach(item =>
+            {
+                topicUsers.AddRange(_userRepo.FindAll(p => p.UserId == item.Author_Id || p.UserId == item.Last_Reply_UserId).Distinct());
+            });
+
+            pagingModel.ModelList.ForEach(item =>
+            {
+                pagingViewModel.ModelList.Add(new IndexTopicsViewModel()
+                {
+                    Type = (TopicTypeViewModel)item.Type,
+                    UserAvatarUrl = topicUsers.Where(p => p.UserId == item.Author_Id).FirstOrDefault().Avatar,
+                    UserId = item.Author_Id,
+                    UserName = topicUsers.Where(p => p.UserId == item.Author_Id).FirstOrDefault().Name,
+                    RepliesCount = item.Reply_Count,
+                    VisitsCount = item.Visit_Count,
+                    LastReplyUrl = item.Last_Reply_Id == null ? null : Url.Content($"/Topic/{item.TopicId}/#{item.Last_Reply_Id}"),
+                    LastReplyUserAvatarUrl = item.Last_Reply_UserId == null ? null : topicUsers.Where(p => p.UserId == item.Last_Reply_UserId).FirstOrDefault().Avatar,
+                    LastReplyDateTime = item.Last_ReplyDateTime.ToString(),
+                    TopicId = item.TopicId,
+                    Title = item.Title
+                });
+            });
+
+            return View(new AllTopicViewModel() { User= user, Topics= pagingViewModel });
         }
 
         /// <summary>
@@ -243,6 +321,7 @@ namespace RedMan.Controllers
             }
             
         }
+
         #region 辅助方法
 
         /// <summary>
@@ -256,6 +335,20 @@ namespace RedMan.Controllers
             {
                 yield return _topicRepo.Find(p => p.TopicId == item.Topic_Id);
             }
+        }
+
+        /// <summary>
+        /// 获取分页大小
+        /// </summary>
+        /// <param name="wherePageSize">分页位置</param>
+        /// <returns></returns>
+        private int? GetPageSize(string wherePageSize)
+        {
+            var directory = Directory.GetCurrentDirectory();
+            IConfigurationRoot configuration = new ConfigurationBuilder().AddJsonFile($"{directory}/appsettings.json",true,true).Build();
+            var pagingConfig = configuration.GetSection("Paging");
+            var pageSize = pagingConfig.GetValue(typeof(int),wherePageSize);
+            return (int?)pageSize;
         }
         #endregion
     }

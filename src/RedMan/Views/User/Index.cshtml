@@ -102,7 +102,7 @@
                 </div>
             }
             <div class="cell more">
-                <a class="dark" href="https://cnodejs.org/user/waning1995/topics">查看更多»</a>
+                <a class="dark" href="@Url.Content($"/User/AllTopic/{Model.User.UserId}?type=pub")">查看更多»</a>
             </div>
         }
         else
@@ -149,7 +149,7 @@
                 </div>
             }
             <div class="cell more">
-                <a class="dark" href="https://cnodejs.org/user/waning1995/replies">查看更多»</a>
+                <a class="dark" href="@Url.Content($"/User/AllTopic/{Model.User.UserId}?type=join")">查看更多»</a>
             </div>
 
         }
