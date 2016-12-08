@@ -22,16 +22,17 @@ using Web.Services.EntitiesServices;
 namespace RedMan.Controllers
 {
     [Authorize]
-    public class UserController : Controller
+    public class UserController :Controller
     {
+        private readonly IHostingEnvironment env;
         private readonly MyContext _context;
         private readonly IRepository<User> _userRepo;
         private readonly IRepository<Topic> _topicRepo;
         private readonly IRepository<Reply> _replyRepo;
         private readonly IdentityService _identityService;
-        private readonly IHostingEnvironment env;
+        private readonly IRepository<TopicCollect> _topicCollectRepo;
 
-        public UserController(IHostingEnvironment env, MyContext context)
+        public UserController(IHostingEnvironment env,MyContext context)
         {
             if(context == null)
                 throw new ArgumentNullException(nameof(context));
@@ -40,6 +41,7 @@ namespace RedMan.Controllers
             this._userRepo = new Repository<User>(context);
             this._topicRepo = new Repository<Topic>(context);
             this._replyRepo = new Repository<Reply>(context);
+            this._topicCollectRepo = new Repository<TopicCollect>(context);
             this._identityService = new IdentityService(new IdentityRepository<User>(context));
         }
 
@@ -54,12 +56,12 @@ namespace RedMan.Controllers
             if(user == null)
                 throw new Exception("用户找不到，或者已被删除");
             //获取用户发布过的主题
-            var topic_Pub = await _topicRepo.FindTopDelayAsync(10,p => p.Author_Id == user.UserId,p=>p.CreateDateTime);
+            var topic_Pub = await _topicRepo.FindTopDelayAsync(10,p => p.Author_Id == user.UserId,p => p.CreateDateTime);
             //获取用户发布过的回复
-            var reply_Pub = await _replyRepo.FindTopDelayAsync(10,p => p.Author_Id == user.UserId,p=>p.CreateDateTime);
+            var reply_Pub = await _replyRepo.FindTopDelayAsync(10,p => p.Author_Id == user.UserId,p => p.CreateDateTime);
             var topic_Reply = GetTopicByReply(reply_Pub);
             UserViewModel userViewModel;
-            if(topic_Pub!=null && topic_Reply != null)
+            if(topic_Pub != null && topic_Reply != null)
             {
                 userViewModel = new UserViewModel()
                 {
@@ -86,12 +88,13 @@ namespace RedMan.Controllers
         /// <param name="type">相关话题类型：发布/参与</param>
         /// <param name="pageIndex">页码</param>
         /// <returns></returns>
-        public async Task<IActionResult> AllTopic(int id, string type, int pageIndex=1)
+        public async Task<IActionResult> AllTopic(int id,string type,int pageIndex = 1)
         {
             var user = await _userRepo.FindAsync(p => p.UserId == id);
             if(user == null)
                 throw new Exception("用户找不到，或者已被删除");
             var pageSize = GetPageSize("User/AllTopic") ?? 40;
+            //数据源
             var pagingModel = new PagingModel<Topic>()
             {
                 ModelList = new List<Topic>(),
@@ -101,14 +104,17 @@ namespace RedMan.Controllers
                     ItemsPerPage = pageSize
                 }
             };
-
+            //话题相关用户
+            var topicUsers = new List<User>();
             if(type == "pub")
             {
                 //获取用户发布过的主题
                 var topic_Pub = await _topicRepo.FindPagingOrderByDescendingAsync(p => p.Author_Id == user.UserId,p => p.CreateDateTime,pagingModel);
+                topicUsers.Add(user);
             }
             else
             {
+                #region 回复分页模型
                 var replyPagingModel = new PagingModel<Reply>()
                 {
                     ModelList = new List<Reply>(),
@@ -118,22 +124,23 @@ namespace RedMan.Controllers
                         ItemsPerPage = pageSize
                     }
                 };
+                #endregion
 
                 //获取用户发布过的回复
                 var reply_Pub = await _replyRepo.FindPagingOrderByDescendingAsync(p => p.Author_Id == user.UserId,p => p.CreateDateTime,replyPagingModel);
                 var topic_Reply = GetTopicByReply(reply_Pub.ModelList);
                 pagingModel.ModelList = topic_Reply.ToList();
+                //查找相关用户
+                pagingModel.ModelList.ForEach(item =>
+                {
+                    topicUsers.AddRange(_userRepo.FindAll(p => p.UserId == item.Author_Id || p.UserId == item.Last_Reply_UserId).Distinct());
+                });
             }
 
+            //分页视图模型
             var pagingViewModel = new PagingModel<IndexTopicsViewModel>();
             pagingViewModel.ModelList = new List<IndexTopicsViewModel>();
             pagingViewModel.PagingInfo = pagingModel.PagingInfo;
-
-            var topicUsers = new List<User>();
-            pagingModel.ModelList.ForEach(item =>
-            {
-                topicUsers.AddRange(_userRepo.FindAll(p => p.UserId == item.Author_Id || p.UserId == item.Last_Reply_UserId).Distinct());
-            });
 
             pagingModel.ModelList.ForEach(item =>
             {
@@ -153,7 +160,97 @@ namespace RedMan.Controllers
                 });
             });
 
-            return View(new AllTopicViewModel() { User= user, Topics= pagingViewModel });
+            ViewData["Type"] = type;
+            return View(new AllTopicViewModel() { User = user,Topics = pagingViewModel });
+        }
+
+        /// <summary>
+        /// 话题收藏
+        /// </summary>
+        /// <param name="id">用户ID</param>
+        /// <param name="pageIndex"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Collections(int id,int pageIndex = 1)
+        {
+            var user = await _userRepo.FindAsync(p => p.UserId == id);
+            if(user == null)
+                throw new Exception("用户找不到，或者已被删除");
+            var pageSize = GetPageSize("User/AllTopic") ?? 40;
+            //数据源
+            var pagingModel = new PagingModel<Topic>()
+            {
+                ModelList = new List<Topic>(),
+                PagingInfo = new PagingInfo()
+                {
+                    CurrentPage = pageIndex,
+                    ItemsPerPage = pageSize
+                }
+            };
+            //话题相关用户
+            var topicUsers = new List<User>();
+
+            #region 收藏分页模型
+            var collectPagingModel = new PagingModel<Reply>()
+            {
+                ModelList = new List<Reply>(),
+                PagingInfo = new PagingInfo()
+                {
+                    CurrentPage = pageIndex,
+                    ItemsPerPage = pageSize
+                }
+            };
+            #endregion
+
+            //获取用户收藏的话题
+            var reply_Pub = await _replyRepo.FindPagingOrderByDescendingAsync(p => p.Author_Id == user.UserId,p => p.CreateDateTime,collectPagingModel);
+            var topic_Reply = GetTopicByReply(reply_Pub.ModelList);
+            pagingModel.ModelList = topic_Reply.ToList();
+
+            var collectTopicIdPagingModel = new PagingModel<TopicCollect>()
+            {
+                ModelList = new List<TopicCollect>(),
+                PagingInfo = new PagingInfo()
+                {
+                    CurrentPage = pageIndex,
+                    ItemsPerPage = pageSize
+                }
+            };
+            var collectTopicId = await _topicCollectRepo.FindPagingAsync(p => p.UserId == user.UserId,collectTopicIdPagingModel);
+
+            collectPagingModel.ModelList.ForEach(item =>
+            {
+                pagingModel.ModelList.Add(_topicRepo.Find(p => p.TopicId == item.Topic_Id));
+            });
+
+            //查找相关用户
+            pagingModel.ModelList.ForEach(item =>
+            {
+                topicUsers.AddRange(_userRepo.FindAll(p => p.UserId == item.Author_Id || p.UserId == item.Last_Reply_UserId).Distinct());
+            });
+
+            //分页视图模型
+            var pagingViewModel = new PagingModel<IndexTopicsViewModel>();
+            pagingViewModel.ModelList = new List<IndexTopicsViewModel>();
+            pagingViewModel.PagingInfo = pagingModel.PagingInfo;
+
+            pagingModel.ModelList.ForEach(item =>
+            {
+                pagingViewModel.ModelList.Add(new IndexTopicsViewModel()
+                {
+                    Type = (TopicTypeViewModel)item.Type,
+                    UserAvatarUrl = topicUsers.Where(p => p.UserId == item.Author_Id).FirstOrDefault().Avatar,
+                    UserId = item.Author_Id,
+                    UserName = topicUsers.Where(p => p.UserId == item.Author_Id).FirstOrDefault().Name,
+                    RepliesCount = item.Reply_Count,
+                    VisitsCount = item.Visit_Count,
+                    LastReplyUrl = item.Last_Reply_Id == null ? null : Url.Content($"/Topic/{item.TopicId}/#{item.Last_Reply_Id}"),
+                    LastReplyUserAvatarUrl = item.Last_Reply_UserId == null ? null : topicUsers.Where(p => p.UserId == item.Last_Reply_UserId).FirstOrDefault().Avatar,
+                    LastReplyDateTime = item.Last_ReplyDateTime.ToString(),
+                    TopicId = item.TopicId,
+                    Title = item.Title
+                });
+            });
+            return View(new AllTopicViewModel() { User = user,Topics = pagingViewModel });
         }
 
         /// <summary>
@@ -192,9 +289,9 @@ namespace RedMan.Controllers
             var loginUserName = User.Identity.Name;
             if(loginUserName == null)
                 return RedirectToAction("Login","Account",new { ReturnUrl = "/User/Setting" });
-           
+
             var user = await _userRepo.FindAsync(p => p.UserId == model.UserId);
-            if(user==null)
+            if(user == null)
                 throw new Exception("用户找不到，或已被删除");
             if(user.Name != loginUserName)
                 return RedirectToAction("Index","Home");
@@ -218,14 +315,14 @@ namespace RedMan.Controllers
                 try
                 {
                     var fileNameSplit = model.AvatarFile.FileName.Split('.');
-                    fileExtensions = fileNameSplit[fileNameSplit.Length-1];
+                    fileExtensions = fileNameSplit[fileNameSplit.Length - 1];
                 }
                 catch(IndexOutOfRangeException)
                 {
                     ModelState.AddModelError("","未知文件格式");
                     return View(model);
                 }
-                if(fileExtensions.ToLower()!="jpg" && fileExtensions.ToLower() != "png")
+                if(fileExtensions.ToLower() != "jpg" && fileExtensions.ToLower() != "png")
                 {
                     ModelState.AddModelError("","请上传 .JPG 或者 .PNG 格式的图片");
                     return View(model);
@@ -319,7 +416,7 @@ namespace RedMan.Controllers
             {
                 return null;
             }
-            
+
         }
 
         #region 辅助方法

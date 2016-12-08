@@ -151,6 +151,57 @@ namespace RedMan.Controllers
         }
 
         /// <summary>
+        /// 编辑回复
+        /// </summary>
+        /// <param name="id">回复ID</param>
+        /// <returns></returns>
+        public async Task<IActionResult> Edit(int id)
+        {
+            ViewData["Error"] = false;
+            var reply = await _replyRepo.FindAsync(p => p.ReplyId == id);
+            if(reply == null)
+                throw new Exception("回复找不到，或已被删除");
+            var replyViewModel = new ReplyEditViewModel()
+            {
+                ReplyId=reply.ReplyId,
+                Content=reply.Content
+            };
+            return View(replyViewModel);
+        }
+
+        /// <summary>
+        /// 编辑回复
+        /// </summary>
+        /// <param name="model">回复</param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(ReplyEditViewModel model)
+        {
+            ViewData["Error"] = true;
+            if(model != null)
+                model.Content = model.Content.Trim();
+            if(!ModelState.IsValid)
+                return View(model);
+            var reply = await _replyRepo.FindAsync(p => p.ReplyId == model.ReplyId);
+            if(reply == null)
+                throw new Exception("回复找不到，或已被删除");
+            reply.Content = model.Content;
+            reply.UpdateDateTime = DateTime.Now;
+            var success = await _replyRepo.UpdateAsync(reply);
+            if(success)
+            {
+                ViewData["Error"] = false;
+                return Redirect($"/Topic/Index/{reply.Topic_Id}#{reply.ReplyId}");
+            }
+            else
+            {
+                ModelState.AddModelError("","保存失败，请稍后重试");
+                return View(model);
+            }
+        }
+
+        /// <summary>
         /// 删除，回复ID
         /// </summary>
         /// <param name="id">回复ID</param>

@@ -43,15 +43,8 @@
         </div>
     </div>
     <div class="panel">
-        @if((string)ViewData["Type"] == "pub")
-        {
-            <div class="header">@Model.User.Name 创建的话题</div>
-        }
-        else
-        {
-            <div class="header">@Model.User.Name 参与的话题</div>
-        }
-        <div class="inner padding">
+        <div class="header">@Model.User.Name 收藏的话题</div>
+        <div class="inner paddi
             <div id="topic_list">
                 @if(Model.Topics != null)
                 {

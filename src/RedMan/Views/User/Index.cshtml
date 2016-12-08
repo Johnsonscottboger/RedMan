@@ -55,6 +55,14 @@
             <div class="user_profile">
                 <ul class="unstyled">
                     <span class="big">@Model.User.Score</span> 积分
+                    @if(Model.User.Collect_Topic_Count > 0)
+                    {
+                        <li>
+                            <a class="dark" href="@Url.Content($"/User/Collections/{Model.User.UserId}")" target="_blank">
+                                <span class="big collect-topic-count">@Model.User.Topic_Count</span>个话题收藏
+                            </a>
+                        </li>
+                    }
                     <li>
                         <i class="fa fa-lg fa-fw fa-github"></i>
                         <a class="dark" href="mailto:@Model.User.Email" target="_blank">
