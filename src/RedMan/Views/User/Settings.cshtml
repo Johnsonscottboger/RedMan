@@ -55,9 +55,10 @@
                     <label class="control-label" for="Name">头像</label>
                     <div class="controls">
                         <img id="user_avatar_img" name="user_avatar_img" style="width:120px; height:120px; margin-bottom: 15px;" src="@Model.Avatar" />
+                        <p>点击图片切换</p>
                     </div>
                     <div class="controls">
-                        <input id="user_avatar_input" name="AvatarFile" class="input-xlarge readonly" size="30" type="file" value="" />
+                        <input id="user_avatar_input" style="display:none" name="AvatarFile" class="input-xlarge readonly" size="30" type="file" value="" />
                     </div>
                 </div>
                 <div class="control-group">
@@ -93,16 +94,19 @@
 </div>
 
 <script type="text/javascript">
-    //上传图片
-    $('#user_avatar_input').change(function () {
-        console.log($(this).val());
-        var objUrl = getObjectURL(this.files[0]);
-        console.log(objUrl);
-        if (objUrl) {
-            $('#user_avatar_img').css('width:120px; height:120px;');
-            $('#user_avatar_img').attr('src', objUrl);
-        }
-    });
+    $('#user_avatar_img').click(function () {
+        $('#user_avatar_input').click();
+        //上传图片
+        $('#user_avatar_input').change(function () {
+            console.log($(this).val());
+            var objUrl = getObjectURL(this.files[0]);
+            console.log(objUrl);
+            if (objUrl) {
+                $('#user_avatar_img').css('width:120px; height:120px;');
+                $('#user_avatar_img').attr('src', objUrl);
+            }
+        });
+    })
 
     //获取图片路径
     function getObjectURL(file){

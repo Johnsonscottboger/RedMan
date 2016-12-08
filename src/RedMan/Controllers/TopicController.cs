@@ -187,9 +187,9 @@ namespace RedMan.Controllers
         }
 
         /// <summary>
-        /// 删除
+        /// 删除话题
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">话题ID</param>
         /// <returns></returns>
         [HttpPost]
         public async Task<JsonResult> Delete(int id)

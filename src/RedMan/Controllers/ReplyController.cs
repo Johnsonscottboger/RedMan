@@ -21,6 +21,7 @@ namespace RedMan.Controllers
         private readonly IRepository<Topic> _topicRepo;
         private readonly IRepository<Reply> _replyRepo;
         private readonly IRepository<User> _userRepo;
+        private readonly IRepository<Message> _msgRepo;
         public ReplyController(MyContext context)
         {
             if(context == null)
@@ -29,6 +30,7 @@ namespace RedMan.Controllers
             this._replyRepo = new Repository<Reply>(context);
             this._topicRepo = new Repository<Topic>(context);
             this._userRepo = new Repository<User>(context);
+            this._msgRepo = new Repository<Message>(context);
         }
 
         
@@ -74,6 +76,13 @@ namespace RedMan.Controllers
             var topicSuccess = await _topicRepo.UpdateAsync(topic,false);
             loginUser.Reply_Count += 1;
             topicSuccess = await _userRepo.UpdateAsync(loginUser);
+            var topicAuthor = await _userRepo.FindAsync(p => p.UserId == topic.Author_Id);
+            if(topicAuthor!=null)
+            {
+                topicAuthor.UnreadMsg_Count += 1;
+                await _userRepo.UpdateAsync(topicAuthor);
+                await AddMessage(topicAuthor,loginUser,topic,reply);
+            }
             if(replySuccess&&topicSuccess)
             {
                 return new RedirectResult(Url.Content($"/Topic/Index/{id}"));
@@ -123,6 +132,13 @@ namespace RedMan.Controllers
             var topicSuccess = await _topicRepo.UpdateAsync(topic,false);
             loginUser.Reply_Count += 1;
             topicSuccess = await _userRepo.UpdateAsync(loginUser);
+            var replyAuthor = await _userRepo.FindAsync(p => p.UserId == reply.Author_Id);
+            if(replyAuthor!=null)
+            {
+                replyAuthor.UnreadMsg_Count += 1;
+                await _userRepo.UpdateAsync(replyAuthor);
+                await AddMessage(replyAuthor,loginUser,topic,replyToReply);
+            }
             if(replySuccess && topicSuccess)
             {
                 return new RedirectResult(Url.Content($"/Topic/Index/{topicId}#{replyToReply.ReplyId}"));
@@ -153,6 +169,33 @@ namespace RedMan.Controllers
                 return Json(new { status = "success" });
             else
                 return Json(new { status = "faile" });
+        }
+
+        /// <summary>
+        /// 添加消息
+        /// </summary>
+        /// <param name="to_userid">接收用户ID</param>
+        /// <param name="from_userid">发送用户ID</param>
+        /// <param name="fromReply">来源回复</param>
+        /// <param name="topic">目标话题</param>
+        /// <param name="reply">目标回复</param>
+        /// <returns></returns>
+        private async Task<bool> AddMessage(User to_user,User from_user,Topic fromTopic,Reply newReply)
+        {
+            var message = new Message()
+            {
+                ToUserId = to_user.UserId,
+                FromUserId = from_user.UserId,
+                FromUserName = from_user.Name,
+                Topic_Id = fromTopic.TopicId,
+                Tilte = fromTopic.Title,
+
+                FromReplyId = newReply.ReplyId,
+                Content = "回复了",
+                CreateDateTime = DateTime.Now
+            };
+
+            return await _msgRepo.AddAsync(message);
         }
     }
 }

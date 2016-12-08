@@ -7,7 +7,7 @@
         @foreach(var item in Model) {
             <li>
                 <div>
-                    <a class="dark topic_title" href="@Url.Action("Index","Topic",new { topicid=item.TopicId })" title="@item.Title">@item.Title</a>
+                    <a class="dark topic_title" href="@Url.Content($"/Topic/Index/{item.TopicId}")" title="@item.Title">@item.Title</a>
                 </div>
             </li>
         }

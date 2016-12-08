@@ -9,11 +9,12 @@ using Web.Model.Entities;
 using Web.Services.EntitiesServices;
 using Web.Services.IEntitiesServices;
 
-namespace RedMan.ViewComponentes {
+namespace RedMan.ViewComponentes
+{
     /// <summary>
     /// 首页-右侧-用户面板
     /// </summary>
-    public class UserPanel:ViewComponent
+    public class UserPanel :ViewComponent
     {
         private readonly MyContext _context;
         private readonly IIdentityService _identitySer;
@@ -30,25 +31,34 @@ namespace RedMan.ViewComponentes {
         public async Task<IViewComponentResult> InvokeAsync(String username)
         {
             //当前登录用户名
-            if(username== "loginUserName") {
+            if(username == "loginUserName")
+            {
                 var loginUserName = User.Identity.Name;
                 //已登录
-                if(loginUserName != null) {
+                if(loginUserName != null)
+                {
                     var loginUser = await _userRepo.FindAsync(p => p.Name == loginUserName);
-                    return View(nameof(UserPanel),loginUser);
+                    if(loginUser != null)
+                        return View(nameof(UserPanel),loginUser);
+                    else
+                        return View(nameof(UserPanel),new User());
                 }
                 //未登录
-                else {
+                else
+                {
                     return View(nameof(UserPanel),new User());
                 }
             }
             //话题作者，或其他
-            else {
+            else
+            {
                 var showUser = await _userRepo.FindAsync(p => p.Name == username);
-                if(showUser != null) {
+                if(showUser != null)
+                {
                     return View(nameof(UserPanel),showUser);
                 }
-                else {
+                else
+                {
                     return View(nameof(UserPanel),new User());
                 }
             }

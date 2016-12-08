@@ -1,0 +1,85 @@
+﻿@model IEnumerable<Web.Model.Entities.Message>
+
+
+@section sidebar{
+    <div id="sidebar">
+        <!--右侧用户面板-->
+        <!--用户面板-调用视图组件-显示登陆用户信息-->
+        @await Component.InvokeAsync(nameof(UserPanel),new { username = "loginUserName" })
+
+        <!--右侧显示无人回复的话题-->
+        <div class="panel">
+            <div class="header">
+                <span class="col_fade">无人回复的话题</span>
+            </div>
+            <div class="inner">
+                <!--无人回复的话题-调用视图组件-->
+                @await Component.InvokeAsync(nameof(ZeroReplySubject))
+            </div>
+        </div>
+
+        <!--右侧等级用户排行-->
+        <div class="panel">
+            <div class="header">
+                <span class="col_fade">积分榜</span>
+                &nbsp;
+                <a class="dark" href="@Url.Action("Top100","User")">TOP 100 &gt;&gt;</a>
+            </div>
+            <div class="inner">
+                <!--前10用户-调用视图组件-->
+                @await Component.InvokeAsync(nameof(Top10))
+            </div>
+        </div>
+        <!--右侧等级用户排行-->
+    </div>
+}
+
+
+<div id="content">
+    <div class="panel">
+        <div class="header">
+            <ul class="breadcrumb">
+                <li><a href="@Url.Content("/Home/Index")">主页</a><span class="divider">/</span></li>
+                <li class="active">新消息</li>
+            </ul>
+        </div>
+        @if(Model != null)
+        {
+            if(Model.Count() > 0)
+            {
+                foreach(var item in Model)
+                {
+                    <div class="cell message" message_id="@item.MessageId">
+                        <span>
+                            <a href="@Url.Content($"/User/Index/{item.FromUserId}")" target="_blank">@item.FromUserName</a>
+                            @item.Content
+                            <a id="message_title" href="@Url.Content($"/Message/MarkRead/{item.MessageId}")" target="_blank">@item.Tilte</a>
+                        </span>
+                    </div>
+                }
+
+            }
+            else
+            {
+                <div class="inner">
+                    <p>无消息</p>
+                </div>
+            }
+        }
+    </div>
+    <div id="readmessage" class="panel">
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajax({
+                url: '/Message/ReadMessage',
+                type: 'POST',
+                dataType: 'html',
+                success: function (data) {
+                    $('#readmessage').html(data);
+                }
+            });
+        });
+    </script>
+</div>

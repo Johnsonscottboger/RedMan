@@ -13,7 +13,14 @@
 @if(User.Claims.Any(p => p.Type == ClaimTypes.Name)) {
     <li><a href="@Url.Action("Index","Home")">首页</a></li>
     <li>
-        <a href="https://cnodejs.org/my/messages">
+        <a href="@Url.Content("/Message/Index/")">
+            @if(Model != null)
+            {
+                if(Model.UnreadMsg_Count > 0)
+                {
+                    <span class='big messages_count'>@Model.UnreadMsg_Count</span>
+                }
+            }
             未读消息
         </a>
     </li>

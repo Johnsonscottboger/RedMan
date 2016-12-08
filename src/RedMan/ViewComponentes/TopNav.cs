@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RedMan.DataAccess.IRepository;
+using RedMan.DataAccess.Repository;
 using System.Threading.Tasks;
 using Web.Model.Context;
 using Web.Model.Entities;
@@ -10,16 +12,29 @@ namespace RedMan.ViewComponentes {
     public class TopNav:ViewComponent
     {
         private readonly MyContext _context;
+        private readonly IRepository<User> _userRepo;
+
         public TopNav(MyContext context)
         {
             this._context = context;
+            this._userRepo = new Repository<User>(context);
         }
         
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            //TODO:首页-头部-右侧导航菜单
-            await Task.FromResult(0);
-            return View(nameof(TopNav),new User());
+            var loginUserName = User.Identity.Name;
+            if(loginUserName == null)
+            {
+                return View(nameof(TopNav),new User());
+            }
+            else
+            {
+                var loginUser = await _userRepo.FindAsync(p => p.Name == loginUserName);
+                if(loginUser != null)
+                    return View(nameof(TopNav),loginUser);
+                else
+                    return View(nameof(TopNav),new User());
+            }
         }
     }
 }

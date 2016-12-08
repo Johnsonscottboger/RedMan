@@ -9,12 +9,15 @@ namespace Web.Model.Entities
     public class Message
     {
         public Int64 MessageId { get; set; }
-        public Int64 Master_Id { get; set; }
-        public MessageType Type { get; set; }
-        public Int64 Author_Id { get; set; }
-        public Int64 Topic_Id { get; set; }
-        public Int64 Reply_Id { get; set; }
-        public bool Has_Read { get; set; }
+        public Int64 ToUserId { get; set; }
+        public Int64 FromUserId { get; set; }
+        public string FromUserName { get; set; }
+        public Int64? Topic_Id { get; set; }
+        public Int64? Reply_Id { get; set; }
+        public string Tilte { get; set; }
+        public Int64? FromReplyId { get; set; }
+        public string Content { get; set; }
+        public bool Has_Read { get; set; } = false;
         public DateTime CreateDateTime { get; set; }
     }
 }
