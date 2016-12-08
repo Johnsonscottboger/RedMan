@@ -1,13 +1,17 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using RedMan.DataAccess.IRepository;
 using RedMan.DataAccess.Repository;
+using RedMan.Extensions;
 using RedMan.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Web.DataAccess.Repository;
 using Web.Model.Context;
@@ -24,12 +28,13 @@ namespace RedMan.Controllers
         private readonly IRepository<Topic> _topicRepo;
         private readonly IRepository<Reply> _replyRepo;
         private readonly IdentityService _identityService;
+        private readonly IHostingEnvironment env;
 
-
-        public UserController(MyContext context)
+        public UserController(IHostingEnvironment env, MyContext context)
         {
             if(context == null)
                 throw new ArgumentNullException(nameof(context));
+            this.env = env;
             this._context = context;
             this._userRepo = new Repository<User>(context);
             this._topicRepo = new Repository<Topic>(context);
@@ -127,6 +132,29 @@ namespace RedMan.Controllers
             {
                 ModelState.AddModelError("","此邮箱地址已存在");
                 return View(model);
+            }
+
+            if(model.AvatarFile != null)
+            {
+                string fileExtensions = string.Empty;
+                try
+                {
+                    var fileNameSplit = model.AvatarFile.FileName.Split('.');
+                    fileExtensions = fileNameSplit[fileNameSplit.Length-1];
+                }
+                catch(IndexOutOfRangeException)
+                {
+                    ModelState.AddModelError("","未知文件格式");
+                    return View(model);
+                }
+                if(fileExtensions.ToLower()!="jpg" && fileExtensions.ToLower() != "png")
+                {
+                    ModelState.AddModelError("","请上传 .JPG 或者 .PNG 格式的图片");
+                    return View(model);
+                }
+                var fileName = new StringBuilder().AppendFormat($"{model.UserId}_{model.Name}.{fileExtensions}").ToString();
+                var uploadFile = new UploadFile(env);
+                model.Avatar = await uploadFile.UploadImage(model.AvatarFile,fileName);
             }
 
             user.Name = model.Name;
