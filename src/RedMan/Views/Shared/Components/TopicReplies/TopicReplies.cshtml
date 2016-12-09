@@ -9,7 +9,7 @@
     {
         <div class="panel">
             <div class="header">
-                <span class="col_fade">@Model.Replies.Count() 回复</span>
+                <span class="col_fade"><span id="reply_count">@Model.Replies.Count()</span> 回复</span>
             </div>
             @{ int index = 1;}
             @foreach(var item in Model.Replies)
@@ -56,18 +56,17 @@
                     </div>
                     <div class="reply_content from-@item.Author_Id">
                         <div class="markdown-text">
-                            <p>
-                                @if(item.Content.StartsWith("@"))
-                                {
-                                    var firstSpaceIndex = item.Content.IndexOf(' ');
-                                    var atUserName = item.Content.Substring(0,firstSpaceIndex);
-                                    <a href="@Url.Content($"/User/Index/{item.Author_Id}")" style="float: left;">@atUserName</a> <span style="margin-left: -175px;">@item.Content.Substring(firstSpaceIndex,item.Content.Length - firstSpaceIndex).Trim()</span>
-                                }
-                                else
-                                {
-                                    @item.Content;
-                                }
-                            </p>
+                            @if(item.Html.StartsWith("<p>@"))
+                            {
+                                var firstSpaceIndex = item.Html.IndexOf(' ');
+                                var atUserName = item.Html.Substring(3,firstSpaceIndex - 3);
+                                var replaceStr = $"<a href='/User/Index/{item.Author_Id}' style='float: left;'>{atUserName}</a>";
+                                @Html.Raw(item.Html.Replace(atUserName,replaceStr))
+                            }
+                            else
+                            {
+                                @Html.Raw(item.Html)
+                            }
                         </div>
                     </div>
                     <div class="clearfix">

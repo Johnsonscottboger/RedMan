@@ -40,5 +40,10 @@ namespace RedMan.ViewModel
         /// 是否已被当前登录用户收藏
         /// </summary>
         public bool Collected { get; set; }
+
+        /// <summary>
+        /// Markdown转换为HTML
+        /// </summary>
+        public string Html { get; set; }
     }
 }

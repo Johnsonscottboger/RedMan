@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using Web.Model.Enums;
@@ -9,10 +10,14 @@ namespace Web.Model.Entities
 {
     public class Topic
     {
+        private MarkdownSharp.Markdown markdown = new MarkdownSharp.Markdown();
+
         [Key]
         public Int64 TopicId { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
+        [NotMapped]
+        public string Html { get { return markdown.Transform(Content?.Trim()); } }
         public Int64 Author_Id { get; set; }
         public bool Top { get; set; } = false;
         public bool Good { get; set; } = false;

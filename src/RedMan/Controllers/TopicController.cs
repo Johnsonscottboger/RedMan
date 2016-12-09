@@ -13,6 +13,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using RedMan.Extensions;
 using Microsoft.AspNetCore.Hosting;
+using MarkdownSharp;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -52,6 +53,11 @@ namespace RedMan.Controllers
             if(author == null)
                 throw new Exception("作者未找到");
 
+            #region Markdown转换为HTML
+            //Markdown markdown = new Markdown();
+            //var html = markdown.Transform(topic.Content.Trim());
+            #endregion
+
             var topicViewModel = new TopicViewModel()
             {
                 Tab = topic.Type,
@@ -59,7 +65,8 @@ namespace RedMan.Controllers
                 Content = topic.Content,
 
                 Topic = topic,
-                Author = author
+                Author = author,
+                Html=topic.Html
             };
 
             if(User.Claims.Any(p => p.Type == ClaimTypes.Name))
@@ -92,8 +99,10 @@ namespace RedMan.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(TopicViewModel model)
         {
-            model.Title = model.Title.Trim();
+            ViewData["Action"] = "Add";
             ViewData["Error"] = true;
+            model.Title = model.Title.Trim();
+            model.Content = model.Content.Trim();
             if(!ModelState.IsValid)
             {
                 return View(model);
@@ -160,6 +169,8 @@ namespace RedMan.Controllers
         public async Task<IActionResult> Edit(TopicViewModel model)
         {
             model.Title = model.Title.Trim();
+            model.Content = model.Content.Trim();
+
             ViewData["Error"] = true;
             if(!ModelState.IsValid)
             {
@@ -202,7 +213,7 @@ namespace RedMan.Controllers
             var fileSplit = file.FileName.Split('.');
             var fileExtenions = "."+fileSplit[fileSplit.Length - 1];
             var fileName = UploadFile.DateTimeToUnixTimestamp(DateTime.Now)+ fileExtenions;
-            var filePath = await new UploadFile(env).UploadImageReturnFullPath(file,fileName);
+            var filePath = await new UploadFile(env).UploadImage(file,fileName);
             return Json(new { success = true,url = filePath });
         }
 

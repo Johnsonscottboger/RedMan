@@ -130,7 +130,7 @@
         <div class="inner topic">
             <div class="topic_content">
                 <div class="markdown-text">
-                    <p id="topicContent" >@Model.Content</p>
+                    <p id="topicContent">@Html.Raw(Model.Html)</p>
                 </div>
             </div>
         </div>
@@ -322,6 +322,10 @@
                             if ($me.hasClass('delete_reply2_btn')) {
                                 $me.closest('.reply2_item').remove();
                             }
+                            //回复数量-1
+                            var reply_count=$('#reply_count').text();
+                            var count= Number(reply_count)-1;
+                            $('#reply_count').text(count);
                         }
                     }, 'json');
                 }

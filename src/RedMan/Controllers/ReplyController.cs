@@ -81,7 +81,7 @@ namespace RedMan.Controllers
             }
             if(replySuccess&&topicSuccess)
             {
-                return new RedirectResult(Url.Content($"/Topic/Index/{id}"));
+                return new RedirectResult(Url.Content($"/Topic/Index/{id}#{reply.ReplyId}"));
             }
             else
             {

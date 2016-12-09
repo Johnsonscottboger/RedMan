@@ -21,7 +21,8 @@ namespace RedMan.ViewModel
         public string Name { get; set; }
 
         [Required(ErrorMessage = "密码不能为空!")]
-        [DataType(DataType.Password)]
+        [MinLength(6,ErrorMessage = "密码长度过短")]
+        [MaxLength(16,ErrorMessage = "密码长度过长")]
         public string Password { get; set; }
 
         [Required(ErrorMessage ="请输入确认密码")]
