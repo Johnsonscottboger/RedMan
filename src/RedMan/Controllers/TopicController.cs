@@ -10,6 +10,9 @@ using Web.Model.Entities;
 using RedMan.DataAccess.Repository;
 using RedMan.ViewModel;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using RedMan.Extensions;
+using Microsoft.AspNetCore.Hosting;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,16 +21,18 @@ namespace RedMan.Controllers
     [Authorize]
     public class TopicController :Controller
     {
+        private readonly IHostingEnvironment env;
         private readonly MyContext _context;
         private readonly IRepository<Topic> _topicRepo;
         private readonly IRepository<User> _userRepo;
         private readonly IRepository<Reply> _replyRepo;
         private readonly IRepository<TopicCollect> _topicCollectRepo;
 
-        public TopicController(MyContext context)
+        public TopicController(IHostingEnvironment env,MyContext context)
         {
             if(context == null)
                 throw new ArgumentNullException(nameof(context));
+            this.env = env;
             this._context = context;
             this._userRepo = new Repository<User>(context);
             this._topicRepo = new Repository<Topic>(context);
@@ -185,6 +190,20 @@ namespace RedMan.Controllers
                 ModelState.AddModelError("","出现未知错误，编辑失败，请稍后再试");
                 return View(model);
             }
+        }
+
+        /// <summary>
+        /// 上传文件
+        /// </summary>
+        /// <param name="file">文件</param>
+        /// <returns></returns>
+        public async Task<JsonResult> Upload(IFormFile file)
+        {
+            var fileSplit = file.FileName.Split('.');
+            var fileExtenions = "."+fileSplit[fileSplit.Length - 1];
+            var fileName = UploadFile.DateTimeToUnixTimestamp(DateTime.Now)+ fileExtenions;
+            var filePath = await new UploadFile(env).UploadImageReturnFullPath(file,fileName);
+            return Json(new { success = true,url = filePath });
         }
 
         /// <summary>

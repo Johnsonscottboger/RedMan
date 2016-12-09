@@ -421,6 +421,11 @@ namespace RedMan.Controllers
 
         }
 
+        /// <summary>
+        /// 设置管理员
+        /// </summary>
+        /// <param name="id">用户ID</param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<JsonResult> SetAdmin(int id)
         {
