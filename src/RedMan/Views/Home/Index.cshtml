@@ -41,11 +41,14 @@
     <div class="panel">
         <!--分类-->
         <div class="header" id="index_header">
-            <a href="@Url.Action("Index","Home",new { tab = 0 })" class="topic-tab ">全部</a>
-            <a href="@Url.Action("Index","Home",new { tab = 1 })" class="topic-tab ">精华</a>
-            <a href="@Url.Action("Index","Home",new { tab = 2 })" class="topic-tab ">分享</a>
-            <a href="@Url.Action("Index","Home",new { tab = 3 })" class="topic-tab ">问答</a>
-            <a href="@Url.Action("Index","Home",new { tab = 4 })" class="topic-tab ">招聘</a>
+            <a href="@Url.Content("/Home/Index/0/")" class="topic-tab ">全部</a>
+            @if(ViewData["q"] == null)
+            {
+                <a href="@Url.Content("/Home/Index/1/")" class="topic-tab ">精华</a>
+                <a href="@Url.Content("/Home/Index/2/")" class="topic-tab ">分享</a>
+                <a href="@Url.Content("/Home/Index/3/")" class="topic-tab ">问答</a>
+                <a href="@Url.Content("/Home/Index/4/")" class="topic-tab ">招聘</a>
+            }
         </div>
         <!--首页Tab标签-->
         <script type="text/javascript">
@@ -86,7 +89,7 @@
                     <div class="topic_title_wrapper">
                         <span class="put_top">置顶</span>
                         <a class="topic_title" href="http://cnodejs.org/topic/581b0c4ebb9452c9052e7acb" title="《一起学 Node.js》彻底重写完毕">
-                            《一起学 Node.js》彻底重写完毕
+                            《一起学 .NET Core》彻底重写完毕
                         </a>
                     </div>
                 </div>

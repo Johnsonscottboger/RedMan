@@ -39,8 +39,8 @@
                     @*<img src="~/images/cnodejs_light.svg">*@
                     <h4>红人社区</h4> 
                 </a>
-                <form id="search_form" class="navbar-search" action="@Url.Content($"/Home/Search/")">
-                    <input type="text" id="q" name="q" class="search-query span3" value="">
+                <form id="search_form" class="navbar-search" action="@Url.Content($"/Home/Index/0/")">
+                    <input type="text" id="q" name="q" class="search-query span3" value="@ViewData["q"]">
                 </form>
                 <!--首页-头部-右侧-导航菜单-->
                 <ul class="nav pull-right">
@@ -59,11 +59,11 @@
     <div id="main">
         <!--右侧边栏-->
         @RenderSection("sidebar",true)
+        <!--右侧边栏-->
 
         <!--主体部分-->
-        @*<div id="content">*@
             @RenderBody()
-        @*</div>*@
+        <!--主体部分-->
     </div>
     <div id="backtotop" style="top: 358px; right: 0px;">回到顶部</div>
 
@@ -96,8 +96,12 @@
     <div id="sidebar-mask"></div>
 
     <script type="text/javascript">
+
+        //搜索框提交
         $('#search_form').submit(function () {
-            alert('提交');
+            var query = $('#q').val();
+            var action = "/Home/Index/0/" + query + "/";
+            $(this).attr('action', action);
         })
     </script>
 </body>

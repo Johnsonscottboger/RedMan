@@ -31,11 +31,10 @@ namespace RedMan.Controllers
         }
 
         [Route("")]
-        [Route("/{tab?}/{pageIndex?}")]
-        [Route("/Home/Index/{tab?}/{pageIndex?}")]
-        public async Task<IActionResult> Index(int tab,int pageIndex = 1)
+        [Route("Home/Index/{tab}")]
+        [Route("Home/Index/{tab}/{q}")]
+        public async Task<IActionResult> Index(int tab,string q = null, int pageIndex = 1)
         {
-
             var pageSize = GetPageSize("Home/Index") ?? 40;
             var pagingModel = new PagingModel<Topic>()
             {
@@ -46,41 +45,36 @@ namespace RedMan.Controllers
                     ItemsPerPage = pageSize
                 }
             };
-
-            if(tab == 0)
+            if(!string.IsNullOrEmpty(q))
             {
-                pagingModel = await _topicRepo.FindPagingOrderByDescendingAsync(p => !p.Deleted,p => p.CreateDateTime,pagingModel);
+                ViewData["q"] = q;
+                if(tab == 0)
+                {
+                    pagingModel = await _topicRepo.FindPagingOrderByDescendingAsync(p => !p.Deleted && (p.Title.Contains(q) || p.Content.Contains(q)),p => p.CreateDateTime,pagingModel);
+                }
+                else
+                {
+                    pagingModel = await _topicRepo.FindPagingOrderByDescendingAsync(p => !p.Deleted && p.Type == tab && (p.Title.Contains(q) || p.Content.Contains(q)),p => p.CreateDateTime,pagingModel);
+                }
             }
             else
             {
-                pagingModel = await _topicRepo.FindPagingOrderByDescendingAsync(p => !p.Deleted && p.Type == tab,p => p.CreateDateTime,pagingModel);
+                if(tab == 0)
+                {
+                    pagingModel = await _topicRepo.FindPagingOrderByDescendingAsync(p => !p.Deleted,p => p.CreateDateTime,pagingModel);
+                }
+                else
+                {
+                    pagingModel = await _topicRepo.FindPagingOrderByDescendingAsync(p => !p.Deleted && p.Type == tab,p => p.CreateDateTime,pagingModel);
+                }
             }
+            
             
             var pagingViewModel = GetViewModel(pagingModel,tab);
             ViewData["tab"] = tab;
             return View(pagingViewModel);
         }
-
-        [Route("/Search/{q}/{tab?}/{pageIndex?}")]
-        public async Task<IActionResult> Search(int tab, string q, int pageIndex=1)
-        {
-            if(string.IsNullOrEmpty(q))
-                return RedirectToAction("Index","Home");
-            var pageSize = GetPageSize("Home/Index") ?? 40;
-            var pagingModel = new PagingModel<Topic>()
-            {
-                ModelList = new List<Topic>(),
-                PagingInfo = new PagingInfo()
-                {
-                    CurrentPage = pageIndex,
-                    ItemsPerPage = pageSize
-                }
-            };
-            pagingModel = await _topicRepo.FindPagingAsync(p => p.Title.Contains(q) || p.Content.Contains(q),pagingModel);
-            var pagingViewModel = GetViewModel(pagingModel,tab);
-            return View("Index",pagingViewModel);
-        }
-
+        
         public PagingModel<IndexTopicsViewModel> GetViewModel(PagingModel<Topic> pagingModel, int tab = 0)
         {
             pagingModel.ModelList.OrderBy(p => p.Top);
