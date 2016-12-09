@@ -32,7 +32,6 @@ namespace RedMan.Controllers
             this._userRepo = new Repository<User>(context);
             this._msgRepo = new Repository<Message>(context);
         }
-
         
         /// <summary>
         /// 添加回复
@@ -199,7 +198,7 @@ namespace RedMan.Controllers
         }
 
         /// <summary>
-        /// 删除，回复ID
+        /// 删除回复ID
         /// </summary>
         /// <param name="id">回复ID</param>
         /// <returns></returns>
@@ -209,7 +208,8 @@ namespace RedMan.Controllers
             var reply = await _replyRepo.FindAsync(p => p.ReplyId == id);
             if(reply == null)
                 return Json(new { status = "faile" });
-            await _replyRepo.DeleteAsync(reply,false);
+            reply.Deleted = true;
+            await _replyRepo.UpdateAsync(reply,false);
             var topic = await _topicRepo.FindAsync(p => p.TopicId == reply.Topic_Id);
             topic.Reply_Count -= 1;
             var topicSuccess = await _topicRepo.UpdateAsync(topic);

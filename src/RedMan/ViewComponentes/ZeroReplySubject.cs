@@ -25,7 +25,7 @@ namespace RedMan.ViewComponentes {
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var zeroReplySubject = await _topicRepo.FindTopDelayAsync(5,p => p.Reply_Count == 0,p => p.CreateDateTime);
+            var zeroReplySubject = await _topicRepo.FindTopDelayAsync(5,p => p.Reply_Count == 0 && !p.Deleted,p => p.CreateDateTime);
             return View(nameof(ZeroReplySubject),zeroReplySubject);
         }
     }

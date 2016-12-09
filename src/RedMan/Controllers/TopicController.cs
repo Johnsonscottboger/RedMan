@@ -44,19 +44,14 @@ namespace RedMan.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index(int id)
         {
-            var topic = await _topicRepo.FindAsync(p => p.TopicId == id);
+            var topic = await _topicRepo.FindAsync(p => p.TopicId == id && !p.Deleted);
             if(topic == null)
-                throw new Exception("找不到此话题");
+                throw new Exception("找不到此话题,或已被删除");
             topic.Visit_Count += 1;
             await _topicRepo.UpdateAsync(topic);
             var author = await _userRepo.FindAsync(p => p.UserId == topic.Author_Id);
             if(author == null)
                 throw new Exception("作者未找到");
-
-            #region Markdown转换为HTML
-            //Markdown markdown = new Markdown();
-            //var html = markdown.Transform(topic.Content.Trim());
-            #endregion
 
             var topicViewModel = new TopicViewModel()
             {
@@ -230,7 +225,8 @@ namespace RedMan.Controllers
                 return Json(new { success = false,message = "找不到此话题" });
             else
             {
-                var success = await _topicRepo.DeleteAsync(topic,false);
+                topic.Deleted = true;
+                var success = await _topicRepo.UpdateAsync(topic,false);
                 var user = await _userRepo.FindAsync(p => p.UserId == topic.Author_Id);
                 if(user!=null)
                 {

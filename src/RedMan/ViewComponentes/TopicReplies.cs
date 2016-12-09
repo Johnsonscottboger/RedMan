@@ -32,7 +32,7 @@ namespace RedMan.ViewComponentes
             var topic = await _topicRepo.FindAsync(p => p.TopicId == topicId);
             if(topic == null)
                 return View(new TopicRepliesViewModel() { TopicId = topicId });
-            var topicReplies = await _replyRepo.FindAllDelayAsync(p => p.Topic_Id == topicId);
+            var topicReplies = await _replyRepo.FindAllDelayAsync(p => p.Topic_Id == topicId && !p.Deleted);
             var loginUser = await _userRepo.FindAsync(p => p.Name == User.Identity.Name);
             var topicRepliesViewModel = new TopicRepliesViewModel()
             {
