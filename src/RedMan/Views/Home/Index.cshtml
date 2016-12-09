@@ -69,7 +69,7 @@
         <div class="inner no-padding">
             <div id="topic_list">
                 <!--以此为一个单元，显示一条主题-->
-                <div class="cell">
+                @*<div class="cell">
                     <a class="user_avatar pull-left" href="http://cnodejs.org/user/nswbmw">
                         <img src="~/img/8791709.png" title="nswbmw">
                     </a>
@@ -92,7 +92,7 @@
                             《一起学 .NET Core》彻底重写完毕
                         </a>
                     </div>
-                </div>
+                </div>*@
                 <!--以此为一个单元，显示一条主题-->
                 @if(Model.ModelList.Count != 0)
                 {
@@ -119,7 +119,7 @@
                                 </a>
                             }
                             <div class="topic_title_wrapper">
-                                @if(item.Type == TopicTypeViewModel.置顶)
+                                @if(item.Top)
                                 {
                                     <span class="put_top">置顶</span>
                                 }

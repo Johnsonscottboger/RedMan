@@ -262,6 +262,63 @@ namespace RedMan.Controllers
                 return Json(new { status = "error" });
         }
 
-        
+        /// <summary>
+        /// 置顶
+        /// </summary>
+        /// <param name="id">话题ID</param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<JsonResult> Top(int id)
+        {
+            var topic = await _topicRepo.FindAsync(p => p.TopicId == id);
+            if(topic == null)
+                return Json(new { status = "error" });
+            if(topic.Top)
+            {
+                topic.Top = false;
+                if(await _topicRepo.UpdateAsync(topic))
+                    return Json(new { status = "cancel_top" });
+                else
+                    return Json(new { status = "error" });
+            }
+            else
+            {
+                topic.Top = true;
+                if(await _topicRepo.UpdateAsync(topic))
+                    return Json(new { status = "top" });
+                else
+                    return Json(new { status = "error" });
+            }
+        }
+
+        /// <summary>
+        /// 设置为精华
+        /// </summary>
+        /// <param name="id">话题ID</param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<JsonResult> Good(int id)
+        {
+            var topic = await _topicRepo.FindAsync(p => p.TopicId == id);
+            if(topic == null)
+                return Json(new { status = "error" });
+            if(topic.Good)
+            {
+                topic.Good = false;
+                if(await _topicRepo.UpdateAsync(topic))
+                    return Json(new { status = "cancel_good" });
+                else
+                    return Json(new { status = "error" });
+            }
+            else
+            {
+                topic.Good = true;
+                if(await _topicRepo.UpdateAsync(topic))
+                    return Json(new { status = "good" });
+                else
+                    return Json(new { status = "error" });
+            }
+            
+        }
     }
 }

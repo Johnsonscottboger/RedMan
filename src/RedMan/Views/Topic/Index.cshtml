@@ -97,6 +97,32 @@
                     <a href="javascript:;" data-id="@Model.Topic.TopicId" class="delete_topic_btn">
                         <i class="fa fa-lg fa-trash" title="删除"></i>
                     </a>
+
+                    if(Model.Author.IsAdmin)
+                    {
+                        @*置顶*@
+                        <a class="topic_top_good" id="@Url.Content($"/Topic/Top/{Model.Topic.TopicId}")" href="javascript:;" data-method="post">
+                            @if(Model.Topic.Top)
+                            {
+                                <i class="fa fa-lg fa-star" title="取消置顶"></i>
+                            }
+                            else
+                            {
+                                <i class="fa fa-lg fa-star-o" title="置顶"></i>
+                            }
+                        </a>
+                        @*精华*@
+                        <a class="topic_top_good" id="@Url.Content($"/Topic/Good/{Model.Topic.TopicId}")" href="javascript:;" data-method="post">
+                            @if(Model.Topic.Good)
+                            {
+                                <i class="fa fa-lg fa-heart" title="取消精华"></i>
+                            }
+                            else
+                            {
+                                <i class="fa fa-lg fa-heart-o" title="加为精华"></i>
+                            }
+                        </a>
+                    }
                 }
                 
             </div>
@@ -332,6 +358,26 @@
             //      }
             //  });
             // END 用户 hover 在回复框时才显示点赞按钮
+
+            $('.topic_top_good').click(function(){
+                var $a=$(this);
+                var url=$a.attr('id');
+                var id=@Model.Topic.TopicId;
+                $.post(url,{id:id},function(data){
+                    if(data.status!= 'error'){
+                        if(data.status=='top'){
+                            $a.html('<i class="fa fa-lg fa-star" title="取消置顶"></i>');
+                            //$a.children('i').remove();
+                        }else if(data.status=='cancel_top'){
+                            $a.html('<i class="fa fa-lg fa-star-o" title="置顶"></i>');
+                        }else if(data.status=='good'){
+                            $a.html('<i class="fa fa-lg fa-heart" title="取消精华"></i>');
+                        }else if(data.status=='cancel_good'){
+                            $a.html('<i class="fa fa-lg fa-heart-o" title="加为精华"></i>');
+                        }
+                    }
+                })
+            })
         });
     </script>
 }

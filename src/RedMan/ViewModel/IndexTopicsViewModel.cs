@@ -18,6 +18,8 @@ namespace RedMan.ViewModel
         public string LastReplyDateTime { get; set; }
         public Int64 TopicId { get; set; }
         public string Title { get; set; }
+        public bool Top { get; set; }
+        public bool Good { get; set; }
     }
 
     /// <summary>

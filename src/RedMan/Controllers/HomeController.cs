@@ -65,7 +65,10 @@ namespace RedMan.Controllers
                 }
                 else
                 {
-                    pagingModel = await _topicRepo.FindPagingOrderByDescendingAsync(p => !p.Deleted && p.Type == tab,p => p.CreateDateTime,pagingModel);
+                    if(tab == 1)
+                        pagingModel = await _topicRepo.FindPagingOrderByDescendingAsync(p => !p.Deleted && p.Good, p => p.CreateDateTime,pagingModel);
+                    else
+                        pagingModel = await _topicRepo.FindPagingOrderByDescendingAsync(p => !p.Deleted && p.Type == tab,p => p.CreateDateTime,pagingModel);
                 }
             }
             
@@ -77,7 +80,7 @@ namespace RedMan.Controllers
         
         public PagingModel<IndexTopicsViewModel> GetViewModel(PagingModel<Topic> pagingModel, int tab = 0)
         {
-            pagingModel.ModelList.OrderBy(p => p.Top);
+            pagingModel.ModelList = pagingModel.ModelList.OrderByDescending(p => p.Top).ToList();
             var pagingViewModel = new PagingModel<IndexTopicsViewModel>();
             pagingViewModel.ModelList = new List<IndexTopicsViewModel>();
             pagingViewModel.PagingInfo = pagingModel.PagingInfo;
@@ -104,12 +107,13 @@ namespace RedMan.Controllers
                     LastReplyUserAvatarUrl = item.Last_Reply_UserId == null ? null : topicUsers.Where(p => p.UserId == item.Last_Reply_UserId).FirstOrDefault().Avatar,
                     LastReplyDateTime = item.Last_ReplyDateTime.ToString(),
                     TopicId = item.TopicId,
-                    Title = item.Title
+                    Title = item.Title,
+                    Top=item.Top,
+                    Good=item.Good
                 });
             });
             return pagingViewModel;
         }
-
         #region 附加方法
 
         /// <summary>

@@ -10,6 +10,7 @@ namespace Web.Model.Entities
     {
         [Key]
         public int Id { get; set; }
+
         public string RoleName { get; set; }
     }
 }

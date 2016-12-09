@@ -52,6 +52,8 @@ namespace RedMan.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Index(int id)
         {
+            var loginUser = await _userRepo.FindAsync(p => p.Name == User.Identity.Name);
+            
             var user = await _userRepo.FindAsync(p => p.UserId == id);
             if(user == null)
                 throw new Exception("用户找不到，或者已被删除");
@@ -65,6 +67,7 @@ namespace RedMan.Controllers
             {
                 userViewModel = new UserViewModel()
                 {
+                    LoginUserIsAdmin=loginUser.IsAdmin,
                     User = user,
                     Topic_Published = topic_Pub.Distinct(),
                     Topic_Join = topic_Reply.Distinct()
@@ -74,6 +77,7 @@ namespace RedMan.Controllers
             {
                 userViewModel = new UserViewModel()
                 {
+                    LoginUserIsAdmin=loginUser.IsAdmin,
                     User = user
                 };
             }
@@ -415,6 +419,30 @@ namespace RedMan.Controllers
                 return null;
             }
 
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> SetAdmin(int id)
+        {
+            var user = await _userRepo.FindAsync(p => p.UserId == id);
+            if(user == null)
+                return Json(new { status = "error" });
+            if(user.IsAdmin)
+            {
+                user.IsAdmin = false;
+                if(await _userRepo.UpdateAsync(user))
+                    return Json(new { status = "cancel_admin" });
+                else
+                    return Json(new { status = "error" });
+            }
+            else
+            {
+                user.IsAdmin = true;
+                if(await _userRepo.UpdateAsync(user))
+                    return Json(new { status = "admin" });
+                else
+                    return Json(new { status = "error" });
+            }
         }
 
         #region 辅助方法

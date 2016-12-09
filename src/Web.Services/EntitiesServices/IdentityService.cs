@@ -17,6 +17,12 @@ namespace Web.Services.EntitiesServices
             this._identityRepository = identityRepository;
         }
 
+        /// <summary>
+        /// 检索用户
+        /// </summary>
+        /// <param name="email">邮箱</param>
+        /// <param name="password">密码</param>
+        /// <returns></returns>
         public async Task<ClaimsPrincipal> CheckUserAsync(String email,String password)
         {
             var user = await _identityRepository.GetUserAsync(p => p.Email == email && p.Password == password);

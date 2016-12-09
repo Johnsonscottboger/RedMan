@@ -49,7 +49,8 @@ namespace Web.Model.Entities
         public string AccessToken { get; set; }
 
         public int UnreadMsg_Count { get; set; }
-
         public virtual ICollection<Role> Roles { get; set; }
+
+        public bool IsAdmin { get; set; } = false;
     }
 }
