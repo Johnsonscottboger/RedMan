@@ -28,13 +28,15 @@
                             </a>
                         </div>
                         <div class="user_action">
-                            <span>
+                            @*点赞按钮*@
+                            @*<span>
                             @if(User.Claims.Any(p => p.Type == ClaimTypes.Name))
                             {
                                 <i class="fa up_btn fa-thumbs-o-up" title="喜欢"></i>
                                 <span class="up-count"></span>
                             }
-                            </span>
+                            </span>*@
+                            @*点赞按钮*@
                             @if(Model.LoginUser != null)
                             {
                                 @if(Model.LoginUser.UserId == item.Author_Id)

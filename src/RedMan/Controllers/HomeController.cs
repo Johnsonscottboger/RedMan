@@ -30,6 +30,9 @@ namespace RedMan.Controllers
             this._userRepo = new Repository<User>(context);
         }
 
+        [Route("")]
+        [Route("/{tab?}/{pageIndex?}")]
+        [Route("/Home/Index/{tab?}/{pageIndex?}")]
         public async Task<IActionResult> Index(int tab,int pageIndex = 1)
         {
 
@@ -52,6 +55,34 @@ namespace RedMan.Controllers
             {
                 pagingModel = await _topicRepo.FindPagingOrderByDescendingAsync(p => !p.Deleted && p.Type == tab,p => p.CreateDateTime,pagingModel);
             }
+            
+            var pagingViewModel = GetViewModel(pagingModel,tab);
+            ViewData["tab"] = tab;
+            return View(pagingViewModel);
+        }
+
+        [Route("/Search/{q}/{tab?}/{pageIndex?}")]
+        public async Task<IActionResult> Search(int tab, string q, int pageIndex=1)
+        {
+            if(string.IsNullOrEmpty(q))
+                return RedirectToAction("Index","Home");
+            var pageSize = GetPageSize("Home/Index") ?? 40;
+            var pagingModel = new PagingModel<Topic>()
+            {
+                ModelList = new List<Topic>(),
+                PagingInfo = new PagingInfo()
+                {
+                    CurrentPage = pageIndex,
+                    ItemsPerPage = pageSize
+                }
+            };
+            pagingModel = await _topicRepo.FindPagingAsync(p => p.Title.Contains(q) || p.Content.Contains(q),pagingModel);
+            var pagingViewModel = GetViewModel(pagingModel,tab);
+            return View("Index",pagingViewModel);
+        }
+
+        public PagingModel<IndexTopicsViewModel> GetViewModel(PagingModel<Topic> pagingModel, int tab = 0)
+        {
             pagingModel.ModelList.OrderBy(p => p.Top);
             var pagingViewModel = new PagingModel<IndexTopicsViewModel>();
             pagingViewModel.ModelList = new List<IndexTopicsViewModel>();
@@ -63,6 +94,7 @@ namespace RedMan.Controllers
                 topicUsers.AddRange(_userRepo.FindAll(p => p.UserId == item.Author_Id || p.UserId == item.Last_Reply_UserId).Distinct());
             });
 
+            pagingModel.ModelList.OrderByDescending(p => p.CreateDateTime);
             pagingModel.ModelList.ForEach(item =>
             {
                 pagingViewModel.ModelList.Add(new IndexTopicsViewModel()
@@ -70,7 +102,7 @@ namespace RedMan.Controllers
                     Tab = (TopicTapViewModel)tab,
                     Type = (TopicTypeViewModel)item.Type,
                     UserAvatarUrl = topicUsers.Where(p => p.UserId == item.Author_Id).FirstOrDefault().Avatar,
-                    UserId=item.Author_Id,
+                    UserId = item.Author_Id,
                     UserName = topicUsers.Where(p => p.UserId == item.Author_Id).FirstOrDefault().Name,
                     RepliesCount = item.Reply_Count,
                     VisitsCount = item.Visit_Count,
@@ -81,9 +113,7 @@ namespace RedMan.Controllers
                     Title = item.Title
                 });
             });
-            pagingModel.ModelList.OrderByDescending(p => p.CreateDateTime);
-            ViewData["tab"] = tab;
-            return View(pagingViewModel);
+            return pagingViewModel;
         }
 
         #region 附加方法

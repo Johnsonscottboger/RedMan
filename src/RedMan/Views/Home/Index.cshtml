@@ -142,7 +142,7 @@
                 @functions{
                     public string GetUrl(long pageIndex)
                     {
-                        return Url.Content($"/Home/Index?pageIndex={pageIndex}");
+                        return Url.Content($"?pageIndex={pageIndex}");
                     }
                 }
                 <page paging-info="Model.PagingInfo" page-url="x => GetUrl(x)"></page>
