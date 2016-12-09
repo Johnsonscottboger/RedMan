@@ -34,11 +34,6 @@ namespace RedMan.Controllers
         }
 
         
-        public async Task<IActionResult> Index(Int64 topicId)
-        {
-            return View();
-        }
-
         /// <summary>
         /// 添加回复
         /// </summary>
@@ -75,6 +70,7 @@ namespace RedMan.Controllers
             topic.Last_Reply_UserId = loginUser.UserId;
             var topicSuccess = await _topicRepo.UpdateAsync(topic,false);
             loginUser.Reply_Count += 1;
+            loginUser.Score += 1;
             topicSuccess = await _userRepo.UpdateAsync(loginUser);
             var topicAuthor = await _userRepo.FindAsync(p => p.UserId == topic.Author_Id);
             if(topicAuthor!=null)
@@ -131,6 +127,7 @@ namespace RedMan.Controllers
             topic.Reply_Count += 1;
             var topicSuccess = await _topicRepo.UpdateAsync(topic,false);
             loginUser.Reply_Count += 1;
+            loginUser.Score += 1;
             topicSuccess = await _userRepo.UpdateAsync(loginUser);
             var replyAuthor = await _userRepo.FindAsync(p => p.UserId == reply.Author_Id);
             if(replyAuthor!=null)

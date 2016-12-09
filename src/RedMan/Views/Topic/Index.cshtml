@@ -80,11 +80,11 @@
                 {
                     if(Model.Collected)
                     {
-                        <input class="span-common pull-right collect_btn" type="submit" value="取消收藏" action="de_collect">
+                        <input class="span-common pull-right collect_btn" type="button" value="取消收藏" action="@Url.Content($"CollecteDel/{Model.Topic.TopicId}")">
                     }
                     else
                     {
-                        <input class="span-common span-success pull-right collect_btn" type="submit" value="收藏" action="collect">
+                        <input class="span-common span-success pull-right collect_btn" type="button" value="收藏" action="@Url.Content($"Collecte/{Model.Topic.TopicId}")">
                     }
                 }
             </div>
@@ -248,22 +248,28 @@
             // 加入收藏
             $('.collect_btn').click(function () {
                 var $me = $(this);
+                var addToCollect= '@Url.Content($"Collecte/{Model.Topic.TopicId}")';
+                var delCollect= '@Url.Content($"CollecteDel/{Model.Topic.TopicId}")';
                 var action = $me.attr('action');
+
+
+                var topicId=@Model.Topic.TopicId;
                 var data = {
-                    topic_id: '<%= topic._id %>',
-                    _csrf: '<%= csrf %>'
+                    topic_id: topicId
                 };
                 var $countSpan = $('.collect-topic-count');
-                $.post('/topic/' + action, data, function (data) {
+                $.post('/Topic/' + action, data, function (data) {
                     if (data.status === 'success') {
-                        if (action == 'collect') {
+                        if (action == addToCollect) {
                             $me.val('取消收藏');
-                            $me.attr('action', 'de_collect');
+                            $me.attr('action', delCollect);
                         } else {
                             $me.val('收藏');
-                            $me.attr('action', 'collect');
+                            $me.attr('action', addToCollect);
                         }
                         $me.toggleClass('span-success');
+                    }else{
+                        alert('收藏失败');
                     }
                 }, 'json');
             });

@@ -129,7 +129,7 @@ namespace RedMan.Controllers
                 //获取用户发布过的回复
                 var reply_Pub = await _replyRepo.FindPagingOrderByDescendingAsync(p => p.Author_Id == user.UserId,p => p.CreateDateTime,replyPagingModel);
                 var topic_Reply = GetTopicByReply(reply_Pub.ModelList);
-                pagingModel.ModelList = topic_Reply.ToList();
+                pagingModel.ModelList = topic_Reply.Distinct().ToList();
                 //查找相关用户
                 pagingModel.ModelList.ForEach(item =>
                 {
@@ -163,6 +163,7 @@ namespace RedMan.Controllers
             ViewData["Type"] = type;
             return View(new AllTopicViewModel() { User = user,Topics = pagingViewModel });
         }
+
 
         /// <summary>
         /// 话题收藏
@@ -202,10 +203,6 @@ namespace RedMan.Controllers
             #endregion
 
             //获取用户收藏的话题
-            var reply_Pub = await _replyRepo.FindPagingOrderByDescendingAsync(p => p.Author_Id == user.UserId,p => p.CreateDateTime,collectPagingModel);
-            var topic_Reply = GetTopicByReply(reply_Pub.ModelList);
-            pagingModel.ModelList = topic_Reply.ToList();
-
             var collectTopicIdPagingModel = new PagingModel<TopicCollect>()
             {
                 ModelList = new List<TopicCollect>(),
@@ -217,9 +214,9 @@ namespace RedMan.Controllers
             };
             var collectTopicId = await _topicCollectRepo.FindPagingAsync(p => p.UserId == user.UserId,collectTopicIdPagingModel);
 
-            collectPagingModel.ModelList.ForEach(item =>
+            collectTopicId.ModelList.ForEach(item =>
             {
-                pagingModel.ModelList.Add(_topicRepo.Find(p => p.TopicId == item.Topic_Id));
+                pagingModel.ModelList.Add(_topicRepo.Find(p => p.TopicId == item.TopicId));
             });
 
             //查找相关用户
@@ -397,6 +394,7 @@ namespace RedMan.Controllers
         /// </summary>
         /// <param name="id">用户ID</param>
         /// <returns></returns>
+        [AllowAnonymous]
         public async Task<FileContentResult> GetUserAvatarUrl(int id)
         {
             var user = await _userRepo.FindAsync(p => p.UserId == id);

@@ -110,6 +110,7 @@ namespace RedMan.Controllers
             };
             var result = await _topicRepo.AddAsync(topic,false);
             loginUser.Topic_Count += 1;
+            loginUser.Score += 5;
             result = await _userRepo.UpdateAsync(loginUser);
             if(result)
             {
@@ -211,6 +212,54 @@ namespace RedMan.Controllers
                 else
                     return Json(new { success = false,message = "删除失败" });                
             }
+        }
+
+        /// <summary>
+        /// 添加到收藏
+        /// </summary>
+        /// <param name="id">话题ID</param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<JsonResult> Collecte(int id)
+        {
+            var loginUserName = User.Identity.Name;
+            var loginUser = await _userRepo.FindAsync(p => p.Name == loginUserName);
+            if(loginUser == null)
+                return Json(new { status ="error"});
+            loginUser.Collect_Topic_Count += 1;
+            var topicCollect = new TopicCollect()
+            {
+                UserId = loginUser.UserId,
+                TopicId = id,
+                CreateDateTime = DateTime.Now
+            };
+            await _userRepo.UpdateAsync(loginUser,false);
+            var success = await _topicCollectRepo.AddAsync(topicCollect);
+            if(success)
+                return Json(new { status="success"});
+            else
+                return Json(new { status="error"});
+        }
+
+        /// <summary>
+        /// 删除收藏
+        /// </summary>
+        /// <param name="id">话题ID</param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> CollecteDel(int id)
+        {
+            var loginUserName = User.Identity.Name;
+            var loginUser = await _userRepo.FindAsync(p => p.Name == loginUserName);
+            if(loginUser == null)
+                return Json(new { status = "error" });
+            loginUser.Collect_Topic_Count -= 1;
+            await _userRepo.UpdateAsync(loginUser,false);
+            var success = await _topicCollectRepo.DeleteAsync(p => p.UserId == loginUser.UserId && p.TopicId == id);
+            if(success)
+                return Json(new { status = "success" });
+            else
+                return Json(new { status = "error" });
         }
     }
 }
