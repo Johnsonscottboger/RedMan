@@ -50,7 +50,8 @@ namespace RedMan {
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseStatusCodePages("text/plain","Response status code:{0}");
+                //app.UseExceptionHandler("/Home/Error");
             }
 
             app.UseStaticFiles();

@@ -82,7 +82,7 @@ namespace RedMan.Controllers
         {
             ViewData["Error"] = false;
             ViewData["Action"] = "Add";
-            return View(new TopicViewModel());
+            return View(new TopicViewModel() { Title=string.Empty,Content=string.Empty});
         }
 
         /// <summary>

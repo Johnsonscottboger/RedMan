@@ -60,16 +60,10 @@
                 </select>
                 <span id="topic_create_warn"></span>
                 <input type="hidden" id="TopicId" name="TopicId" value="@Model.TopicId" />
-                <textarea autofocus class='span9' id='title' name='title' rows='1'
-                          placeholder="标题字数 10 字以上">
-                    @Model.Title
-                </textarea>
+                <textarea autofocus class='span9' id='title' name='title' rows='1' placeholder="标题字数 10 字以上">@Model.Title</textarea>
                 <div class='markdown_editor in_editor'>
                     <div class='markdown_in_editor'>
-                        <textarea class='editor' name='Content' rows='20'
-                                  placeholder='文章支持 Markdown 语法, 请注意标记代码'>
-                            @Model.Content
-                        </textarea>
+                        <textarea class='editor' name='Content' rows='20'>@Model.Content</textarea>
                         <div class='editor_buttons'>
                             <input type="submit" class='span-primary submit_btn' data-loading-text="提交中"
                                    value="提交">

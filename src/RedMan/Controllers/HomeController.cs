@@ -78,6 +78,10 @@ namespace RedMan.Controllers
             return View(pagingViewModel);
         }
         
+        public IActionResult Error()
+        {
+            return Content("很简单的告诉你，出错了!");
+        }
         public PagingModel<IndexTopicsViewModel> GetViewModel(PagingModel<Topic> pagingModel, int tab = 0)
         {
             pagingModel.ModelList = pagingModel.ModelList.OrderByDescending(p => p.Top).ToList();

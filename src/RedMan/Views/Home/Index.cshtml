@@ -69,31 +69,6 @@
         <div class="inner no-padding">
             <div id="topic_list">
                 <!--以此为一个单元，显示一条主题-->
-                @*<div class="cell">
-                    <a class="user_avatar pull-left" href="http://cnodejs.org/user/nswbmw">
-                        <img src="~/img/8791709.png" title="nswbmw">
-                    </a>
-                    <span class="reply_count pull-left">
-                        <span class="count_of_replies" title="回复数">
-                            75
-                        </span>
-                        <span class="count_seperator">/</span>
-                        <span class="count_of_visits" title="点击数">
-                            11638
-                        </span>
-                    </span>
-                    <a class="last_time pull-right" href="http://cnodejs.org/topic/581b0c4ebb9452c9052e7acb#583419f3bde2b59e06141e40">
-                        <img class="user_small_avatar" src="~/img/8791709.png">
-                        <span class="last_active_time">4 小时前</span>
-                    </a>
-                    <div class="topic_title_wrapper">
-                        <span class="put_top">置顶</span>
-                        <a class="topic_title" href="http://cnodejs.org/topic/581b0c4ebb9452c9052e7acb" title="《一起学 Node.js》彻底重写完毕">
-                            《一起学 .NET Core》彻底重写完毕
-                        </a>
-                    </div>
-                </div>*@
-                <!--以此为一个单元，显示一条主题-->
                 @if(Model.ModelList.Count != 0)
                 {
                     @foreach(var item in Model.ModelList)
@@ -125,7 +100,14 @@
                                 }
                                 else
                                 {
-                                    <span class="topiclist-tab">@item.Type</span>
+                                    if(item.Good)
+                                    {
+                                        <span class="put_good">精华</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="topiclist-tab">@item.Type</span>
+                                    }
                                 }
                                 <a class="topic_title" href="@Url.Content($"/Topic/Index/{item.TopicId}")" title="@item.Title">
                                     @item.Title
