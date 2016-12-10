@@ -1,8 +1,5 @@
 ﻿@model TopicRepliesViewModel
 
-@using System.Security.Claims;
-
-
 @if(Model.Replies != null)
 {
     if(Model.Replies.Count() != 0)
@@ -11,10 +8,12 @@
             <div class="header">
                 <span class="col_fade"><span id="reply_count">@Model.Replies.Count()</span> 回复</span>
             </div>
-            @{ int index = 1;}
+            @{ 
+                int index = 1;
+            }
             @foreach(var item in Model.Replies)
             {
-                <div class="cell reply_area reply_item" id="reply @index++ " reply_id="@item.ReplyId" reply_to_id="@item.Reply_Id">
+                <div class="cell reply_area reply_item" id="reply @index " reply_id="@item.ReplyId" reply_to_id="@item.Reply_Id">
                     <a class="anchor" id="@item.ReplyId"></a>
                     <div class="author_content">
                         <a href="@Url.Content($"/User/Index/{item.Author_Id}")" class="user_avatar">
@@ -28,15 +27,6 @@
                             </a>
                         </div>
                         <div class="user_action">
-                            @*点赞按钮*@
-                            @*<span>
-                            @if(User.Claims.Any(p => p.Type == ClaimTypes.Name))
-                            {
-                                <i class="fa up_btn fa-thumbs-o-up" title="喜欢"></i>
-                                <span class="up-count"></span>
-                            }
-                            </span>*@
-                            @*点赞按钮*@
                             @if(Model.LoginUser != null)
                             {
                                 @if(Model.LoginUser.UserId == item.Author_Id)
@@ -59,7 +49,11 @@
                             @if(item.Html.StartsWith("<p>@"))
                             {
                                 var firstSpaceIndex = item.Html.IndexOf(' ');
-                                var atUserName = item.Html.Substring(3,firstSpaceIndex - 3);
+                                string atUserName = string.Empty;
+                                if(firstSpaceIndex == -1)
+                                { atUserName = item.Html.Substring(3,item.Html.Length - 8);}
+                                else
+                                { atUserName = item.Html.Substring(3,firstSpaceIndex - 3); }
                                 var replaceStr = $"<a href='/User/Index/{item.Author_Id}' style='float: left;'>{atUserName}</a>";
                                 @Html.Raw(item.Html.Replace(atUserName,replaceStr))
                             }
@@ -72,6 +66,7 @@
                     <div class="clearfix">
                         <div class="reply2_area">
                             <form class="reply2_form" action="@Url.Content($"/Reply/AddToReply/{item.ReplyId}")" method="post">
+                                @Html.AntiForgeryToken()
                                 <input type="hidden" name="reply_id" value="@item.ReplyId">
                                 <div class="markdown_editor in_editor">
                                     <div class="markdown_in_editor">

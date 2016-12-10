@@ -40,6 +40,8 @@ namespace RedMan.Controllers
         {
             ViewData["Error"] = true;
             ViewData["ReturnUrl"] = returnUrl;
+            model.Email = model.Email?.Trim();
+            model.Password = model.Password?.Trim();
             if(!ModelState.IsValid) {
                 return View(model);
             }
@@ -73,6 +75,10 @@ namespace RedMan.Controllers
         {
             ViewData["Error"] = true;
             ViewData["ReturnUrl"] = returnUrl;
+            model.Name = model.Name?.Trim();
+            model.Email = model.Email?.Trim();
+            model.Password = model.Password?.Trim();
+            model.ConfirmPassword = model.ConfirmPassword?.Trim();
             if(!ModelState.IsValid) {
                 return View(model);
             }

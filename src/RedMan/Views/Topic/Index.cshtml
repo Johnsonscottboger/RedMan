@@ -147,13 +147,14 @@
 
     @if(User.Claims.Any(p => p.Type == ClaimTypes.Name))
     {
-        <div class="panel">
+        <div class="panel" id="add_reply">
             <div class="header">
                 <span class="col_fade">添加回复</span>
             </div>
             @Html.ValidationSummary()
             <div class="inner reply">
                 <form id="reply_form" action="@Url.Content($"/Reply/Add/{Model.Topic.TopicId}")" method="post">
+                    @Html.AntiForgeryToken()
                     <div class="markdown_editor in_editor">
                         <div class="markdown_in_editor">
                             <textarea class='editor' name='r_content' rows='8'></textarea>

@@ -96,8 +96,8 @@ namespace RedMan.Controllers
         {
             ViewData["Action"] = "Add";
             ViewData["Error"] = true;
-            model.Title = model.Title.Trim();
-            model.Content = model.Content.Trim();
+            model.Title = model.Title?.Trim();
+            model.Content = model.Content?.Trim();
             if(!ModelState.IsValid)
             {
                 return View(model);
@@ -163,8 +163,8 @@ namespace RedMan.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(TopicViewModel model)
         {
-            model.Title = model.Title.Trim();
-            model.Content = model.Content.Trim();
+            model.Title = model.Title?.Trim();
+            model.Content = model.Content?.Trim();
 
             ViewData["Error"] = true;
             if(!ModelState.IsValid)

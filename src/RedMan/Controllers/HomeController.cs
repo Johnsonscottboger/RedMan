@@ -107,7 +107,7 @@ namespace RedMan.Controllers
                     UserName = topicUsers.Where(p => p.UserId == item.Author_Id).FirstOrDefault().Name,
                     RepliesCount = item.Reply_Count,
                     VisitsCount = item.Visit_Count,
-                    LastReplyUrl = item.Last_Reply_Id == null ? null : Url.Content($"/Topic/{item.TopicId}/#{item.Last_Reply_Id}"),
+                    LastReplyUrl = item.Last_Reply_Id == null ? null : Url.Content($"/Topic/Index/{item.TopicId}/#{item.Last_Reply_Id}"),
                     LastReplyUserAvatarUrl = item.Last_Reply_UserId == null ? null : topicUsers.Where(p => p.UserId == item.Last_Reply_UserId).FirstOrDefault().Avatar,
                     LastReplyDateTime = item.Last_ReplyDateTime.ToString(),
                     TopicId = item.TopicId,

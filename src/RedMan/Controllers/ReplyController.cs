@@ -39,8 +39,11 @@ namespace RedMan.Controllers
         /// <param name="id">话题ID</param>
         /// <param name="r_content">回复内容</param>
         /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(int id,string r_content)
         {
+            r_content = r_content?.Trim();
             var topic = await _topicRepo.FindAsync(p => p.TopicId == id);
             if(topic == null)
                 throw new Exception("话题找不到，或者已被删除");
@@ -95,8 +98,11 @@ namespace RedMan.Controllers
         /// <param name="id">回复ID</param>
         /// <param name="r_content">回复内容</param>
         /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddToReply(int id,string r_content)
         {
+            //r_content = r_content?.Trim();
             var loginUser = await _userRepo.FindAsync(p => p.Name == User.Identity.Name);
             if(loginUser == null)
                 return RedirectToAction("Login","Account");
@@ -104,6 +110,8 @@ namespace RedMan.Controllers
             if(reply == null)
                 throw new Exception("回复找不到，或已被删除");
             var topicId = reply.Topic_Id;
+            if(string.IsNullOrEmpty(r_content))
+                return new RedirectResult(Url.Content($"/Topic/Index/{topicId}"));
             var topic = await _topicRepo.FindAsync(p => p.TopicId == topicId);
             if(topic==null)
             {
@@ -174,6 +182,7 @@ namespace RedMan.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ReplyEditViewModel model)
         {
+            model.Content = model.Content.Trim();
             ViewData["Error"] = true;
             if(model != null)
                 model.Content = model.Content.Trim();

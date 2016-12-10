@@ -13,8 +13,6 @@ namespace RedMan.ViewModel
         public string Email { get; set; }
 
         [Required(ErrorMessage = "密码不能为空!")]
-        [MinLength(6,ErrorMessage ="密码长度过短")]
-        [MaxLength(16,ErrorMessage ="密码长度过长")]
         public string Password { get; set; }
     }
 }
