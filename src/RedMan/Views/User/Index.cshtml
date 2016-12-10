@@ -74,13 +74,17 @@
             <p class="col_fade">注册时间 @Model.User.CreateDateTime</p>
             @if(Model.LoginUserIsAdmin)
             {
-                if(Model.User.IsAdmin)
+                if(Model.User.Name != User.Identity.Name)
                 {
-                    <span class='span-common span-success' id='set_star_btn'>取消管理员</span>
-                }
-                else
-                {
-                    <span class='span-common' id='set_star_btn'>设为管理员</span>
+                    if(Model.User.IsAdmin)
+                    {
+                        <span class='span-common span-success' id='set_star_btn'>取消管理员</span>
+                    }
+                    else
+                    {
+                        <span class='span-common' id='set_star_btn'>设为管理员</span>
+                    }
+
                 }
 
             }
