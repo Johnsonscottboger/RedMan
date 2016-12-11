@@ -26,11 +26,9 @@ namespace RedMan.Controllers
             this._userRepo = new Repository<User>(context);
             this._msgRepo = new Repository<Message>(context);
         }
-
         public async Task<IActionResult> Index()
         {
-            var loginUserName = User.Identity.Name;
-            var loginUser = await _userRepo.FindAsync(p => p.Name == loginUserName);
+            var loginUser = await _userRepo.FindAsync(p => p.Name == User.Identity.Name);
             if(loginUser == null)
                 throw new Exception("找不到用户，或已被删除");
             var unreadMsg = await _msgRepo.FindAllDelayAsync(p => p.ToUserId == loginUser.UserId && !p.Has_Read);
@@ -40,8 +38,7 @@ namespace RedMan.Controllers
         [HttpPost]
         public async Task<IActionResult> ReadMessage()
         {
-            var loginUserName = User.Identity.Name;
-            var loginUser = await _userRepo.FindAsync(p => p.Name == loginUserName);
+            var loginUser = await _userRepo.FindAsync(p => p.Name == User.Identity.Name);
             if(loginUser == null)
                 throw new Exception("找不到用户，或已被删除");
             var unreadMsg = await _msgRepo.FindAllDelayAsync(p => p.ToUserId == loginUser.UserId && p.Has_Read);

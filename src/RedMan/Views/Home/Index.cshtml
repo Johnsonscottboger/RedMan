@@ -93,6 +93,12 @@
                                     <span class="last_active_time">@item.LastReplyDateTime</span>
                                 </a>
                             }
+                            else
+                            {
+                                <a class="last_time pull-right" href="@Url.Content($"/Topic/Index/{item.TopicId}")">
+                                    <span class="last_active_time">@item.CreateDateTime</span>
+                                </a>
+                            }
                             <div class="topic_title_wrapper">
                                 @if(item.Top)
                                 {

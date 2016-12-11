@@ -48,10 +48,7 @@ namespace RedMan.Controllers
             if(topic == null)
                 throw new Exception("话题找不到，或者已被删除");
             if(string.IsNullOrEmpty(r_content))
-            {
-                ModelState.AddModelError("","请输入回复内容");
                 return new RedirectResult(Url.Content($"/Topic/Index/{id}"));
-            }
             var loginUser = await _userRepo.FindAsync(p => p.Name == User.Identity.Name);
             if(loginUser == null)
             {
@@ -103,9 +100,6 @@ namespace RedMan.Controllers
         public async Task<IActionResult> AddToReply(int id,string r_content)
         {
             //r_content = r_content?.Trim();
-            var loginUser = await _userRepo.FindAsync(p => p.Name == User.Identity.Name);
-            if(loginUser == null)
-                return RedirectToAction("Login","Account");
             var reply = await _replyRepo.FindAsync(p => p.ReplyId == id);
             if(reply == null)
                 throw new Exception("回复找不到，或已被删除");
@@ -117,6 +111,11 @@ namespace RedMan.Controllers
             {
                 ModelState.AddModelError("","话题找不到，或者已被删除");
                 return RedirectToAction("Index","Home");
+            }
+            var loginUser = await _userRepo.FindAsync(p => p.Name == User.Identity.Name);
+            if(loginUser == null)
+            {
+                return new RedirectResult(Url.Action("Login","Account"));
             }
             var replyToReply = new Reply()
             {

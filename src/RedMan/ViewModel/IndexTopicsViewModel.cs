@@ -20,6 +20,7 @@ namespace RedMan.ViewModel
         public string Title { get; set; }
         public bool Top { get; set; }
         public bool Good { get; set; }
+        public string CreateDateTime { get; set; }
     }
 
     /// <summary>

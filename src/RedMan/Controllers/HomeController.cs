@@ -7,10 +7,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Web.Model.Context;
 using Web.Model.Entities;
 using Web.Model.Paging;
+using Web.DataAccess.ExpressionExtend;
 
 namespace RedMan.Controllers
 {
@@ -33,9 +35,9 @@ namespace RedMan.Controllers
         [Route("")]
         [Route("Home/Index/{tab}")]
         [Route("Home/Index/{tab}/{q}")]
-        public async Task<IActionResult> Index(int tab,string q = null, int pageIndex = 1)
+        public async Task<IActionResult> Index(int tab,string q = null,int pageIndex = 1)
         {
-            var pageSize = GetPageSize("Home/Index") ?? 40;
+            var pageSize = (await GetPageSize("Home/Index")) ?? 40;
             var pagingModel = new PagingModel<Topic>()
             {
                 ModelList = new List<Topic>(),
@@ -45,57 +47,48 @@ namespace RedMan.Controllers
                     ItemsPerPage = pageSize
                 }
             };
+
+            Expression<Func<Topic,bool>> predicate = p => !p.Deleted;
+            switch(tab)
+            {
+                case 0:
+                break;
+                case 1:
+                predicate = predicate.And(p => p.Good);
+                break;
+                default:
+                predicate = predicate.And(p => p.Type == tab);
+                break;
+            }
             if(!string.IsNullOrEmpty(q))
             {
                 ViewData["q"] = q;
                 if(tab == 0)
-                {
-                    pagingModel = await _topicRepo.FindPagingOrderByDescendingAsync(p => !p.Deleted && (p.Title.Contains(q) || p.Content.Contains(q)),p => p.CreateDateTime,pagingModel);
-                }
-                else
-                {
-                    pagingModel = await _topicRepo.FindPagingOrderByDescendingAsync(p => !p.Deleted && p.Type == tab && (p.Title.Contains(q) || p.Content.Contains(q)),p => p.CreateDateTime,pagingModel);
-                }
+                    predicate = predicate.And(p => (p.Title.Contains(q) || p.Content.Contains(q)));
             }
-            else
-            {
-                if(tab == 0)
-                {
-                    pagingModel = await _topicRepo.FindPagingOrderByDescendingAsync(p => !p.Deleted,p => p.CreateDateTime,pagingModel);
-                }
-                else
-                {
-                    if(tab == 1)
-                        pagingModel = await _topicRepo.FindPagingOrderByDescendingAsync(p => !p.Deleted && p.Good, p => p.CreateDateTime,pagingModel);
-                    else
-                        pagingModel = await _topicRepo.FindPagingOrderByDescendingAsync(p => !p.Deleted && p.Type == tab,p => p.CreateDateTime,pagingModel);
-                }
-            }
-            
-            
-            var pagingViewModel = GetViewModel(pagingModel,tab);
+            pagingModel = await _topicRepo.FindPagingOrderByDescendingAsync(predicate,p => p.Top,pagingModel);
+
+            var pagingViewModel = await GetViewModel(pagingModel,tab);
             ViewData["tab"] = tab;
             return View(pagingViewModel);
         }
-        
+
         public IActionResult Error()
         {
             return Content("很简单的告诉你，出错了!");
         }
-        public PagingModel<IndexTopicsViewModel> GetViewModel(PagingModel<Topic> pagingModel, int tab = 0)
+
+        public async Task<PagingModel<IndexTopicsViewModel>> GetViewModel(PagingModel<Topic> pagingModel,int tab = 0)
         {
-            pagingModel.ModelList = pagingModel.ModelList.OrderByDescending(p => p.Top).ToList();
             var pagingViewModel = new PagingModel<IndexTopicsViewModel>();
             pagingViewModel.ModelList = new List<IndexTopicsViewModel>();
             pagingViewModel.PagingInfo = pagingModel.PagingInfo;
 
-            var topicUsers = new List<User>();
-            pagingModel.ModelList.ForEach(item =>
-            {
-                topicUsers.AddRange(_userRepo.FindAll(p => p.UserId == item.Author_Id || p.UserId == item.Last_Reply_UserId).Distinct());
-            });
+            //根据话题,查找相关用户
+            var topicAuthors = await _userRepo.JoinAsync(pagingModel.ModelList,user => user.UserId,topic => topic.Author_Id,(user,topic) => user);
+            var topicLastReplyUsers = await _userRepo.JoinAsync(pagingModel.ModelList,user => user.UserId,topic => topic.Last_Reply_UserId,(user,topic) => user);
+            var topicUsers = topicAuthors.Concat(topicLastReplyUsers);
 
-            pagingModel.ModelList.OrderByDescending(p => p.CreateDateTime);
             pagingModel.ModelList.ForEach(item =>
             {
                 pagingViewModel.ModelList.Add(new IndexTopicsViewModel()
@@ -112,12 +105,14 @@ namespace RedMan.Controllers
                     LastReplyDateTime = item.Last_ReplyDateTime.ToString(),
                     TopicId = item.TopicId,
                     Title = item.Title,
-                    Top=item.Top,
-                    Good=item.Good
+                    Top = item.Top,
+                    Good = item.Good,
+                    CreateDateTime=item.CreateDateTime.ToString()
                 });
             });
             return pagingViewModel;
         }
+
         #region 附加方法
 
         /// <summary>
@@ -125,13 +120,16 @@ namespace RedMan.Controllers
         /// </summary>
         /// <param name="wherePageSize">分页位置</param>
         /// <returns></returns>
-        private int? GetPageSize(string wherePageSize)
+        private async Task<int?> GetPageSize(string wherePageSize)
         {
-            var directory = Directory.GetCurrentDirectory();
-            IConfigurationRoot configuration = new ConfigurationBuilder().AddJsonFile($"{directory}/appsettings.json",true,true).Build();
-            var pagingConfig = configuration.GetSection("Paging");
-            var pageSize = pagingConfig.GetValue(typeof(int),wherePageSize);
-            return (int?)pageSize;
+            return await Task.Factory.StartNew(() => 
+            {
+                var directory = Directory.GetCurrentDirectory();
+                IConfigurationRoot configuration = new ConfigurationBuilder().AddJsonFile($"{directory}/appsettings.json",true,true).Build();
+                var pagingConfig = configuration.GetSection("Paging");
+                var pageSize = pagingConfig.GetValue(typeof(int),wherePageSize);
+                return (int?)pageSize;
+            });
         }
 
         #endregion
