@@ -528,6 +528,42 @@ namespace RedMan.DataAccess.Repository {
         }
         #endregion
 
+        #region 联接查询
+
+        /// <summary>
+        /// 内连接查询
+        /// </summary>
+        /// <typeparam name="TInner">要联接的序列类型</typeparam>
+        /// <typeparam name="TKey">联接键的类型</typeparam>
+        /// <typeparam name="TResult">返回值类型</typeparam>
+        /// <param name="inner">要联接的序列</param>
+        /// <param name="outerKeySelector">用于从第一个序列的每个元素提取联接键的函数</param>
+        /// <param name="innerKeySelector">用于从第二个序列的每个元素提取联接键的函数</param>
+        /// <param name="resultSelector">用于从两个匹配元素创建结果元素的函数</param>
+        /// <returns></returns>
+        public IEnumerable<TResult> Join<TInner, TKey, TResult>(IEnumerable<TInner> inner,Func<T,TKey> outerKeySelector,Func<TInner,TKey> innerKeySelector,Func<T,TInner,TResult> resultSelector)
+        {
+            return dbSet.Join(inner,outerKeySelector,innerKeySelector,resultSelector);
+        }
+
+        /// <summary>
+        /// 内连接查询
+        /// </summary>
+        /// <typeparam name="TInner">要联接的序列类型</typeparam>
+        /// <typeparam name="TKey">联接键的类型</typeparam>
+        /// <typeparam name="TResult">返回值类型</typeparam>
+        /// <param name="inner">要联接的序列</param>
+        /// <param name="outerKeySelector">用于从第一个序列的每个元素提取联接键的函数</param>
+        /// <param name="innerKeySelector">用于从第二个序列的每个元素提取联接键的函数</param>
+        /// <param name="resultSelector">用于从两个匹配元素创建结果元素的函数</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<TResult>> JoinAsync<TInner, TKey, TResult>(IEnumerable<TInner> inner,Func<T,TKey> outerkeySelector,Func<TInner,TKey> innerkeySelector,Func<T,TInner,TResult> resultSelector)
+        {
+            return await Task.Factory.StartNew(() => dbSet.Join(inner,outerkeySelector,innerkeySelector,resultSelector));
+        }
+
+        #endregion
+
         #region 是否存在
         /// <summary>
         /// 是否存在
@@ -597,6 +633,7 @@ namespace RedMan.DataAccess.Repository {
         {
             return await dbSet.CountAsync(predicate);
         }
+
         #endregion
     }
 }
