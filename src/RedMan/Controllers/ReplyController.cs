@@ -215,7 +215,7 @@ namespace RedMan.Controllers
         {
             var reply = await _replyRepo.FindAsync(p => p.ReplyId == id);
             if(reply == null)
-                return Json(new { status = "faile" });
+                return Json(new { status = "fail" });
             reply.Deleted = true;
             await _replyRepo.UpdateAsync(reply,false);
             var topic = await _topicRepo.FindAsync(p => p.TopicId == reply.Topic_Id);
@@ -224,7 +224,7 @@ namespace RedMan.Controllers
             if(topicSuccess)
                 return Json(new { status = "success" });
             else
-                return Json(new { status = "faile" });
+                return Json(new { status = "fail" });
         }
 
         /// <summary>

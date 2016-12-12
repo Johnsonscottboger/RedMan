@@ -53,7 +53,7 @@ namespace RedMan.Controllers
         public async Task<IActionResult> Index(int id)
         {
             var loginUser = await _userRepo.FindAsync(p => p.Name == User.Identity.Name);
-            
+
             var user = await _userRepo.FindAsync(p => p.UserId == id);
             if(user == null)
                 throw new Exception("用户找不到，或者已被删除");
@@ -61,15 +61,15 @@ namespace RedMan.Controllers
             var topic_Pub = await _topicRepo.FindTopDelayAsync(10,p => p.Author_Id == user.UserId,p => p.CreateDateTime);
             //获取用户发布过的回复
             var reply_Pub = await _replyRepo.FindTopDelayAsync(10,p => p.Author_Id == user.UserId,p => p.CreateDateTime);
-            var topic_Reply = GetTopicByReply(reply_Pub);
+            var topic_Reply = await GetTopicByReply(reply_Pub);
             UserViewModel userViewModel;
             if(topic_Pub != null && topic_Reply != null)
             {
                 userViewModel = new UserViewModel()
                 {
-                    LoginUserIsAdmin=loginUser.IsAdmin,
+                    LoginUserIsAdmin = loginUser.IsAdmin,
                     User = user,
-                    Topic_Published = topic_Pub.Distinct(),
+                    Topic_Published = topic_Pub,
                     Topic_Join = topic_Reply.Distinct()
                 };
             }
@@ -77,7 +77,7 @@ namespace RedMan.Controllers
             {
                 userViewModel = new UserViewModel()
                 {
-                    LoginUserIsAdmin=loginUser.IsAdmin,
+                    LoginUserIsAdmin = loginUser.IsAdmin,
                     User = user
                 };
             }
@@ -97,7 +97,7 @@ namespace RedMan.Controllers
             var user = await _userRepo.FindAsync(p => p.UserId == id);
             if(user == null)
                 throw new Exception("用户找不到，或者已被删除");
-            var pageSize = GetPageSize("User/AllTopic") ?? 40;
+            var pageSize =(await GetPageSize("User/AllTopic")) ?? 40;
             //数据源
             var pagingModel = new PagingModel<Topic>()
             {
@@ -132,13 +132,12 @@ namespace RedMan.Controllers
 
                 //获取用户发布过的回复
                 var reply_Pub = await _replyRepo.FindPagingOrderByDescendingAsync(p => p.Author_Id == user.UserId,p => p.CreateDateTime,replyPagingModel);
-                var topic_Reply = GetTopicByReply(reply_Pub.ModelList);
+                var topic_Reply = await GetTopicByReply(reply_Pub.ModelList);
                 pagingModel.ModelList = topic_Reply.Distinct().ToList();
                 //查找相关用户
-                pagingModel.ModelList.ForEach(item =>
-                {
-                    topicUsers.AddRange(_userRepo.FindAll(p => p.UserId == item.Author_Id || p.UserId == item.Last_Reply_UserId).Distinct());
-                });
+                var topicAuthors = await _userRepo.JoinAsync(pagingModel.ModelList,author => author.UserId,topic => topic.Author_Id,(author,topic) => author);
+                var topicLastReplyUsers = await _userRepo.JoinAsync(pagingModel.ModelList,replyUser => replyUser.UserId,topic => topic.Last_Reply_UserId,(replyUser,topic) => replyUser);
+                topicUsers = topicAuthors.Concat(topicLastReplyUsers).ToList();
             }
 
             //分页视图模型
@@ -180,7 +179,7 @@ namespace RedMan.Controllers
             var user = await _userRepo.FindAsync(p => p.UserId == id);
             if(user == null)
                 throw new Exception("用户找不到，或者已被删除");
-            var pageSize = GetPageSize("User/AllTopic") ?? 40;
+            var pageSize = (await GetPageSize("User/AllTopic")) ?? 40;
             //数据源
             var pagingModel = new PagingModel<Topic>()
             {
@@ -218,16 +217,12 @@ namespace RedMan.Controllers
             };
             var collectTopicId = await _topicCollectRepo.FindPagingAsync(p => p.UserId == user.UserId,collectTopicIdPagingModel);
 
-            collectTopicId.ModelList.ForEach(item =>
-            {
-                pagingModel.ModelList.Add(_topicRepo.Find(p => p.TopicId == item.TopicId));
-            });
+            pagingModel.ModelList = (await _topicRepo.JoinAsync(collectTopicId.ModelList,topic => topic.TopicId,topicCollect => topicCollect.TopicId,(topic,topicCollect) => topic)).ToList();
 
             //查找相关用户
-            pagingModel.ModelList.ForEach(item =>
-            {
-                topicUsers.AddRange(_userRepo.FindAll(p => p.UserId == item.Author_Id || p.UserId == item.Last_Reply_UserId).Distinct());
-            });
+            var topicAuthors = await _userRepo.JoinAsync(pagingModel.ModelList,author => author.UserId,topic => topic.Author_Id,(author,topic) => author);
+            var topicLastReplyUsers = await _userRepo.JoinAsync(pagingModel.ModelList,replyUser => replyUser.UserId,topic => topic.Last_Reply_UserId,(replyUser,topic) => replyUser);
+            topicUsers = topicAuthors.Concat(topicLastReplyUsers).ToList();
 
             //分页视图模型
             var pagingViewModel = new PagingModel<IndexTopicsViewModel>();
@@ -457,12 +452,9 @@ namespace RedMan.Controllers
         /// </summary>
         /// <param name="replies">回复列表</param>
         /// <returns></returns>
-        public IEnumerable<Topic> GetTopicByReply(IEnumerable<Reply> replies)
+        public async Task<IEnumerable<Topic>> GetTopicByReply(IEnumerable<Reply> replies)
         {
-            foreach(var item in replies)
-            {
-                yield return _topicRepo.Find(p => p.TopicId == item.Topic_Id);
-            }
+            return await _topicRepo.JoinAsync(replies,topic => topic.TopicId,reply => reply.Topic_Id,(topic,reply) => topic);
         }
 
         /// <summary>
@@ -470,13 +462,16 @@ namespace RedMan.Controllers
         /// </summary>
         /// <param name="wherePageSize">分页位置</param>
         /// <returns></returns>
-        private int? GetPageSize(string wherePageSize)
+        private static async Task<int?> GetPageSize(string wherePageSize)
         {
-            var directory = Directory.GetCurrentDirectory();
-            IConfigurationRoot configuration = new ConfigurationBuilder().AddJsonFile($"{directory}/appsettings.json",true,true).Build();
-            var pagingConfig = configuration.GetSection("Paging");
-            var pageSize = pagingConfig.GetValue(typeof(int),wherePageSize);
-            return (int?)pageSize;
+            return await Task.Factory.StartNew(() =>
+            {
+                var directory = Directory.GetCurrentDirectory();
+                IConfigurationRoot configuration = new ConfigurationBuilder().AddJsonFile($"{directory}/appsettings.json",true,true).Build();
+                var pagingConfig = configuration.GetSection("Paging");
+                var pageSize = pagingConfig.GetValue(typeof(int),wherePageSize);
+                return (int?)pageSize;
+            });
         }
         #endregion
     }

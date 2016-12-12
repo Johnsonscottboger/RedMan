@@ -82,7 +82,7 @@ namespace RedMan.Controllers
         {
             ViewData["Error"] = false;
             ViewData["Action"] = "Add";
-            return View(new TopicViewModel() { Title=string.Empty,Content=string.Empty});
+            return View(new TopicViewModel());
         }
 
         /// <summary>
@@ -102,8 +102,7 @@ namespace RedMan.Controllers
             {
                 return View(model);
             }
-            var loginUserName = User.Identity.Name;
-            var loginUser = await _userRepo.FindAsync(p => p.Name == loginUserName);
+            var loginUser = await _userRepo.FindAsync(p => p.Name == User.Identity.Name);
             if(loginUser == null)
             {
                 ModelState.AddModelError("","用户找不到");
@@ -206,7 +205,11 @@ namespace RedMan.Controllers
         public async Task<JsonResult> Upload(IFormFile file)
         {
             var fileSplit = file.FileName.Split('.');
+            if(fileSplit.Length <= 1)
+                return Json(new { success = false,message = "无法识别的扩展名" });
             var fileExtenions = "."+fileSplit[fileSplit.Length - 1];
+            if(fileExtenions.ToLower() != ".jpg" && fileExtenions.ToLower() != ".png")
+                return Json(new { success = false,message = "请上传 .jpg 或者 .png格式的图片" });
             var fileName = UploadFile.DateTimeToUnixTimestamp(DateTime.Now)+ fileExtenions;
             var filePath = await new UploadFile(env).UploadImage(file,fileName);
             return Json(new { success = true,url = filePath });
@@ -275,8 +278,7 @@ namespace RedMan.Controllers
         [HttpPost]
         public async Task<IActionResult> CollecteDel(int id)
         {
-            var loginUserName = User.Identity.Name;
-            var loginUser = await _userRepo.FindAsync(p => p.Name == loginUserName);
+            var loginUser = await _userRepo.FindAsync(p => p.Name == User.Identity.Name);
             if(loginUser == null)
                 return Json(new { status = "error" });
             loginUser.Collect_Topic_Count -= 1;

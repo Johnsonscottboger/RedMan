@@ -6,8 +6,7 @@
     ViewData["Title"] = "登录";
 }
 @section sidebar{
-    <div id="sidebar">
-        <!--右侧关于-->
+    @*<div id="sidebar">
         <div class="panel">
             <div class="header">
                 <span class="col_fade">关于</span>
@@ -23,7 +22,9 @@
                 </ul>
             </div>
         </div>
-    </div>
+    </div>*@
+
+    @await Html.PartialAsync("_PartialAccountSidebar")
 }
 
 <div id="content">
