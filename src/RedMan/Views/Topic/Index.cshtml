@@ -89,7 +89,7 @@
                 }
             </div>
             <div id="manage_topic">
-                @if(Model.Author.Name == User.Identity.Name || Model.LoginUser.IsAdmin)
+                @if(Model.Author.Name == User.Identity.Name || (Model.LoginUser != null && Model.LoginUser.IsAdmin))
                 {
                     <a href="@Url.Content($"/Topic/Edit/{Model.Topic.TopicId}")">
                         <i class="fa fa-lg fa-pencil-square-o" title="编辑"></i>
@@ -98,7 +98,7 @@
                         <i class="fa fa-lg fa-trash" title="删除"></i>
                     </a>
 
-                    if(Model.LoginUser.IsAdmin)
+                    if(Model.LoginUser!=null && Model.LoginUser.IsAdmin)
                     {
                         @*置顶*@
                         <a class="topic_top_good" id="@Url.Content($"/Topic/Top/{Model.Topic.TopicId}")" href="javascript:;" data-method="post">
