@@ -66,8 +66,8 @@ namespace RedMan.Controllers
                 if(tab == 0)
                     predicate = predicate.And(p => (p.Title.Contains(q) || p.Content.Contains(q)));
             }
-            pagingModel = await _topicRepo.FindPagingOrderByDescendingAsync(predicate,p => p.Top,pagingModel);
-
+            pagingModel = await _topicRepo.FindPagingOrderByDescendingAsync(predicate,p => p.CreateDateTime,pagingModel);
+            pagingModel.ModelList = pagingModel.ModelList.OrderByDescending(p => p.Top).ToList();
             var pagingViewModel = await GetViewModel(pagingModel,tab);
             ViewData["tab"] = tab;
             return View(pagingViewModel);
