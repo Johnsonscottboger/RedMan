@@ -6,28 +6,22 @@
     <meta name="description" content="CNode：Node.js专业中文社区">
     <!-- style -->
     <link rel="stylesheet" href="~/css/index.min.3c50e680.min.css" media="all">
-    @*<link rel="stylesheet" href="~/libs/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/stylesheets/common.css" />
-    <link rel="stylesheet" href="~/stylesheets/style.less" />
-    <link rel="stylesheet" href="~/stylesheets/responsive.css" />
-    <link rel="stylesheet" href="~/stylesheets/jquery.atwho.css" />
-    <link rel="stylesheet" href="~/libs/editor/editor.css" />
-    <link rel="stylesheet" href="~/libs/webuploader/webuploader.css" />
-    <link rel="stylesheet" href="~/libs/code-prettify/prettify.css" />
-    <link rel="stylesheet" href="~/libs/font-awesome/css/font-awesome.css" />*@
-
-    <script type="text/javascript" src="~/libs/jquery-2.1.0.js"></script>
-    <script type="text/javascript" src="~/libs/lodash.compat.js"></script>
-    <script type="text/javascript" src="~/libs/jquery-ujs.js"></script>
-    <script type="text/javascript" src="~/libs/bootstrap/js/bootstrap.js"></script>
-    <script type="text/javascript" src="~/libs/jquery.caret.js"></script>
-    <script type="text/javascript" src="~/libs/jquery.atwho.js"></script>
-    <script type="text/javascript" src="~/libs/markdownit.js"></script>
-    <script type="text/javascript" src="~/libs/code-prettify/prettify.js"></script>
-    <script type="text/javascript" src="~/libs/qrcode.js"></script>
-    <script type="text/javascript" src="~/javascripts/main.js"></script>
-    <script type="text/javascript" src="~/javascripts/responsive.js"></script>
-
+    <environment names="Staging,Production">
+        <script type="text/javascript" src="~/js/site.min.js"></script>
+    </environment>
+    <environment names="Development">
+        <script type="text/javascript" src="~/libs/jquery-2.1.0.js"></script>
+        <script type="text/javascript" src="~/libs/lodash.compat.js"></script>
+        <script type="text/javascript" src="~/libs/jquery-ujs.js"></script>
+        <script type="text/javascript" src="~/libs/bootstrap/js/bootstrap.js"></script>
+        <script type="text/javascript" src="~/libs/jquery.caret.js"></script>
+        <script type="text/javascript" src="~/libs/jquery.atwho.js"></script>
+        <script type="text/javascript" src="~/libs/markdownit.js"></script>
+        <script type="text/javascript" src="~/libs/code-prettify/prettify.js"></script>
+        <script type="text/javascript" src="~/libs/qrcode.js"></script>
+        <script type="text/javascript" src="~/javascripts/main.js"></script>
+        <script type="text/javascript" src="~/javascripts/responsive.js"></script>
+    </environment>
     <title>@ViewData["Title"]</title>
 </head>
 <body>

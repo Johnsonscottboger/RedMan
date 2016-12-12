@@ -11,7 +11,17 @@
   {
     "outputFileName": "wwwroot/js/site.min.js",
     "inputFiles": [
-      "wwwroot/js/site.js"
+      "wwwroot//libs/jquery-2.1.0.js",
+      "wwwroot//libs/lodash.compat.js",
+      "wwwroot//libs/jquery-ujs.js",
+      "wwwroot//libs/bootstrap/js/bootstrap.js",
+      "wwwroot//libs/jquery.caret.js",
+      "wwwroot//libs/jquery.atwho.js",
+      "wwwroot//libs/markdownit.js",
+      "wwwroot//libs/code-prettify/prettify.js",
+      "wwwroot//libs/qrcode.js",
+      "wwwroot//javascripts/main.js",
+      "wwwroot//javascripts/responsive.js"
     ],
     // Optionally specify minification options
     "minify": {
