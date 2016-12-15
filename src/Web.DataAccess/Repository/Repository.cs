@@ -414,7 +414,7 @@ namespace RedMan.DataAccess.Repository {
             if (pagingModel.ModelList == null)
                 throw new NullReferenceException("PagingModel.ModelList为NULL");
             pagingModel.PagingInfo.TotalItems += dbSet.Count(predicate);
-            var result= dbSet.Where(predicate).Skip((Int32)((pagingModel.PagingInfo.CurrentPage - 1) * pagingModel.PagingInfo.ItemsPerPage)).Take((Int32)(pagingModel.PagingInfo.ItemsPerPage)).AsNoTracking();
+            var result= dbSet.AsNoTracking().Where(predicate).Skip((Int32)((pagingModel.PagingInfo.CurrentPage - 1) * pagingModel.PagingInfo.ItemsPerPage)).Take((Int32)(pagingModel.PagingInfo.ItemsPerPage));
             pagingModel.ModelList.AddRange(result);
             return pagingModel;
         }
@@ -433,7 +433,7 @@ namespace RedMan.DataAccess.Repository {
             if (pagingModel.ModelList == null)
                 throw new NullReferenceException("PagingModel.ModelList为NULL");
             pagingModel.PagingInfo.TotalItems += await dbSet.CountAsync(predicate);
-            var result= await dbSet.Where(predicate).Skip((int)((pagingModel.PagingInfo.CurrentPage - 1) * pagingModel.PagingInfo.ItemsPerPage)).Take((int)(pagingModel.PagingInfo.ItemsPerPage)).AsNoTracking().ToListAsync();
+            var result= await dbSet.AsNoTracking().Where(predicate).Skip((int)((pagingModel.PagingInfo.CurrentPage - 1) * pagingModel.PagingInfo.ItemsPerPage)).Take((int)(pagingModel.PagingInfo.ItemsPerPage)).ToListAsync();
             pagingModel.ModelList.AddRange(result);
             return pagingModel;
         }
@@ -455,7 +455,7 @@ namespace RedMan.DataAccess.Repository {
             if (pagingModel.ModelList == null)
                 throw new NullReferenceException("PagingModel.ModelList为NULL");
             pagingModel.PagingInfo.TotalItems += dbSet.Count(predicate);
-            var result = dbSet.Where(predicate).OrderBy(orderKey).Skip((Int32)((pagingModel.PagingInfo.CurrentPage - 1) * pagingModel.PagingInfo.ItemsPerPage)).Take((Int32)(pagingModel.PagingInfo.ItemsPerPage)).AsNoTracking();
+            var result = dbSet.AsNoTracking().Where(predicate).OrderBy(orderKey).Skip((Int32)((pagingModel.PagingInfo.CurrentPage - 1) * pagingModel.PagingInfo.ItemsPerPage)).Take((Int32)(pagingModel.PagingInfo.ItemsPerPage));
             pagingModel.ModelList.AddRange(result);
             return pagingModel;
         }
@@ -477,7 +477,7 @@ namespace RedMan.DataAccess.Repository {
             if (pagingModel.ModelList == null)
                 throw new NullReferenceException("PagingModel.ModelList为NULL");
             pagingModel.PagingInfo.TotalItems += await dbSet.CountAsync(predicate);
-            var result = await dbSet.Where(predicate).OrderBy(orderKey).Skip((int)((pagingModel.PagingInfo.CurrentPage - 1) * pagingModel.PagingInfo.ItemsPerPage)).Take((int)(pagingModel.PagingInfo.ItemsPerPage)).AsNoTracking().ToListAsync();
+            var result = await dbSet.AsNoTracking().Where(predicate).OrderBy(orderKey).Skip((int)((pagingModel.PagingInfo.CurrentPage - 1) * pagingModel.PagingInfo.ItemsPerPage)).Take((int)(pagingModel.PagingInfo.ItemsPerPage)).ToListAsync();
             pagingModel.ModelList.AddRange(result);
             return pagingModel;
         }
@@ -499,7 +499,7 @@ namespace RedMan.DataAccess.Repository {
             if (pagingModel.ModelList == null)
                 throw new NullReferenceException("PagingModel.ModelList为NULL");
             pagingModel.PagingInfo.TotalItems += dbSet.Count(predicate);
-            var result = dbSet.Where(predicate).OrderByDescending(orderKey).Skip((Int32)((pagingModel.PagingInfo.CurrentPage - 1) * pagingModel.PagingInfo.ItemsPerPage)).Take((Int32)(pagingModel.PagingInfo.ItemsPerPage)).AsNoTracking();
+            var result = dbSet.AsNoTracking().Where(predicate).OrderByDescending(orderKey).Skip((Int32)((pagingModel.PagingInfo.CurrentPage - 1) * pagingModel.PagingInfo.ItemsPerPage)).Take((Int32)(pagingModel.PagingInfo.ItemsPerPage));
             if(result.Count() != 0) {
                 pagingModel.ModelList.AddRange(result);
             }
@@ -522,7 +522,7 @@ namespace RedMan.DataAccess.Repository {
             if (pagingModel.ModelList == null)
                 throw new NullReferenceException("PagingModel.ModelList为NULL");
             pagingModel.PagingInfo.TotalItems += await dbSet.CountAsync(predicate);
-            var result = await dbSet.Where(predicate).OrderByDescending(orderKey).Skip((int)((pagingModel.PagingInfo.CurrentPage - 1) * pagingModel.PagingInfo.ItemsPerPage)).Take((int)(pagingModel.PagingInfo.ItemsPerPage)).AsNoTracking().ToListAsync();
+            var result = await dbSet.AsNoTracking().Where(predicate).OrderByDescending(orderKey).Skip((int)((pagingModel.PagingInfo.CurrentPage - 1) * pagingModel.PagingInfo.ItemsPerPage)).Take((int)(pagingModel.PagingInfo.ItemsPerPage)).ToListAsync();
             pagingModel.ModelList.AddRange(result);
             return pagingModel;
         }
