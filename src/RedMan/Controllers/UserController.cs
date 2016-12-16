@@ -445,6 +445,18 @@ namespace RedMan.Controllers
             }
         }
 
+
+        /// <summary>
+        /// 忘记密码
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        public IActionResult ForgetPassword()
+        {
+            ViewData["Error"] = false;
+            return View();
+        }
+        
         #region 辅助方法
 
         /// <summary>

@@ -33,6 +33,7 @@ namespace RedMan {
                options.UseSqlServer(Configuration.GetConnectionString("SqlServerConnection")));
 
             // Add framework services.
+            services.AddResponseCaching();
             services.AddMyIdentity();
             services.AddMvc();
         }
@@ -54,6 +55,7 @@ namespace RedMan {
                 //app.UseExceptionHandler("/Home/Error");
             }
 
+            app.UseResponseCaching();
             app.UseStaticFiles();
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {

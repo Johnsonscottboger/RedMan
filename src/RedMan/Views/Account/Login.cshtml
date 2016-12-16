@@ -6,24 +6,6 @@
     ViewData["Title"] = "登录";
 }
 @section sidebar{
-    @*<div id="sidebar">
-        <div class="panel">
-            <div class="header">
-                <span class="col_fade">关于</span>
-            </div>
-            <div class="inner">
-                <p>红人社区</p>
-                <p>在这里你可以：</p>
-                <ul>
-                    <li>向别人提出你遇到的问题</li>
-                    <li>帮助遇到问题的人</li>
-                    <li>分享自己的知识</li>
-                    <li>和其它人一起进步</li>
-                </ul>
-            </div>
-        </div>
-    </div>*@
-
     @await Html.PartialAsync("_PartialAccountSidebar")
 }
 
@@ -38,7 +20,6 @@
         <div class="inner">
             <form id="signin_form" class="form-horizontal" asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
                 @Html.AntiForgeryToken()
-                @*<div asp-validation-summary="All" class="text-danger"></div>*@
                 @if((bool)ViewData["Error"]) {
                     <div class="alert alert-error">
                         <a class="close" data-dismiss="alert" href="#">&times;</a>
@@ -49,14 +30,12 @@
                     <label class="control-label" for="Email">邮箱</label>
                     <div class="controls">
                         <input class="input-xlarge" id="Email" name="Email" size="30" type="text" placeholder="请输入邮箱">
-                        @*<span asp-validation-for="Email" class="text-danger"></span>*@
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" for="Password">密码</label>
                     <div class="controls">
                         <input class="input-xlarge" id="Password" name="Password" size="30" type="password" placeholder="请输入密码">
-                        @*<span asp-validation-for="Password" class="text-danger"></span>*@
                     </div>
                 </div>
                 <div class="form-actions">
@@ -66,7 +45,7 @@
                             注册
                         </span>
                     </a>
-                    <a id="forgot_password" href="http://cnodejs.org/search_pass">忘记密码了?</a>
+                    @*<a id="forgot_password" href="@Url.Content("/User/ForgetPassword")">忘记密码了?</a>*@
                 </div>
             </form>
         </div>

@@ -35,6 +35,7 @@ namespace RedMan.Controllers
         [Route("")]
         [Route("Home/Index/{tab}")]
         [Route("Home/Index/{tab}/{q}")]
+        [ResponseCache(VaryByHeader = "User-Agent",Duration =10)]
         public async Task<IActionResult> Index(int tab,string q = null,int pageIndex = 1)
         {
             var pageSize = (await GetPageSize("Home/Index")) ?? 40;
