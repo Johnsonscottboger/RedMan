@@ -105,6 +105,7 @@ namespace RedMan.Controllers
             return RedirectToLocal(null);
         }
 
+        
         #region 辅助
         private IActionResult RedirectToLocal(string returnUrl)
         {

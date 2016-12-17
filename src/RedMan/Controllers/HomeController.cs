@@ -86,8 +86,8 @@ namespace RedMan.Controllers
             pagingViewModel.PagingInfo = pagingModel.PagingInfo;
 
             //根据话题,查找相关用户
-            var topicAuthors = await _userRepo.JoinAsync(pagingModel.ModelList,user => user.UserId,topic => topic.Author_Id,(user,topic) => user);
-            var topicLastReplyUsers = await _userRepo.JoinAsync(pagingModel.ModelList,user => user.UserId,topic => topic.Last_Reply_UserId,(user,topic) => user);
+            var topicAuthors = (await _userRepo.JoinAsync(pagingModel.ModelList,user => user.UserId,topic => topic.Author_Id,(user,topic) => user)).ToList();
+            var topicLastReplyUsers = (await _userRepo.JoinAsync(pagingModel.ModelList,user => user.UserId,topic => topic.Last_Reply_UserId,(user,topic) => user)).ToList();
             var topicUsers = topicAuthors.Concat(topicLastReplyUsers);
 
             pagingModel.ModelList.ForEach(item =>

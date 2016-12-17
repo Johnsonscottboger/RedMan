@@ -361,7 +361,7 @@ namespace RedMan.Controllers
                 return PartialView("_PartialChangePassword",model);
             if(user.Password != model.OldPassword)
             {
-                ModelState.AddModelError("","密码不正确");
+                ModelState.AddModelError("","原始密码不正确");
                 return PartialView("_PartialChangePassword",model);
             }
             user.Password = model.Password;
@@ -456,7 +456,27 @@ namespace RedMan.Controllers
             ViewData["Error"] = false;
             return View();
         }
-        
+
+        [AllowAnonymous]
+        public async Task<JsonResult> CheckUserNameIsExist(string Name)
+        {
+            var user = await _userRepo.FindAsync(p => p.Name == Name);
+            if(user != null)
+                return Json("此用户名已存在");
+            else
+                return Json(true);
+        }
+
+        [AllowAnonymous]
+        public async Task<JsonResult> CheckEmailIsExist(string Email)
+        {
+            var user = await _userRepo.FindAsync(p => p.Email == Email);
+            if(user != null)
+                return Json("此邮箱已存在");
+            else
+                return Json(true);
+        }
+
         #region 辅助方法
 
         /// <summary>

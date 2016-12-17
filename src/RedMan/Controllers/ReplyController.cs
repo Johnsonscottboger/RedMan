@@ -72,13 +72,13 @@ namespace RedMan.Controllers
             loginUser.Score += 1;
             topicSuccess = await _userRepo.UpdateAsync(loginUser);
             var topicAuthor = await _userRepo.FindAsync(p => p.UserId == topic.Author_Id);
-            if(topicAuthor!=null)
+            if(topicAuthor!=null && topicAuthor.UserId != loginUser.UserId)
             {
                 topicAuthor.UnreadMsg_Count += 1;
                 await _userRepo.UpdateAsync(topicAuthor);
                 await AddMessage(topicAuthor,loginUser,topic,reply);
             }
-            if(replySuccess&&topicSuccess)
+            if(replySuccess && topicSuccess)
             {
                 return new RedirectResult(Url.Content($"/Topic/Index/{id}#{reply.ReplyId}"));
             }
@@ -136,7 +136,7 @@ namespace RedMan.Controllers
             loginUser.Score += 1;
             topicSuccess = await _userRepo.UpdateAsync(loginUser);
             var replyAuthor = await _userRepo.FindAsync(p => p.UserId == reply.Author_Id);
-            if(replyAuthor!=null)
+            if(replyAuthor!=null && replyAuthor.UserId != loginUser.UserId)
             {
                 replyAuthor.UnreadMsg_Count += 1;
                 await _userRepo.UpdateAsync(replyAuthor);

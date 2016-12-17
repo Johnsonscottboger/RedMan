@@ -25,25 +25,30 @@
                 <div class="control-group">
                     <label class="control-label" for="email">邮箱</label>
                     <div class="controls">
-                        <input class="input-xlarge" id="Email" name="Email" size="30" type="text" placeholder="请输入邮箱">
+                        <input class="input-xlarge" asp-for="Email" id="Email" name="Email" size="30" type="text" placeholder="请输入邮箱">
+                        <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" for="name">用户名</label>
                     <div class="controls">
-                        <input class="input-xlarge" id="Name" name="Name" size="30" type="text" placeholder="请输入用户名">
+                        <input class="input-xlarge" asp-for="Name" id="Name" name="Name" size="30" type="text" placeholder="请输入用户名">
+                        <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" for="Password">密码</label>
                     <div class="controls">
-                        <input class="input-xlarge" id="Password" name="Password" size="30" type="password" placeholder="请输入密码">
+                        <input class="input-xlarge" asp-for="Password" id="Password" name="Password" size="30" type="password" placeholder="请输入密码">
+                        <span asp-validation-for="Password" class="text-danger"></span>
+
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" for="ConfirmPassword">确认密码</label>
                     <div class="controls">
-                        <input class="input-xlarge" id="ConfirmPassword" name="ConfirmPassword" size="30" type="password" placeholder="请输入密码">
+                        <input class="input-xlarge" asp-for="ConfirmPassword" id="ConfirmPassword" name="ConfirmPassword" size="30" type="password" placeholder="请输入密码">
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-actions">
@@ -53,18 +58,7 @@
         </div>
     </div>
 
-    <environment names="Development">
-        <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
-        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
-    </environment>
-    <environment names="Staging,Production">
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"
-                asp-fallback-src="~/lib/jquery-validation/dist/jquery.validate.min.js"
-                asp-fallback-test="window.jQuery && window.jQuery.validator">
-        </script>
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery.validation.unobtrusive/3.2.6/jquery.validate.unobtrusive.min.js"
-                asp-fallback-src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"
-                asp-fallback-test="window.jQuery && window.jQuery.validator && window.jQuery.validator.unobtrusive">
-        </script>
-    </environment>
+
+    <script src="~/lib/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery.validate.unobtrusive.min.js"></script>
 </div>
