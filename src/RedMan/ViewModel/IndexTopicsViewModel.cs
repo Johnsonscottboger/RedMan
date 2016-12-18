@@ -42,6 +42,6 @@ namespace RedMan.ViewModel
         精华,
         分享,
         问答,
-        招聘
+        二手
     }
 }
