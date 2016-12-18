@@ -22,7 +22,7 @@ RedMan是一个具备网络发帖,回复等功能的社区系统。
 8. ASP.NET Core MVC最新提供的TagHelper，ViewComponent，更方便的结构视图，模块化开发。在官方文档均可查阅： [.NET Core Docs](https://docs.microsoft.com/en-us/aspnet/core/getting-started)，
 9. 部署，Windows中IIS，以及Ubuntu中。
 ## 3.结果展示
-![QQ截图20161218111819.png](/RedMan/src/RedMan/wwwroot/avatar/1482061237.png)
+![QQ截图20161218111819.png](https://github.com/waning1995/RedMan/blob/master/src/RedMan/wwwroot/avatar/1482061237.png)
 ![QQ截图20161218113241.png](/RedMan/src/RedMan/wwwroot/avatar/1482061259.png)
 ![QQ截图20161218113532.png](/RedMan/src/RedMan/wwwroot/avatar/1482061274.png)
 ![QQ截图20161218113551.png](/RedMan/src/RedMan/wwwroot/avatar/1482061292.png)
