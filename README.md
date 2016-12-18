@@ -23,10 +23,10 @@ RedMan是一个具备网络发帖,回复等功能的社区系统。
 9. 部署，Windows中IIS，以及Ubuntu中。
 ## 3.结果展示
 ![QQ截图20161218111819.png](https://github.com/waning1995/RedMan/blob/master/src/RedMan/wwwroot/avatar/1482061237.png)
-![QQ截图20161218113241.png](/RedMan/src/RedMan/wwwroot/avatar/1482061259.png)
-![QQ截图20161218113532.png](/RedMan/src/RedMan/wwwroot/avatar/1482061274.png)
-![QQ截图20161218113551.png](/RedMan/src/RedMan/wwwroot/avatar/1482061292.png)
-![QQ截图20161218113652.png](/RedMan/src/RedMan/wwwroot/avatar/1482061321.png)
-![QQ截图20161218113938.png](/RedMan/src/RedMan/wwwroot/avatar/1482061332.png)
+![QQ截图20161218113241.png](https://github.com/waning1995/RedMan/blob/master/src/RedMan/wwwroot/avatar/1482061259.png)
+![QQ截图20161218113532.png](https://github.com/waning1995/RedMan/blob/master/src/RedMan/wwwroot/avatar/1482061274.png)
+![QQ截图20161218113551.png](https://github.com/waning1995/RedMan/blob/master/src/RedMan/wwwroot/avatar/1482061292.png)
+![QQ截图20161218113652.png](https://github.com/waning1995/RedMan/blob/master/src/RedMan/wwwroot/avatar/1482061321.png)
+![QQ截图20161218113938.png](https://github.com/waning1995/RedMan/blob/master/src/RedMan/wwwroot/avatar/1482061332.png)
 
 
