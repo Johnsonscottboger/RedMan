@@ -74,9 +74,10 @@ namespace RedMan.Controllers
             return View(pagingViewModel);
         }
 
+        [Route("/Error")]
         public IActionResult Error()
         {
-            return Content("很简单的告诉你，出错了!");
+            return Content("<h1>Sorry,服务器内部出错了!</h1>","text/html");
         }
 
         public async Task<PagingModel<IndexTopicsViewModel>> GetViewModel(PagingModel<Topic> pagingModel,int tab = 0)
