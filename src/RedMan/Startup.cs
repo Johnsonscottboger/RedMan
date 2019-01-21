@@ -8,7 +8,8 @@ using RedMan.Extensions;
 using Web.Model.Context;
 using Web.Services.EntitiesServices;
 
-namespace RedMan {
+namespace RedMan
+{
     public class Startup
     {
         public Startup(IHostingEnvironment env)
@@ -19,26 +20,23 @@ namespace RedMan {
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
 
-            
+
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
         }
 
         public IConfigurationRoot Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<MyContext>(options =>
+            services.AddDbContext<ModelContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("SqlServerConnection")));
 
-            // Add framework services.
             services.AddResponseCaching();
             services.AddMyIdentity();
             services.AddMvc();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
@@ -51,7 +49,6 @@ namespace RedMan {
             }
             else
             {
-                //app.UseStatusCodePages("text/plain","Response status code:{0}");
                 app.UseExceptionHandler("/Error");
             }
 

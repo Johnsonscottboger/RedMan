@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.271
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{86899251-12DC-4A5A-A554-0E04D379B2AD}"
 EndProject
@@ -10,15 +10,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		global.json = global.json
 	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RedMan", "src\RedMan\RedMan.xproj", "{C89BDBE5-B59D-46F6-99B7-FD87D906A2D6}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{0BB2535E-EB3C-4DF6-B804-7BCC70659AEF}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Web.DataAccess", "src\Web.DataAccess\Web.DataAccess.xproj", "{346597D7-F3D2-4D3A-9323-867E4A58EE72}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedMan", "src\RedMan\RedMan.csproj", "{C89BDBE5-B59D-46F6-99B7-FD87D906A2D6}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Web.Model", "src\Web.Model\Web.Model.xproj", "{BE6AC3BE-DC69-441A-862B-40EA7E9B7E7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.DataAccess", "src\Web.DataAccess\Web.DataAccess.csproj", "{346597D7-F3D2-4D3A-9323-867E4A58EE72}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Web.Services", "src\Web.Services\Web.Services.xproj", "{909352A9-CD58-4606-993E-6027196C2EDE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.Model", "src\Web.Model\Web.Model.csproj", "{BE6AC3BE-DC69-441A-862B-40EA7E9B7E7B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.Services", "src\Web.Services\Web.Services.csproj", "{909352A9-CD58-4606-993E-6027196C2EDE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +47,13 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{C89BDBE5-B59D-46F6-99B7-FD87D906A2D6} = {86899251-12DC-4A5A-A554-0E04D379B2AD}
 		{0BB2535E-EB3C-4DF6-B804-7BCC70659AEF} = {86899251-12DC-4A5A-A554-0E04D379B2AD}
+		{C89BDBE5-B59D-46F6-99B7-FD87D906A2D6} = {86899251-12DC-4A5A-A554-0E04D379B2AD}
 		{346597D7-F3D2-4D3A-9323-867E4A58EE72} = {0BB2535E-EB3C-4DF6-B804-7BCC70659AEF}
 		{BE6AC3BE-DC69-441A-862B-40EA7E9B7E7B} = {0BB2535E-EB3C-4DF6-B804-7BCC70659AEF}
 		{909352A9-CD58-4606-993E-6027196C2EDE} = {0BB2535E-EB3C-4DF6-B804-7BCC70659AEF}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1D983E43-75D0-4F03-A423-CFC4DCBFD234}
 	EndGlobalSection
 EndGlobal

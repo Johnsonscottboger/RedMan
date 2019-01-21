@@ -10,21 +10,30 @@ using RedMan.DataAccess.Repository;
 using RedMan.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 
-// For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace RedMan.Controllers
 {
+    /// <summary>
+    /// 回复管理控制器
+    /// </summary>
     [Authorize]
-    public class ReplyController :Controller
+    public class ReplyController : Controller
     {
-        private readonly MyContext _context;
+        #region - Private -
+        private readonly ModelContext _context;
         private readonly IRepository<Topic> _topicRepo;
         private readonly IRepository<Reply> _replyRepo;
         private readonly IRepository<User> _userRepo;
         private readonly IRepository<Message> _msgRepo;
-        public ReplyController(MyContext context)
+        #endregion
+
+        /// <summary>
+        /// 初始化回复管理控制器<see cref="ReplyController"/>实例
+        /// </summary>
+        /// <param name="context">指定的模型上下文<see cref="ModelContext"/>实例</param>
+        public ReplyController(ModelContext context)
         {
-            if(context == null)
+            if (context == null)
                 throw new ArgumentNullException(nameof(context));
             this._context = context;
             this._replyRepo = new Repository<Reply>(context);
@@ -32,59 +41,57 @@ namespace RedMan.Controllers
             this._userRepo = new Repository<User>(context);
             this._msgRepo = new Repository<Message>(context);
         }
-        
+
         /// <summary>
         /// 添加回复
         /// </summary>
-        /// <param name="id">话题ID</param>
-        /// <param name="r_content">回复内容</param>
-        /// <returns></returns>
+        /// <param name="id">指定的话题 ID</param>
+        /// <param name="replyContent">指定的回复内容</param>
+        /// <returns>话题首页</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(int id,string r_content)
+        public async Task<IActionResult> Add(int id, string replyContent)
         {
-            r_content = r_content?.Trim();
-            var topic = await _topicRepo.FindAsync(p => p.TopicId == id);
-            if(topic == null)
+            replyContent = replyContent?.Trim();
+            var topic = await this._topicRepo.FindAsync(p => p.TopicId == id);
+            if (topic == null)
                 throw new Exception("话题找不到，或者已被删除");
-            if(string.IsNullOrEmpty(r_content))
+            if (string.IsNullOrEmpty(replyContent))
                 return new RedirectResult(Url.Content($"/Topic/Index/{id}"));
-            var loginUser = await _userRepo.FindAsync(p => p.Name == User.Identity.Name);
-            if(loginUser == null)
-            {
-                return new RedirectResult(Url.Action("Login","Account"));
-            }
+            var loginUser = await this._userRepo.FindAsync(p => p.Name == User.Identity.Name);
+            if (loginUser == null)
+                return new RedirectResult(Url.Action("Login", "Account"));
             var reply = new Reply()
             {
-                Content = r_content,
+                Content = replyContent,
                 Author_Id = loginUser.UserId,
                 Author_Name = loginUser.Name,
                 Topic_Id = id,
                 CreateDateTime = DateTime.Now
             };
-            var replySuccess = await _replyRepo.AddAsync(reply);
+            var replySuccess = await this._replyRepo.AddAsync(reply);
             topic.Reply_Count += 1;
             topic.Last_Reply_Id = reply.ReplyId;
             topic.Last_ReplyDateTime = reply.CreateDateTime;
             topic.Last_Reply_UserId = loginUser.UserId;
-            var topicSuccess = await _topicRepo.UpdateAsync(topic,false);
+            var topicSuccess = await this._topicRepo.UpdateAsync(topic, false);
             loginUser.Reply_Count += 1;
             loginUser.Score += 1;
-            topicSuccess = await _userRepo.UpdateAsync(loginUser);
-            var topicAuthor = await _userRepo.FindAsync(p => p.UserId == topic.Author_Id);
-            if(topicAuthor!=null && topicAuthor.UserId != loginUser.UserId)
+            topicSuccess = await this._userRepo.UpdateAsync(loginUser);
+            var topicAuthor = await this._userRepo.FindAsync(p => p.UserId == topic.Author_Id);
+            if (topicAuthor != null && topicAuthor.UserId != loginUser.UserId)
             {
                 topicAuthor.UnreadMsg_Count += 1;
-                await _userRepo.UpdateAsync(topicAuthor);
-                await AddMessage(topicAuthor,loginUser,topic,reply);
+                await this._userRepo.UpdateAsync(topicAuthor);
+                await AddMessage(topicAuthor, loginUser, topic, reply);
             }
-            if(replySuccess && topicSuccess)
+            if (replySuccess && topicSuccess)
             {
                 return new RedirectResult(Url.Content($"/Topic/Index/{id}#{reply.ReplyId}"));
             }
             else
             {
-                ModelState.AddModelError("","回复发布失败，请稍后重试");
+                ModelState.AddModelError("", "回复发布失败，请稍后重试");
                 return new RedirectResult(Url.Content($"/Topic/Index/{id}"));
             }
         }
@@ -97,25 +104,24 @@ namespace RedMan.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddToReply(int id,string r_content)
+        public async Task<IActionResult> AddToReply(int id, string r_content)
         {
-            //r_content = r_content?.Trim();
-            var reply = await _replyRepo.FindAsync(p => p.ReplyId == id);
-            if(reply == null)
+            var reply = await this._replyRepo.FindAsync(p => p.ReplyId == id);
+            if (reply == null)
                 throw new Exception("回复找不到，或已被删除");
             var topicId = reply.Topic_Id;
-            if(string.IsNullOrEmpty(r_content))
+            if (string.IsNullOrEmpty(r_content))
                 return new RedirectResult(Url.Content($"/Topic/Index/{topicId}"));
-            var topic = await _topicRepo.FindAsync(p => p.TopicId == topicId);
-            if(topic==null)
+            var topic = await this._topicRepo.FindAsync(p => p.TopicId == topicId);
+            if (topic == null)
             {
-                ModelState.AddModelError("","话题找不到，或者已被删除");
-                return RedirectToAction("Index","Home");
+                ModelState.AddModelError("", "话题找不到，或者已被删除");
+                return RedirectToAction("Index", "Home");
             }
-            var loginUser = await _userRepo.FindAsync(p => p.Name == User.Identity.Name);
-            if(loginUser == null)
+            var loginUser = await this._userRepo.FindAsync(p => p.Name == User.Identity.Name);
+            if (loginUser == null)
             {
-                return new RedirectResult(Url.Action("Login","Account"));
+                return new RedirectResult(Url.Action("Login", "Account"));
             }
             var replyToReply = new Reply()
             {
@@ -123,32 +129,32 @@ namespace RedMan.Controllers
                 Author_Id = loginUser.UserId,
                 Author_Name = loginUser.Name,
                 Topic_Id = topicId,
-                Reply_Id=reply.ReplyId,
+                Reply_Id = reply.ReplyId,
                 CreateDateTime = DateTime.Now,
             };
-            var replySuccess = await _replyRepo.AddAsync(replyToReply);
+            var replySuccess = await this._replyRepo.AddAsync(replyToReply);
             topic.Last_ReplyDateTime = replyToReply.CreateDateTime;
             topic.Last_Reply_Id = replyToReply.ReplyId;
             topic.Last_Reply_UserId = replyToReply.Author_Id;
             topic.Reply_Count += 1;
-            var topicSuccess = await _topicRepo.UpdateAsync(topic,false);
+            var topicSuccess = await this._topicRepo.UpdateAsync(topic, false);
             loginUser.Reply_Count += 1;
             loginUser.Score += 1;
-            topicSuccess = await _userRepo.UpdateAsync(loginUser);
-            var replyAuthor = await _userRepo.FindAsync(p => p.UserId == reply.Author_Id);
-            if(replyAuthor!=null && replyAuthor.UserId != loginUser.UserId)
+            topicSuccess = await this._userRepo.UpdateAsync(loginUser);
+            var replyAuthor = await this._userRepo.FindAsync(p => p.UserId == reply.Author_Id);
+            if (replyAuthor != null && replyAuthor.UserId != loginUser.UserId)
             {
                 replyAuthor.UnreadMsg_Count += 1;
-                await _userRepo.UpdateAsync(replyAuthor);
-                await AddMessage(replyAuthor,loginUser,topic,replyToReply);
+                await this._userRepo.UpdateAsync(replyAuthor);
+                await AddMessage(replyAuthor, loginUser, topic, replyToReply);
             }
-            if(replySuccess && topicSuccess)
+            if (replySuccess && topicSuccess)
             {
                 return new RedirectResult(Url.Content($"/Topic/Index/{topicId}#{replyToReply.ReplyId}"));
             }
             else
             {
-                ModelState.AddModelError("","回复失败，请稍后重试");
+                ModelState.AddModelError("", "回复失败，请稍后重试");
                 return new RedirectResult(Url.Content($"/Topic/Index/{topicId}"));
             }
         }
@@ -161,13 +167,13 @@ namespace RedMan.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             ViewData["Error"] = false;
-            var reply = await _replyRepo.FindAsync(p => p.ReplyId == id);
-            if(reply == null)
+            var reply = await this._replyRepo.FindAsync(p => p.ReplyId == id);
+            if (reply == null)
                 throw new Exception("回复找不到，或已被删除");
             var replyViewModel = new ReplyEditViewModel()
             {
-                ReplyId=reply.ReplyId,
-                Content=reply.Content
+                ReplyId = reply.ReplyId,
+                Content = reply.Content
             };
             return View(replyViewModel);
         }
@@ -183,24 +189,24 @@ namespace RedMan.Controllers
         {
             model.Content = model.Content.Trim();
             ViewData["Error"] = true;
-            if(model != null)
+            if (model != null)
                 model.Content = model.Content.Trim();
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return View(model);
-            var reply = await _replyRepo.FindAsync(p => p.ReplyId == model.ReplyId);
-            if(reply == null)
+            var reply = await this._replyRepo.FindAsync(p => p.ReplyId == model.ReplyId);
+            if (reply == null)
                 throw new Exception("回复找不到，或已被删除");
             reply.Content = model.Content;
             reply.UpdateDateTime = DateTime.Now;
-            var success = await _replyRepo.UpdateAsync(reply);
-            if(success)
+            var success = await this._replyRepo.UpdateAsync(reply);
+            if (success)
             {
                 ViewData["Error"] = false;
                 return Redirect($"/Topic/Index/{reply.Topic_Id}#{reply.ReplyId}");
             }
             else
             {
-                ModelState.AddModelError("","保存失败，请稍后重试");
+                ModelState.AddModelError("", "保存失败，请稍后重试");
                 return View(model);
             }
         }
@@ -213,20 +219,21 @@ namespace RedMan.Controllers
         [HttpPost]
         public async Task<JsonResult> Delete(int id)
         {
-            var reply = await _replyRepo.FindAsync(p => p.ReplyId == id);
-            if(reply == null)
+            var reply = await this._replyRepo.FindAsync(p => p.ReplyId == id);
+            if (reply == null)
                 return Json(new { status = "fail" });
             reply.Deleted = true;
-            await _replyRepo.UpdateAsync(reply,false);
-            var topic = await _topicRepo.FindAsync(p => p.TopicId == reply.Topic_Id);
+            await this._replyRepo.UpdateAsync(reply, false);
+            var topic = await this._topicRepo.FindAsync(p => p.TopicId == reply.Topic_Id);
             topic.Reply_Count -= 1;
-            var topicSuccess = await _topicRepo.UpdateAsync(topic);
-            if(topicSuccess)
+            var topicSuccess = await this._topicRepo.UpdateAsync(topic);
+            if (topicSuccess)
                 return Json(new { status = "success" });
             else
                 return Json(new { status = "fail" });
         }
 
+        #region - Private Method -
         /// <summary>
         /// 添加消息
         /// </summary>
@@ -236,7 +243,7 @@ namespace RedMan.Controllers
         /// <param name="topic">目标话题</param>
         /// <param name="reply">目标回复</param>
         /// <returns></returns>
-        private async Task<bool> AddMessage(User to_user,User from_user,Topic fromTopic,Reply newReply)
+        private async Task<bool> AddMessage(User to_user, User from_user, Topic fromTopic, Reply newReply)
         {
             var message = new Message()
             {
@@ -251,7 +258,8 @@ namespace RedMan.Controllers
                 CreateDateTime = DateTime.Now
             };
 
-            return await _msgRepo.AddAsync(message);
+            return await this._msgRepo.AddAsync(message);
         }
+        #endregion
     }
 }

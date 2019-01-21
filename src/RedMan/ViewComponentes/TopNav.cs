@@ -11,10 +11,10 @@ namespace RedMan.ViewComponentes {
     /// </summary>
     public class TopNav:ViewComponent
     {
-        private readonly MyContext _context;
+        private readonly ModelContext _context;
         private readonly IRepository<User> _userRepo;
 
-        public TopNav(MyContext context)
+        public TopNav(ModelContext context)
         {
             this._context = context;
             this._userRepo = new Repository<User>(context);

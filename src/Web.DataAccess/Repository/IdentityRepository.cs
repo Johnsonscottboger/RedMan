@@ -10,9 +10,9 @@ using System.Collections.Generic;
 namespace Web.DataAccess.Repository {
     public class IdentityRepository<T> : IIdentityRepository<T> where T:class
     {
-        private readonly MyContext context;
+        private readonly ModelContext context;
         private readonly DbSet<T> dbSet;
-        public IdentityRepository(MyContext context)
+        public IdentityRepository(ModelContext context)
         {
             this.context = context;
             this.dbSet = context.Set<T>();

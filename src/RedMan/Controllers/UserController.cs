@@ -25,14 +25,14 @@ namespace RedMan.Controllers
     public class UserController :Controller
     {
         private readonly IHostingEnvironment env;
-        private readonly MyContext _context;
+        private readonly ModelContext _context;
         private readonly IRepository<User> _userRepo;
         private readonly IRepository<Topic> _topicRepo;
         private readonly IRepository<Reply> _replyRepo;
         private readonly IdentityService _identityService;
         private readonly IRepository<TopicCollect> _topicCollectRepo;
 
-        public UserController(IHostingEnvironment env,MyContext context)
+        public UserController(IHostingEnvironment env,ModelContext context)
         {
             if(context == null)
                 throw new ArgumentNullException(nameof(context));

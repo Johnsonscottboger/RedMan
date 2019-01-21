@@ -4,7 +4,8 @@ using Web.DataAccess.Repository;
 using Web.Model.Entities;
 using Web.Services.EntitiesServices;
 
-namespace RedMan.Extensions {
+namespace RedMan.Extensions
+{
     public static class ServiceExtension
     {
         public static IServiceCollection AddMyIdentity(this IServiceCollection services)

@@ -7,9 +7,9 @@ using Web.Model.Entities;
 
 namespace Web.Model.Context
 {
-    public class MyContext:DbContext
+    public class ModelContext:DbContext
     {
-        public MyContext(DbContextOptions<MyContext> options) 
+        public ModelContext(DbContextOptions<ModelContext> options) 
             : base(options)
         {
             Database.EnsureCreated();

@@ -12,10 +12,10 @@ namespace RedMan.ViewComponentes {
     /// </summary>
     public class Top10:ViewComponent
     {
-        private readonly MyContext _context;
+        private readonly ModelContext _context;
         private readonly IRepository<User> _userRepo;
 
-        public Top10(MyContext context)
+        public Top10(ModelContext context)
         {
             if(context == null)
                 throw new ArgumentNullException(nameof(context));

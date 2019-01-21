@@ -3,19 +3,19 @@
 namespace Web.Services {
     public class IdentityResult
     {
-        public bool IsSuccess { get; }
+        public bool Success { get; }
         public string ErrorString { get; }
         public ClaimsPrincipal User { get; }
 
         public IdentityResult(string error)
         {
-            IsSuccess = false;
+            Success = false;
             ErrorString = error;
         }
 
         public IdentityResult(ClaimsPrincipal user)
         {
-            IsSuccess = true;
+            Success = true;
             User = user;
         }
     }

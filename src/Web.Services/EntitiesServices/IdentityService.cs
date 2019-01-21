@@ -8,7 +8,7 @@ using Web.Services.IEntitiesServices;
 
 namespace Web.Services.EntitiesServices
 {
-    public class IdentityService :IIdentityService
+    public class IdentityService : IIdentityService
     {
         public const string AuthenticationScheme = "MyAuthCookie";
         private IIdentityRepository<User> _identityRepository;
@@ -23,14 +23,14 @@ namespace Web.Services.EntitiesServices
         /// <param name="email">邮箱</param>
         /// <param name="password">密码</param>
         /// <returns></returns>
-        public async Task<ClaimsPrincipal> CheckUserAsync(String email,String password)
+        public async Task<ClaimsPrincipal> CheckUserAsync(String email, String password)
         {
             var user = await _identityRepository.GetUserAsync(p => p.Email == email && p.Password == password);
-            if(user == null)
+            if (user == null)
                 return null;
             var ci = CreateClaimsIdentity(user);
             var roles = user.Roles;
-            AddRoleClaims(ci,roles);
+            AddRoleClaims(ci, roles);
             return new ClaimsPrincipal(ci);
         }
 
@@ -41,14 +41,14 @@ namespace Web.Services.EntitiesServices
         /// <param name="username">用户名</param>
         /// <param name="password">密码</param>
         /// <returns></returns>
-        public async Task<ClaimsPrincipal> CheckUserAsync(string email,string username,string password)
+        public async Task<ClaimsPrincipal> CheckUserAsync(string email, string username, string password)
         {
             var user = await _identityRepository.GetUserAsync(p => p.Email == email && p.Name == username && p.Password == password);
-            if(user == null)
+            if (user == null)
                 return null;
             var ci = CreateClaimsIdentity(user);
             var roles = user.Roles;
-            AddRoleClaims(ci,roles);
+            AddRoleClaims(ci, roles);
             return new ClaimsPrincipal(ci);
         }
 
@@ -58,13 +58,13 @@ namespace Web.Services.EntitiesServices
         /// <param name="email">邮箱</param>
         /// <param name="password">密码</param>
         /// <returns></returns>
-        public async Task<IdentityResult> RegisterAsync(string email,string username,string password)
+        public async Task<IdentityResult> RegisterAsync(string email, string username, string password)
         {
-            if(await _identityRepository.CheckEmailAsync(p => p.Name == username))
+            if (await _identityRepository.CheckEmailAsync(p => p.Name == username))
             {
                 return new IdentityResult("用户名已存在！");
             }
-            if(await _identityRepository.CheckEmailAsync(p => p.Email == email))
+            if (await _identityRepository.CheckEmailAsync(p => p.Email == email))
             {
                 return new IdentityResult("邮箱已存在");
             }
@@ -76,10 +76,10 @@ namespace Web.Services.EntitiesServices
                 LoginName = username,
                 CreateDateTime = DateTime.Now,
                 Active = true,
-                Avatar= "/img/8791709.png",
+                Avatar = "/img/8791709.png",
                 Roles = new List<Role>()
                 {
-                    new Role() {Id=1, RoleName="普通用户" }
+                    new Role() {RoleName="普通用户" }
                 }
             };
             await _identityRepository.AddUserAsync(user);
@@ -95,17 +95,17 @@ namespace Web.Services.EntitiesServices
             //如果添加的角色使用的类型不是ClaimTypes.Role，则需要在此处指定类型
             //var result = new ClaimsIdentity(AuthenticationScheme,NameType,RoleType);
             var result = new ClaimsIdentity(AuthenticationScheme);
-            result.AddClaim(new Claim(ClaimTypes.Name,user.Name));
+            result.AddClaim(new Claim(ClaimTypes.Name, user.Name));
             return result;
         }
 
-        private void AddRoleClaims(ClaimsIdentity claimsIdentity,ICollection<Role> roles)
+        private void AddRoleClaims(ClaimsIdentity claimsIdentity, ICollection<Role> roles)
         {
-            if(roles != null)
+            if (roles != null)
             {
-                foreach(var item in roles)
+                foreach (var item in roles)
                 {
-                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role,item.RoleName));
+                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, item.RoleName));
                 }
             }
         }

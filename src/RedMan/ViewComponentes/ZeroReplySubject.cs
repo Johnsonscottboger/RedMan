@@ -12,10 +12,10 @@ namespace RedMan.ViewComponentes {
     /// </summary>
     public class ZeroReplySubject:ViewComponent
     {
-        private readonly MyContext _context;
+        private readonly ModelContext _context;
         private readonly IRepository<Topic> _topicRepo;
 
-        public ZeroReplySubject(MyContext context)
+        public ZeroReplySubject(ModelContext context)
         {
             if(context == null)
                 throw new ArgumentNullException(nameof(context));

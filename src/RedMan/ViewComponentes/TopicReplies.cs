@@ -13,11 +13,11 @@ namespace RedMan.ViewComponentes
 {
     public class TopicReplies:ViewComponent
     {
-        private readonly MyContext _context;
+        private readonly ModelContext _context;
         private readonly IRepository<Topic> _topicRepo;
         private readonly IRepository<Reply> _replyRepo;
         private readonly IRepository<User> _userRepo;
-        public TopicReplies(MyContext context)
+        public TopicReplies(ModelContext context)
         {
             if(context == null)
                 throw new ArgumentNullException(nameof(context));

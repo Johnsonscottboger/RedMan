@@ -11,10 +11,10 @@ using Web.Model.Paging;
 namespace RedMan.DataAccess.Repository {
     public class Repository<T>:IRepository<T> where T:class
     {
-        private readonly MyContext context;
+        private readonly ModelContext context;
         private readonly DbSet<T> dbSet;
 
-        public Repository(MyContext context)
+        public Repository(ModelContext context)
         {
             this.context = context;
             this.dbSet = context.Set<T>();
