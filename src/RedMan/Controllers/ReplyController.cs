@@ -70,15 +70,15 @@ namespace RedMan.Controllers
                 CreateDateTime = DateTime.Now
             };
             var replySuccess = await this._replyRepo.AddAsync(reply);
-            topic.Reply_Count += 1;
+            topic.ReplyCount += 1;
             topic.Last_Reply_Id = reply.ReplyId;
             topic.Last_ReplyDateTime = reply.CreateDateTime;
-            topic.Last_Reply_UserId = loginUser.UserId;
+            topic.LastReplyUserId = loginUser.UserId;
             var topicSuccess = await this._topicRepo.UpdateAsync(topic, false);
             loginUser.Reply_Count += 1;
             loginUser.Score += 1;
             topicSuccess = await this._userRepo.UpdateAsync(loginUser);
-            var topicAuthor = await this._userRepo.FindAsync(p => p.UserId == topic.Author_Id);
+            var topicAuthor = await this._userRepo.FindAsync(p => p.UserId == topic.AuthorId);
             if (topicAuthor != null && topicAuthor.UserId != loginUser.UserId)
             {
                 topicAuthor.UnreadMsg_Count += 1;
@@ -135,8 +135,8 @@ namespace RedMan.Controllers
             var replySuccess = await this._replyRepo.AddAsync(replyToReply);
             topic.Last_ReplyDateTime = replyToReply.CreateDateTime;
             topic.Last_Reply_Id = replyToReply.ReplyId;
-            topic.Last_Reply_UserId = replyToReply.Author_Id;
-            topic.Reply_Count += 1;
+            topic.LastReplyUserId = replyToReply.Author_Id;
+            topic.ReplyCount += 1;
             var topicSuccess = await this._topicRepo.UpdateAsync(topic, false);
             loginUser.Reply_Count += 1;
             loginUser.Score += 1;
@@ -225,7 +225,7 @@ namespace RedMan.Controllers
             reply.Deleted = true;
             await this._replyRepo.UpdateAsync(reply, false);
             var topic = await this._topicRepo.FindAsync(p => p.TopicId == reply.Topic_Id);
-            topic.Reply_Count -= 1;
+            topic.ReplyCount -= 1;
             var topicSuccess = await this._topicRepo.UpdateAsync(topic);
             if (topicSuccess)
                 return Json(new { status = "success" });

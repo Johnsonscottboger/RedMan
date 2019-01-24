@@ -21,22 +21,58 @@ using Web.Services.EntitiesServices;
 
 namespace RedMan.Controllers
 {
+    /// <summary>
+    /// 用户主页控制器
+    /// </summary>
     [Authorize]
-    public class UserController :Controller
+    public class UserController : Controller
     {
-        private readonly IHostingEnvironment env;
+        #region - Private -
+        private static readonly Lazy<int> s_defaultPageSizeLazy = new Lazy<int>(() =>
+        {
+            try
+            {
+                var directory = Directory.GetCurrentDirectory();
+                var configuration = new ConfigurationBuilder()
+                                       .AddJsonFile($"{directory}/appsettings.json", true, true)
+                                       .Build();
+                var pagingConfig = configuration.GetSection("Paging");
+                var pageSize = pagingConfig.GetValue(typeof(int), "User/AllTopic");
+                return (int)pageSize;
+            }
+            catch
+            {
+                return 40;
+            }
+        }, true);
+
+        private readonly IHostingEnvironment _env;
         private readonly ModelContext _context;
         private readonly IRepository<User> _userRepo;
         private readonly IRepository<Topic> _topicRepo;
         private readonly IRepository<Reply> _replyRepo;
         private readonly IdentityService _identityService;
         private readonly IRepository<TopicCollect> _topicCollectRepo;
+        #endregion
 
-        public UserController(IHostingEnvironment env,ModelContext context)
+        /// <summary>
+        /// 获取默认分页大小
+        /// </summary>
+        private int DefaultPageSize
         {
-            if(context == null)
+            get { return s_defaultPageSizeLazy.Value; }
+        }
+
+        /// <summary>
+        /// 初始化用户主页控制器<see cref="UserController"/>实例
+        /// </summary>
+        /// <param name="env">指定的当前寄宿环境实例</param>
+        /// <param name="context">指定的模型上下文<see cref="ModelContext"/>实例</param>
+        public UserController(IHostingEnvironment env, ModelContext context)
+        {
+            if (context == null)
                 throw new ArgumentNullException(nameof(context));
-            this.env = env;
+            this._env = env;
             this._context = context;
             this._userRepo = new Repository<User>(context);
             this._topicRepo = new Repository<Topic>(context);
@@ -49,28 +85,28 @@ namespace RedMan.Controllers
         /// 用户主页
         /// </summary>
         /// <param name="id">用户ID</param>
-        /// <returns></returns>
+        /// <returns>指定的用户主页</returns>
         public async Task<IActionResult> Index(int id)
         {
-            var loginUser = await _userRepo.FindAsync(p => p.Name == User.Identity.Name);
+            var loginUser = await this._userRepo.FindAsync(p => p.Name == User.Identity.Name);
 
-            var user = await _userRepo.FindAsync(p => p.UserId == id);
-            if(user == null)
+            var user = await this._userRepo.FindAsync(p => p.UserId == id);
+            if (user == null)
                 throw new Exception("用户找不到，或者已被删除");
             //获取用户发布过的主题
-            var topic_Pub = await _topicRepo.FindTopDelayAsync(10,p => p.Author_Id == user.UserId,p => p.CreateDateTime);
+            var topicPub = await this._topicRepo.FindTopDelayAsync(10, p => p.AuthorId == user.UserId, p => p.CreateDateTime);
             //获取用户发布过的回复
-            var reply_Pub = await _replyRepo.FindTopDelayAsync(10,p => p.Author_Id == user.UserId,p => p.CreateDateTime);
-            var topic_Reply = await GetTopicByReply(reply_Pub);
+            var replyPub = await this._replyRepo.FindTopDelayAsync(10, p => p.Author_Id == user.UserId, p => p.CreateDateTime);
+            var topicReply = await GetTopicByReply(replyPub);
             UserViewModel userViewModel;
-            if(topic_Pub != null && topic_Reply != null)
+            if (topicPub != null && topicReply != null)
             {
                 userViewModel = new UserViewModel()
                 {
                     LoginUserIsAdmin = loginUser.IsAdmin,
                     User = user,
-                    Topic_Published = topic_Pub,
-                    Topic_Join = topic_Reply.Distinct()
+                    TopicPublished = topicPub,
+                    TopicJoin = topicReply.Distinct()
                 };
             }
             else
@@ -91,14 +127,14 @@ namespace RedMan.Controllers
         /// <param name="id">用户ID</param>
         /// <param name="type">相关话题类型：发布/参与</param>
         /// <param name="pageIndex">页码</param>
-        /// <returns></returns>
-        public async Task<IActionResult> AllTopic(int id,string type,int pageIndex = 1)
+        /// <returns>用户所有话题页面</returns>
+        public async Task<IActionResult> AllTopic(int id, string type, int pageIndex = 1)
         {
-            var user = await _userRepo.FindAsync(p => p.UserId == id);
-            if(user == null)
+            var user = await this._userRepo.FindAsync(p => p.UserId == id);
+            if (user == null)
                 throw new Exception("用户找不到，或者已被删除");
-            var pageSize =(await GetPageSize("User/AllTopic")) ?? 40;
-            //数据源
+            var pageSize = this.DefaultPageSize;
+
             var pagingModel = new PagingModel<Topic>()
             {
                 ModelList = new List<Topic>(),
@@ -110,10 +146,10 @@ namespace RedMan.Controllers
             };
             //话题相关用户
             var topicUsers = new List<User>();
-            if(type == "pub")
+            if (type == "pub")
             {
                 //获取用户发布过的主题
-                var topic_Pub = await _topicRepo.FindPagingOrderByDescendingAsync(p => p.Author_Id == user.UserId,p => p.CreateDateTime,pagingModel);
+                var topicPub = await this._topicRepo.FindPagingOrderByDescendingAsync(p => p.AuthorId == user.UserId, p => p.CreateDateTime, pagingModel);
                 topicUsers.Add(user);
             }
             else
@@ -131,32 +167,40 @@ namespace RedMan.Controllers
                 #endregion
 
                 //获取用户发布过的回复
-                var reply_Pub = await _replyRepo.FindPagingOrderByDescendingAsync(p => p.Author_Id == user.UserId,p => p.CreateDateTime,replyPagingModel);
-                var topic_Reply = await GetTopicByReply(reply_Pub.ModelList);
-                pagingModel.ModelList = topic_Reply.Distinct().ToList();
+                var replyPub = await this._replyRepo.FindPagingOrderByDescendingAsync(p => p.Author_Id == user.UserId, p => p.CreateDateTime, replyPagingModel);
+                var topicReply = await GetTopicByReply(replyPub.ModelList);
+                pagingModel.ModelList = topicReply.Distinct().ToList();
                 //查找相关用户
-                var topicAuthors = await _userRepo.JoinAsync(pagingModel.ModelList,author => author.UserId,topic => topic.Author_Id,(author,topic) => author);
-                var topicLastReplyUsers = await _userRepo.JoinAsync(pagingModel.ModelList,replyUser => replyUser.UserId,topic => topic.Last_Reply_UserId,(replyUser,topic) => replyUser);
+                var topicAuthors = await this._userRepo.JoinAsync(pagingModel.ModelList, 
+                                                                  author => author.UserId, 
+                                                                  topic => topic.AuthorId, 
+                                                                  (author, topic) => author);
+                var topicLastReplyUsers = await this._userRepo.JoinAsync(pagingModel.ModelList, 
+                                                                         replyUser => replyUser.UserId, 
+                                                                         topic => topic.LastReplyUserId, 
+                                                                         (replyUser, topic) => replyUser);
                 topicUsers = topicAuthors.Concat(topicLastReplyUsers).ToList();
             }
 
             //分页视图模型
-            var pagingViewModel = new PagingModel<IndexTopicsViewModel>();
-            pagingViewModel.ModelList = new List<IndexTopicsViewModel>();
-            pagingViewModel.PagingInfo = pagingModel.PagingInfo;
+            var pagingViewModel = new PagingModel<IndexTopicsViewModel>
+            {
+                ModelList = new List<IndexTopicsViewModel>(),
+                PagingInfo = pagingModel.PagingInfo
+            };
 
             pagingModel.ModelList.ForEach(item =>
             {
                 pagingViewModel.ModelList.Add(new IndexTopicsViewModel()
                 {
                     Type = (TopicTypeViewModel)item.Type,
-                    UserAvatarUrl = topicUsers.Where(p => p.UserId == item.Author_Id).FirstOrDefault().Avatar,
-                    UserId = item.Author_Id,
-                    UserName = topicUsers.Where(p => p.UserId == item.Author_Id).FirstOrDefault().Name,
-                    RepliesCount = item.Reply_Count,
-                    VisitsCount = item.Visit_Count,
+                    UserAvatarUrl = topicUsers.Where(p => p.UserId == item.AuthorId).FirstOrDefault().Avatar,
+                    UserId = item.AuthorId,
+                    UserName = topicUsers.Where(p => p.UserId == item.AuthorId).FirstOrDefault().Name,
+                    RepliesCount = item.ReplyCount,
+                    VisitsCount = item.VisitCount,
                     LastReplyUrl = item.Last_Reply_Id == null ? null : Url.Content($"/Topic/Index/{item.TopicId}/#{item.Last_Reply_Id}"),
-                    LastReplyUserAvatarUrl = item.Last_Reply_UserId == null ? null : topicUsers.Where(p => p.UserId == item.Last_Reply_UserId).FirstOrDefault().Avatar,
+                    LastReplyUserAvatarUrl = item.LastReplyUserId == null ? null : topicUsers.Where(p => p.UserId == item.LastReplyUserId).FirstOrDefault().Avatar,
                     LastReplyDateTime = item.Last_ReplyDateTime.ToString(),
                     TopicId = item.TopicId,
                     Title = item.Title
@@ -164,22 +208,21 @@ namespace RedMan.Controllers
             });
 
             ViewData["Type"] = type;
-            return View(new AllTopicViewModel() { User = user,Topics = pagingViewModel });
+            return View(new AllTopicViewModel() { User = user, Topics = pagingViewModel });
         }
-
 
         /// <summary>
         /// 话题收藏
         /// </summary>
         /// <param name="id">用户ID</param>
-        /// <param name="pageIndex"></param>
-        /// <returns></returns>
-        public async Task<IActionResult> Collections(int id,int pageIndex = 1)
+        /// <param name="pageIndex">页码</param>
+        /// <returns>用户收藏的话题页面</returns>
+        public async Task<IActionResult> Collections(int id, int pageIndex = 1)
         {
-            var user = await _userRepo.FindAsync(p => p.UserId == id);
-            if(user == null)
+            var user = await this._userRepo.FindAsync(p => p.UserId == id);
+            if (user == null)
                 throw new Exception("用户找不到，或者已被删除");
-            var pageSize = (await GetPageSize("User/AllTopic")) ?? 40;
+            var pageSize = this.DefaultPageSize;
             //数据源
             var pagingModel = new PagingModel<Topic>()
             {
@@ -215,49 +258,59 @@ namespace RedMan.Controllers
                     ItemsPerPage = pageSize
                 }
             };
-            var collectTopicId = await _topicCollectRepo.FindPagingAsync(p => p.UserId == user.UserId,collectTopicIdPagingModel);
+            var collectTopicId = await this._topicCollectRepo.FindPagingAsync(p => p.UserId == user.UserId, collectTopicIdPagingModel);
 
-            pagingModel.ModelList = (await _topicRepo.JoinAsync(collectTopicId.ModelList,topic => topic.TopicId,topicCollect => topicCollect.TopicId,(topic,topicCollect) => topic)).ToList();
+            pagingModel.ModelList = (await this._topicRepo.JoinAsync(collectTopicId.ModelList,
+                                                                     topic => topic.TopicId,
+                                                                     topicCollect => topicCollect.TopicId, 
+                                                                     (topic, topicCollect) => topic)).ToList();
 
             //查找相关用户
-            var topicAuthors = await _userRepo.JoinAsync(pagingModel.ModelList,author => author.UserId,topic => topic.Author_Id,(author,topic) => author);
-            var topicLastReplyUsers = await _userRepo.JoinAsync(pagingModel.ModelList,replyUser => replyUser.UserId,topic => topic.Last_Reply_UserId,(replyUser,topic) => replyUser);
+            var topicAuthors = await this._userRepo.JoinAsync(pagingModel.ModelList, 
+                                                              author => author.UserId, 
+                                                              topic => topic.AuthorId, 
+                                                              (author, topic) => author);
+            var topicLastReplyUsers = await this._userRepo.JoinAsync(pagingModel.ModelList, 
+                                                                     replyUser => replyUser.UserId, 
+                                                                     topic => topic.LastReplyUserId, 
+                                                                     (replyUser, topic) => replyUser);
             topicUsers = topicAuthors.Concat(topicLastReplyUsers).ToList();
 
             //分页视图模型
-            var pagingViewModel = new PagingModel<IndexTopicsViewModel>();
-            pagingViewModel.ModelList = new List<IndexTopicsViewModel>();
-            pagingViewModel.PagingInfo = pagingModel.PagingInfo;
+            var pagingViewModel = new PagingModel<IndexTopicsViewModel>
+            {
+                ModelList = new List<IndexTopicsViewModel>(),
+                PagingInfo = pagingModel.PagingInfo
+            };
 
             pagingModel.ModelList.ForEach(item =>
             {
                 pagingViewModel.ModelList.Add(new IndexTopicsViewModel()
                 {
                     Type = (TopicTypeViewModel)item.Type,
-                    UserAvatarUrl = topicUsers.Where(p => p.UserId == item.Author_Id).FirstOrDefault().Avatar,
-                    UserId = item.Author_Id,
-                    UserName = topicUsers.Where(p => p.UserId == item.Author_Id).FirstOrDefault().Name,
-                    RepliesCount = item.Reply_Count,
-                    VisitsCount = item.Visit_Count,
+                    UserAvatarUrl = topicUsers.Where(p => p.UserId == item.AuthorId).FirstOrDefault().Avatar,
+                    UserId = item.AuthorId,
+                    UserName = topicUsers.Where(p => p.UserId == item.AuthorId).FirstOrDefault().Name,
+                    RepliesCount = item.ReplyCount,
+                    VisitsCount = item.VisitCount,
                     LastReplyUrl = item.Last_Reply_Id == null ? null : Url.Content($"/Topic/Index/{item.TopicId}/#{item.Last_Reply_Id}"),
-                    LastReplyUserAvatarUrl = item.Last_Reply_UserId == null ? null : topicUsers.Where(p => p.UserId == item.Last_Reply_UserId).FirstOrDefault().Avatar,
+                    LastReplyUserAvatarUrl = item.LastReplyUserId == null ? null : topicUsers.Where(p => p.UserId == item.LastReplyUserId).FirstOrDefault().Avatar,
                     LastReplyDateTime = item.Last_ReplyDateTime.ToString(),
                     TopicId = item.TopicId,
                     Title = item.Title
                 });
             });
-            return View(new AllTopicViewModel() { User = user,Topics = pagingViewModel });
+            return View(new AllTopicViewModel() { User = user, Topics = pagingViewModel });
         }
 
         /// <summary>
         /// 用户设置
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <returns>用户设置页面</returns>
         public async Task<IActionResult> Settings()
         {
-            var user = await _userRepo.FindAsync(p => p.Name == User.Identity.Name);
-            if(user == null)
+            var user = await this._userRepo.FindAsync(p => p.Name == User.Identity.Name);
+            if (user == null)
                 throw new Exception("用户找不到，或已被删除");
             var userSettingViewModel = new UserSettingsViewModel()
             {
@@ -274,38 +327,38 @@ namespace RedMan.Controllers
         /// <summary>
         /// 用户设置
         /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
+        /// <param name="model">指定的用户设置实例</param>
+        /// <returns>用户设置保存成功后跳转到用户信息页面</returns>
         [HttpPost]
         public async Task<IActionResult> Settings(UserSettingsViewModel model)
         {
             ViewData["Error1"] = true;
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return View(model);
             var loginUserName = User.Identity.Name;
-            if(loginUserName == null)
-                return RedirectToAction("Login","Account",new { ReturnUrl = "/User/Setting" });
+            if (loginUserName == null)
+                return RedirectToAction("Login", "Account", new { ReturnUrl = "/User/Setting" });
 
-            var user = await _userRepo.FindAsync(p => p.UserId == model.UserId);
-            if(user == null)
+            var user = await this._userRepo.FindAsync(p => p.UserId == model.UserId);
+            if (user == null)
                 throw new Exception("用户找不到，或已被删除");
-            if(user.Name != loginUserName)
-                return RedirectToAction("Index","Home");
+            if (user.Name != loginUserName)
+                return RedirectToAction("Index", "Home");
 
-            var nameIsExist = await _userRepo.IsExistAsync(p => p.Name == model.Name);
-            if(nameIsExist && (model.Name != user.Name))
+            var nameIsExist = await this._userRepo.IsExistAsync(p => p.Name == model.Name);
+            if (nameIsExist && (model.Name != user.Name))
             {
-                ModelState.AddModelError("","此名称已存在");
+                ModelState.AddModelError("", "此名称已存在");
                 return View(model);
             }
-            var emailIsExist = await _userRepo.IsExistAsync(p => p.Email == model.Email);
-            if(emailIsExist && model.Email != user.Email)
+            var emailIsExist = await this._userRepo.IsExistAsync(p => p.Email == model.Email);
+            if (emailIsExist && model.Email != user.Email)
             {
-                ModelState.AddModelError("","此邮箱地址已存在");
+                ModelState.AddModelError("", "此邮箱地址已存在");
                 return View(model);
             }
 
-            if(model.AvatarFile != null)
+            if (model.AvatarFile != null)
             {
                 string fileExtensions = string.Empty;
                 try
@@ -313,32 +366,32 @@ namespace RedMan.Controllers
                     var fileNameSplit = model.AvatarFile.FileName.Split('.');
                     fileExtensions = fileNameSplit[fileNameSplit.Length - 1];
                 }
-                catch(IndexOutOfRangeException)
+                catch (IndexOutOfRangeException)
                 {
-                    ModelState.AddModelError("","未知文件格式");
+                    ModelState.AddModelError("", "未知文件格式");
                     return View(model);
                 }
-                if(fileExtensions.ToLower() != "jpg" && fileExtensions.ToLower() != "png")
+                if (fileExtensions.ToLower() != "jpg" && fileExtensions.ToLower() != "png")
                 {
-                    ModelState.AddModelError("","请上传 .JPG 或者 .PNG 格式的图片");
+                    ModelState.AddModelError("", "请上传 .JPG 或者 .PNG 格式的图片");
                     return View(model);
                 }
-                var fileName = new StringBuilder().AppendFormat($"{model.UserId}_{model.Name}.{fileExtensions}").ToString();
-                var uploadFile = new UploadFile(env);
-                model.Avatar = await uploadFile.UploadImage(model.AvatarFile,fileName);
+                var fileName = $"{model.UserId}_{model.Name}.{fileExtensions}";
+                var uploadFile = new UploadFile(this._env);
+                model.Avatar = await uploadFile.UploadImage(model.AvatarFile, fileName);
             }
 
             user.Name = model.Name;
             user.Email = model.Email;
-            if(!string.IsNullOrEmpty(model.Avatar))
+            if (!string.IsNullOrEmpty(model.Avatar))
                 user.Avatar = model.Avatar;
             user.Signature = model.Signature;
-            var success = await _userRepo.UpdateAsync(user);
-            if(success)
+            var success = await this._userRepo.UpdateAsync(user);
+            if (success)
                 return new RedirectResult(Url.Content("/User/Settings/"));
             else
             {
-                ModelState.AddModelError("","保存失败，请稍后重试");
+                ModelState.AddModelError("", "保存失败，请稍后重试");
                 return View(model);
             }
         }
@@ -346,35 +399,35 @@ namespace RedMan.Controllers
         /// <summary>
         /// 修改密码
         /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
+        /// <param name="model">指定的修改密码模型实例</param>
+        /// <returns>修改密码成功后跳转到登录页面</returns>
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             ViewData["Error2"] = true;
-            var user = await _userRepo.FindAsync(p => p.UserId == model.UserId);
-            if(user == null)
+            var user = await this._userRepo.FindAsync(p => p.UserId == model.UserId);
+            if (user == null)
             {
-                ModelState.AddModelError("","用户不存在，或已被删除");
-                return PartialView("_PartialChangePassword",model);
+                ModelState.AddModelError("", "用户不存在，或已被删除");
+                return PartialView("_PartialChangePassword", model);
             }
-            if(!ModelState.IsValid)
-                return PartialView("_PartialChangePassword",model);
-            if(user.Password != model.OldPassword)
+            if (!ModelState.IsValid)
+                return PartialView("_PartialChangePassword", model);
+            if (user.Password != model.OldPassword)
             {
-                ModelState.AddModelError("","原始密码不正确");
-                return PartialView("_PartialChangePassword",model);
+                ModelState.AddModelError("", "原始密码不正确");
+                return PartialView("_PartialChangePassword", model);
             }
             user.Password = model.Password;
-            var success = await _userRepo.UpdateAsync(user);
-            if(success)
+            var success = await this._userRepo.UpdateAsync(user);
+            if (success)
             {
                 ViewData["Error2"] = false;
                 return Content("<script>alert('修改成功!');location.href='/Account/Login'</script>");
             }
             else
             {
-                ModelState.AddModelError("","修改失败");
-                return PartialView("_PartialChangePassword",new ChangePasswordViewModel());
+                ModelState.AddModelError("", "修改失败");
+                return PartialView("_PartialChangePassword", new ChangePasswordViewModel());
             }
         }
 
@@ -396,41 +449,40 @@ namespace RedMan.Controllers
         [AllowAnonymous]
         public async Task<FileContentResult> GetUserAvatarUrl(int id)
         {
-            var user = await _userRepo.FindAsync(p => p.UserId == id);
-            if(user == null)
+            var user = await this._userRepo.FindAsync(p => p.UserId == id);
+            if (user == null)
                 return null;
             var path = $"{Directory.GetCurrentDirectory()}/wwwroot/{user.Avatar}";
             try
             {
-                using(FileStream fs = new FileStream(path,FileMode.Open))
+                using (var fs = new FileStream(path, FileMode.Open))
                 {
                     var bytes = new byte[fs.Length];
-                    fs.Read(bytes,0,bytes.Length);
-                    return File(bytes,"application/x-png");
+                    fs.Read(bytes, 0, bytes.Length);
+                    return File(bytes, "application/x-png");
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return null;
             }
-
         }
 
         /// <summary>
         /// 设置管理员
         /// </summary>
         /// <param name="id">用户ID</param>
-        /// <returns></returns>
+        /// <returns>操作结果</returns>
         [HttpPost]
         public async Task<JsonResult> SetAdmin(int id)
         {
-            var user = await _userRepo.FindAsync(p => p.UserId == id);
-            if(user == null)
+            var user = await this._userRepo.FindAsync(p => p.UserId == id);
+            if (user == null)
                 return Json(new { status = "error" });
-            if(user.IsAdmin)
+            if (user.IsAdmin)
             {
                 user.IsAdmin = false;
-                if(await _userRepo.UpdateAsync(user))
+                if (await this._userRepo.UpdateAsync(user))
                     return Json(new { status = "cancel_admin" });
                 else
                     return Json(new { status = "error" });
@@ -438,7 +490,7 @@ namespace RedMan.Controllers
             else
             {
                 user.IsAdmin = true;
-                if(await _userRepo.UpdateAsync(user))
+                if (await this._userRepo.UpdateAsync(user))
                     return Json(new { status = "admin" });
                 else
                     return Json(new { status = "error" });
@@ -457,21 +509,31 @@ namespace RedMan.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 检查指定的用户名是否已存在
+        /// </summary>
+        /// <param name="Name">指定检查的用户名称</param>
+        /// <returns>是否存在信息</returns>
         [AllowAnonymous]
         public async Task<JsonResult> CheckUserNameIsExist(string Name)
         {
-            var user = await _userRepo.FindAsync(p => p.Name == Name);
-            if(user != null)
+            var user = await this._userRepo.FindAsync(p => p.Name == Name);
+            if (user != null)
                 return Json("此用户名已存在");
             else
                 return Json(true);
         }
 
+        /// <summary>
+        /// 检查指定的邮箱地址是否存在
+        /// </summary>
+        /// <param name="Email">指定检查的邮箱地址</param>
+        /// <returns>是否存在信息</returns>
         [AllowAnonymous]
         public async Task<JsonResult> CheckEmailIsExist(string Email)
         {
-            var user = await _userRepo.FindAsync(p => p.Email == Email);
-            if(user != null)
+            var user = await this._userRepo.FindAsync(p => p.Email == Email);
+            if (user != null)
                 return Json("此邮箱已存在");
             else
                 return Json(true);
@@ -486,24 +548,7 @@ namespace RedMan.Controllers
         /// <returns></returns>
         public async Task<IEnumerable<Topic>> GetTopicByReply(IEnumerable<Reply> replies)
         {
-            return await _topicRepo.JoinAsync(replies,topic => topic.TopicId,reply => reply.Topic_Id,(topic,reply) => topic);
-        }
-
-        /// <summary>
-        /// 获取分页大小
-        /// </summary>
-        /// <param name="wherePageSize">分页位置</param>
-        /// <returns></returns>
-        private static async Task<int?> GetPageSize(string wherePageSize)
-        {
-            return await Task.Factory.StartNew(() =>
-            {
-                var directory = Directory.GetCurrentDirectory();
-                IConfigurationRoot configuration = new ConfigurationBuilder().AddJsonFile($"{directory}/appsettings.json",true,true).Build();
-                var pagingConfig = configuration.GetSection("Paging");
-                var pageSize = pagingConfig.GetValue(typeof(int),wherePageSize);
-                return (int?)pageSize;
-            });
+            return await this._topicRepo.JoinAsync(replies, topic => topic.TopicId, reply => reply.Topic_Id, (topic, reply) => topic);
         }
         #endregion
     }

@@ -6,51 +6,95 @@ using System.Threading.Tasks;
 
 namespace Web.Model.Entities
 {
+    /// <summary>
+    /// 用户信息
+    /// </summary>
     public class User
     {
+        /// <summary>
+        /// 获取或设置用户 ID
+        /// </summary>
         [Key]
         public Int64 UserId { get; set; }
+
+        /// <summary>
+        /// 获取或设用户名
+        /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// 获取或设置登录名
+        /// </summary>
         public string LoginName { get; set; }
+
+        /// <summary>
+        /// 获取或设置用户密码
+        /// </summary>
         public string Password { get; set; }
+
+        /// <summary>
+        /// 获取或设置邮箱地址
+        /// </summary>
         public string Email { get; set; }
-        public string Url { get; set; }
-        public string profileImageUrl { get; set; }
-        public string Location { get; set; }
+
+        /// <summary>
+        /// 获取或设置个性签名
+        /// </summary>
         public string Signature { get; set; }
-        public string Profile { get; set; }
-        public string Weibo { get; set; }
+
+        /// <summary>
+        /// 获取或设置用户头像
+        /// </summary>
         public string Avatar { get; set; }
-        public string GithubId { get; set; }
-        public string GithubUserName { get; set; }
-        public string GithubAccessToken { get; set; }
-        public bool Is_Block { get; set; } = false;
 
+        /// <summary>
+        /// 获取或设置用户积分
+        /// </summary>
         public Int32 Score { get; set; }
+
+        /// <summary>
+        /// 获取或设置话题数量
+        /// </summary>
         public Int32 Topic_Count { get; set; }
+
+        /// <summary>
+        /// 获取或设置回复数量
+        /// </summary>
         public Int32 Reply_Count { get; set; }
-        public Int32 Follower_Count { get; set; }
-        public Int32 Following_Count { get; set; }
-        public Int32 Collect_Tag_Count { get; set; }
+
+        /// <summary>
+        /// 获取或设置收藏话题的数量
+        /// </summary>
         public Int32 Collect_Topic_Count { get; set; }
+
+        /// <summary>
+        /// 获取或设置创建时间
+        /// </summary>
         public DateTime CreateDateTime { get; set; }
+
+        /// <summary>
+        /// 获取或设置更新时间
+        /// </summary>
         public DateTime UpdateDateTime { get; set; }
-        public bool Is_Star { get; set; }
-        public string Level { get; set; }
+
+        /// <summary>
+        /// 获取或设置是否已激活
+        /// </summary>
         public bool Active { get; set; }
-
-        public bool Receive_Reply_Mail { get; set; } = false;
-        public bool Receive_At_Mail { get; set; } = false;
-        public bool From_WP { get; set; }
-
-        public Int32 Retrieve_Time { get; set; }
-        public string Retrieve_Key { get; set; }
-
-        public string AccessToken { get; set; }
-
+        
+        /// <summary>
+        /// 获取或设置未读消息数量
+        /// </summary>
         public int UnreadMsg_Count { get; set; }
+
+        /// <summary>
+        /// 获取或设置角色
+        /// </summary>
         public virtual ICollection<Role> Roles { get; set; }
 
+        /// <summary>
+        /// 获取或设置是否为管理员
+        /// </summary>
         public bool IsAdmin { get; set; } = false;
     }
 }

@@ -67,25 +67,25 @@
         </div>
         @if(Model.User.Topic_Count > 0)
         {
-            foreach(var item in Model.Topic_Published)
+            foreach(var item in Model.TopicPublished)
             {
                 <div class="cell">
-                    <a class="user_avatar pull-left" href="@Url.Content($"/User/Index/{item.Author_Id}")">
+                    <a class="user_avatar pull-left" href="@Url.Content($"/User/Index/{item.AuthorId}")">
                         <img src="@Model.User.Avatar" title="@Model.User.Name">
                     </a>
                     <span class="reply_count pull-left">
                         <span class="count_of_replies" title="回复数">
-                            @item.Reply_Count
+                            @item.ReplyCount
                         </span>
                         <span class="count_seperator">/</span>
                         <span class="count_of_visits" title="点击数">
-                            @item.Visit_Count
+                            @item.VisitCount
                         </span>
                     </span>
-                    @if(item.Reply_Count > 0)
+                    @if(item.ReplyCount > 0)
                     {
                         <a class="last_time pull-right" href="@Url.Content($"/Topic/Index/{item.TopicId}")">
-                            <img class="user_small_avatar" src="@Url.Content($"/User/GetUserAvatarUrl/{item.Last_Reply_UserId}")">
+                            <img class="user_small_avatar" src="@Url.Content($"/User/GetUserAvatarUrl/{item.LastReplyUserId}")">
                             <span class="last_active_time">@item.Last_ReplyDateTime</span>
                         </a>
                     }
@@ -114,25 +114,25 @@
         </div>
         @if(Model.User.Reply_Count > 0)
         {
-            @foreach(var item in Model.Topic_Join)
+            @foreach(var item in Model.TopicJoin)
             {
                 <div class="cell">
-                    <a class="user_avatar pull-left" href="@Url.Content($"/User/Index/{item.Author_Id}")">
+                    <a class="user_avatar pull-left" href="@Url.Content($"/User/Index/{item.AuthorId}")">
                         <img src="@Model.User.Avatar" title="@Model.User.Name">
                     </a>
                     <span class="reply_count pull-left">
                         <span class="count_of_replies" title="回复数">
-                            @item.Reply_Count
+                            @item.ReplyCount
                         </span>
                         <span class="count_seperator">/</span>
                         <span class="count_of_visits" title="点击数">
-                            @item.Visit_Count
+                            @item.VisitCount
                         </span>
                     </span>
-                    @if(item.Reply_Count > 0)
+                    @if(item.ReplyCount > 0)
                     {
                         <a class="last_time pull-right" href="@Url.Content($"/Topic/Index/{item.TopicId}")">
-                            <img class="user_small_avatar" src="@Url.Content($"/User/GetUserAvatarUrl/{item.Last_Reply_UserId}")">
+                            <img class="user_small_avatar" src="@Url.Content($"/User/GetUserAvatarUrl/{item.LastReplyUserId}")">
                             <span class="last_active_time">@item.Last_ReplyDateTime</span>
                         </a>
                     }

@@ -6,18 +6,21 @@ using System.Threading.Tasks;
 using Web.Model.Context;
 using Web.Model.Entities;
 
-namespace RedMan.ViewComponentes {
+namespace RedMan.ViewComponentes
+{
     /// <summary>
     /// 首页-右侧-无人回复的话题
     /// </summary>
-    public class ZeroReplySubject:ViewComponent
+    public class ZeroReplySubject : ViewComponent
     {
+        #region - Private -
         private readonly ModelContext _context;
         private readonly IRepository<Topic> _topicRepo;
+        #endregion
 
         public ZeroReplySubject(ModelContext context)
         {
-            if(context == null)
+            if (context == null)
                 throw new ArgumentNullException(nameof(context));
             this._context = context;
             this._topicRepo = new Repository<Topic>(context);
@@ -25,8 +28,8 @@ namespace RedMan.ViewComponentes {
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var zeroReplySubject = await _topicRepo.FindTopDelayAsync(5,p => p.Reply_Count == 0 && !p.Deleted,p => p.CreateDateTime);
-            return View(nameof(ZeroReplySubject),zeroReplySubject);
+            var zeroReplySubject = await this._topicRepo.FindTopDelayAsync(5, p => p.ReplyCount == 0 && !p.Deleted, p => p.CreateDateTime);
+            return View(nameof(ZeroReplySubject), zeroReplySubject);
         }
     }
 }

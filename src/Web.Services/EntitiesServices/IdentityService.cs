@@ -8,10 +8,24 @@ using Web.Services.IEntitiesServices;
 
 namespace Web.Services.EntitiesServices
 {
+    /// <summary>
+    /// 认证服务
+    /// </summary>
     public class IdentityService : IIdentityService
     {
-        public const string AuthenticationScheme = "MyAuthCookie";
+        #region - Private -
         private IIdentityRepository<User> _identityRepository;
+        #endregion
+
+        /// <summary>
+        /// 认证方案
+        /// </summary>
+        public const string AuthenticationScheme = "MyAuthCookie";
+
+        /// <summary>
+        /// 初始化<see cref="IdentityService"/>实例
+        /// </summary>
+        /// <param name="identityRepository">指定的仓储实例</param>
         public IdentityService(IIdentityRepository<User> identityRepository)
         {
             this._identityRepository = identityRepository;
@@ -25,7 +39,7 @@ namespace Web.Services.EntitiesServices
         /// <returns></returns>
         public async Task<ClaimsPrincipal> CheckUserAsync(String email, String password)
         {
-            var user = await _identityRepository.GetUserAsync(p => p.Email == email && p.Password == password);
+            var user = await this._identityRepository.GetUserAsync(p => p.Email == email && p.Password == password);
             if (user == null)
                 return null;
             var ci = CreateClaimsIdentity(user);
@@ -43,7 +57,7 @@ namespace Web.Services.EntitiesServices
         /// <returns></returns>
         public async Task<ClaimsPrincipal> CheckUserAsync(string email, string username, string password)
         {
-            var user = await _identityRepository.GetUserAsync(p => p.Email == email && p.Name == username && p.Password == password);
+            var user = await this._identityRepository.GetUserAsync(p => p.Email == email && p.Name == username && p.Password == password);
             if (user == null)
                 return null;
             var ci = CreateClaimsIdentity(user);
@@ -60,11 +74,11 @@ namespace Web.Services.EntitiesServices
         /// <returns></returns>
         public async Task<IdentityResult> RegisterAsync(string email, string username, string password)
         {
-            if (await _identityRepository.CheckEmailAsync(p => p.Name == username))
+            if (await this._identityRepository.CheckEmailAsync(p => p.Name == username))
             {
                 return new IdentityResult("用户名已存在！");
             }
-            if (await _identityRepository.CheckEmailAsync(p => p.Email == email))
+            if (await this._identityRepository.CheckEmailAsync(p => p.Email == email))
             {
                 return new IdentityResult("邮箱已存在");
             }
@@ -82,7 +96,7 @@ namespace Web.Services.EntitiesServices
                     new Role() {RoleName="普通用户" }
                 }
             };
-            await _identityRepository.AddUserAsync(user);
+            await this._identityRepository.AddUserAsync(user);
             var ci = CreateClaimsIdentity(user);
             return new IdentityResult(new ClaimsPrincipal(ci));
         }
@@ -109,7 +123,6 @@ namespace Web.Services.EntitiesServices
                 }
             }
         }
-
         #endregion
     }
 }

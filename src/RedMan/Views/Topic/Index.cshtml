@@ -53,7 +53,7 @@
                     作者 <a href="@Url.Content($"/User/Index/{Model.Author.UserId}")">@Model.Author.Name</a>
                 </span>
                 <span>
-                    @Model.Topic.Visit_Count 次浏览
+                    @Model.Topic.VisitCount 次浏览
                 </span>
                 <span>
                     来自
@@ -136,7 +136,7 @@
         </div>
     </div>
 
-    @if(Model.Topic.Reply_Count > 0)
+    @if(Model.Topic.ReplyCount > 0)
     {
         <div class='panel'>
             @*回复列表*@
@@ -157,7 +157,7 @@
                     @Html.AntiForgeryToken()
                     <div class="markdown_editor in_editor">
                         <div class="markdown_in_editor">
-                            <textarea class='editor' name='r_content' rows='8'></textarea>
+                            <textarea class='editor' name='replyContent' rows='8'></textarea>
                             <div class="editor_buttons">
                                 <input class="span-primary submit_btn" type="submit" data-loading-text="回复中.." value="回复">
                             </div>

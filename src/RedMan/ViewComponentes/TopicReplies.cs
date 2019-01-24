@@ -11,15 +11,21 @@ using Web.Model.Entities;
 
 namespace RedMan.ViewComponentes
 {
-    public class TopicReplies:ViewComponent
+    /// <summary>
+    /// 话题的回复
+    /// </summary>
+    public class TopicReplies : ViewComponent
     {
+        #region - Private -
         private readonly ModelContext _context;
         private readonly IRepository<Topic> _topicRepo;
         private readonly IRepository<Reply> _replyRepo;
         private readonly IRepository<User> _userRepo;
+        #endregion
+
         public TopicReplies(ModelContext context)
         {
-            if(context == null)
+            if (context == null)
                 throw new ArgumentNullException(nameof(context));
             this._context = context;
             this._replyRepo = new Repository<Reply>(context);
@@ -29,19 +35,19 @@ namespace RedMan.ViewComponentes
 
         public async Task<IViewComponentResult> InvokeAsync(Int64 topicId)
         {
-            var topic = await _topicRepo.FindAsync(p => p.TopicId == topicId);
-            if(topic == null)
+            var topic = await this._topicRepo.FindAsync(p => p.TopicId == topicId);
+            if (topic == null)
                 return View(new TopicRepliesViewModel() { TopicId = topicId });
-            var topicReplies = await _replyRepo.FindAllDelayAsync(p => p.Topic_Id == topicId && !p.Deleted);
-            var loginUser = await _userRepo.FindAsync(p => p.Name == User.Identity.Name);
+            var topicReplies = await this._replyRepo.FindAllDelayAsync(p => p.Topic_Id == topicId && !p.Deleted);
+            var loginUser = await this._userRepo.FindAsync(p => p.Name == User.Identity.Name);
             var topicRepliesViewModel = new TopicRepliesViewModel()
             {
                 TopicId = topic.TopicId,
-                Topic=topic,
-                LoginUser=loginUser,
+                Topic = topic,
+                LoginUser = loginUser,
                 Replies = topicReplies,
             };
-            return View(nameof(TopicReplies),topicRepliesViewModel);
+            return View(nameof(TopicReplies), topicRepliesViewModel);
         }
     }
 }

@@ -13,8 +13,8 @@ namespace RedMan.Extensions
         /// <summary>
         /// 日期转换成unix时间戳
         /// </summary>
-        /// <param name="dateTime"></param>
-        /// <returns></returns>
+        /// <param name="dateTime">指定要转换的<see cref="DateTime"/>实例</param>
+        /// <returns>Unix 时间戳</returns>
         public static long ToUnixTimestamp(this DateTime dateTime)
         {
             var start = new DateTime(1970, 1, 1, 0, 0, 0, dateTime.Kind);

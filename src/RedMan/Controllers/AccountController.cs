@@ -115,7 +115,7 @@ namespace RedMan.Controllers
             var result = await this._identityService.RegisterAsync(model.Email, model.Name, model.Password);
             if (!result.Success)
             {
-                ModelState.AddModelError(string.Empty, result.ErrorString);
+                ModelState.AddModelError(string.Empty, result.ErrorMessage);
                 return View(model);
             }
             ViewData["Error"] = false;

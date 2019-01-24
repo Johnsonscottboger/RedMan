@@ -7,10 +7,19 @@ using Web.Model.Entities;
 
 namespace RedMan.ViewModel
 {
+    /// <summary>
+    /// 修改回复页面的视图模型
+    /// </summary>
     public class ReplyEditViewModel
     {
-        public Int64 ReplyId { get; set; }
+        /// <summary>
+        /// 获取或设置回复的 ID
+        /// </summary>
+        public long ReplyId { get; set; }
 
+        /// <summary>
+        /// 获取或设置回复的内容
+        /// </summary>
         [Required(ErrorMessage ="请输入内容")]
         [MinLength(5,ErrorMessage ="请至少输入5个字")]
         [MaxLength(2048,ErrorMessage ="不得超过2048个字")]

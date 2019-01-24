@@ -2,7 +2,7 @@
 
 @model IEnumerable<Web.Model.Entities.Topic>
 
-@if(Model.Count() != 0) {
+@if(Model.Any()) {
     <ul class="unstyled">
         @foreach(var item in Model) {
             <li>

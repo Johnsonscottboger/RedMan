@@ -144,11 +144,11 @@ namespace RedMan.Controllers
             //根据话题,查找相关用户
             var topicAuthors = this._userRepo.Join(inner: pagingModel.ModelList,
                                                     outerKeySelector: user => user.UserId,
-                                                    innerKeySelector: topic => topic.Author_Id,
+                                                    innerKeySelector: topic => topic.AuthorId,
                                                     resultSelector: (user, topic) => user).ToList();
             var topicLastReplyUsers = this._userRepo.Join(inner: pagingModel.ModelList,
                                                           outerKeySelector: user => user.UserId,
-                                                          innerKeySelector: topic => topic.Last_Reply_UserId,
+                                                          innerKeySelector: topic => topic.LastReplyUserId,
                                                           resultSelector: (user, topic) => user).ToList();
             var topicUsers = topicAuthors.Concat(topicLastReplyUsers);
 
@@ -158,13 +158,13 @@ namespace RedMan.Controllers
                 {
                     Tab = (TopicTapViewModel)tab,
                     Type = (TopicTypeViewModel)item.Type,
-                    UserAvatarUrl = topicUsers.Where(p => p.UserId == item.Author_Id).FirstOrDefault().Avatar,
-                    UserId = item.Author_Id,
-                    UserName = topicUsers.Where(p => p.UserId == item.Author_Id).FirstOrDefault().Name,
-                    RepliesCount = item.Reply_Count,
-                    VisitsCount = item.Visit_Count,
+                    UserAvatarUrl = topicUsers.Where(p => p.UserId == item.AuthorId).FirstOrDefault().Avatar,
+                    UserId = item.AuthorId,
+                    UserName = topicUsers.Where(p => p.UserId == item.AuthorId).FirstOrDefault().Name,
+                    RepliesCount = item.ReplyCount,
+                    VisitsCount = item.VisitCount,
                     LastReplyUrl = item.Last_Reply_Id == null ? null : Url.Content($"/Topic/Index/{item.TopicId}/#{item.Last_Reply_Id}"),
-                    LastReplyUserAvatarUrl = item.Last_Reply_UserId == null ? null : topicUsers.Where(p => p.UserId == item.Last_Reply_UserId).FirstOrDefault().Avatar,
+                    LastReplyUserAvatarUrl = item.LastReplyUserId == null ? null : topicUsers.Where(p => p.UserId == item.LastReplyUserId).FirstOrDefault().Avatar,
                     LastReplyDateTime = item.Last_ReplyDateTime.ToString(),
                     TopicId = item.TopicId,
                     Title = item.Title,
